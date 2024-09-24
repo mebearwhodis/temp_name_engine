@@ -1,0 +1,24 @@
+# ninja log v6
+1	27495	7478546304668744	build.ninja	91e90b7ae67c21d0
+20	457	7478528451137652	core/CMakeFiles/core_test.dir/test/empty.cc.obj	196469bd86a9abc8
+13	459	7478528451077882	core/CMakeFiles/core.dir/src/empty.cc.obj	59863919c52216c2
+17	465	7478528451116940	CMakeFiles/main.dir/main.cc.obj	7713bc0549636261
+15	465	7478528451097789	api/CMakeFiles/api.dir/src/empty.cc.obj	71cbd6dc1807230c
+459	495	7478528455533152	core/core.lib	8c349d61b4c09364
+501	1030	7478528455953778	core/core_test.exe	ed0d372296138528
+495	524	7478528455893811	api/api.lib	f19205d0e3d0eab7
+28	363	7478546715306191	core/CMakeFiles/core.dir/src/window.cc.obj	525ae8531a6cde65
+19	363	7478546715216170	core/CMakeFiles/core.dir/src/game_engine.cc.obj	f434254410d786e7
+24	364	7478546715266187	core/CMakeFiles/core.dir/src/graphics_renderer.cc.obj	887e287874b784c4
+364	401	7478546718666322	core/core.lib	5db42d8f31d1590d
+34	622	7478546715361335	CMakeFiles/main.dir/main.cc.obj	7713bc0549636261
+626	1102	7478546721282277	main.exe	a2e2de5d1bdabd75
+52	644	7488736406888865	core/CMakeFiles/core.dir/src/graphics_renderer.cc.obj	887e287874b784c4
+62	649	7488736406980287	CMakeFiles/main.dir/main.cc.obj	7713bc0549636261
+58	650	7488736406940284	core/CMakeFiles/core.dir/src/window.cc.obj	525ae8531a6cde65
+46	651	7488736406817441	core/CMakeFiles/core.dir/src/game_engine.cc.obj	f434254410d786e7
+651	709	7488736412868967	core/core.lib	5db42d8f31d1590d
+709	1329	7488736413457504	main.exe	a2e2de5d1bdabd75
+31	145	7488736875165965	core/CMakeFiles/core.dir/src/graphics_renderer.cc.obj	887e287874b784c4
+145	173	7488736876307874	core/core.lib	5db42d8f31d1590d
+173	580	7488736876589393	main.exe	a2e2de5d1bdabd75
