@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(GameEngine)
 
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SDL2 CONFIG REQUIRED)
@@ -20,8 +20,7 @@ add_subdirectory(api/)
 
 add_executable(main main.cc)
 target_link_libraries(main PRIVATE core api SDL2::SDL2 SDL2::SDL2main)
-target_link_libraries(main PRIVATE SDL2::SDL2)
-target_link_libraries(main PRIVATE SDL2::SDL2main)
+
 
 
 if(ENABLE_PROFILING)

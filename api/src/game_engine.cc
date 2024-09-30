@@ -43,13 +43,19 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Run()
 {
+    //Begin()
     while (is_running_)
     {
         HandleEvents();
         renderer_->Clear();
-        renderer_->DrawRectangle(100, 100, 200, 200);
-        renderer_->DrawRectangle(0, 0, 100, 100);
-        renderer_->Present();
+        renderer_->DrawRectangle(0, 0, 200, 80, SDL_Color{ 255, 255, 255, 255 });
+        renderer_->DrawRectangle(210, 0, 300, 80, SDL_Color{ 255, 255, 255, 255 });
+        renderer_->DrawRectangle(520, 0, 200, 80, SDL_Color{ 255, 255, 0, 255 });
+        renderer_->DrawRectangle(0, 0, 50, 50, SDL_Color{ 255, 0, 255, 255 });
+        renderer_->DrawRectangle(0, 300, 500, 80, SDL_Color{ 0, 0, 255, 255 });
+
+        renderer_->Draw();
     }
+    //End()
 }
 

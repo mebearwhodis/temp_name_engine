@@ -50,7 +50,7 @@ cmake_ninja_workdir = C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngin
 build cmake_object_order_depends_target_main: phony || cmake_object_order_depends_target_api cmake_object_order_depends_target_core
 
 build CMakeFiles\main.dir\main.cc.obj: CXX_COMPILER__main_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\main.cc || cmake_object_order_depends_target_main
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
   INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include\SDL2 -external:W0
   OBJECT_DIR = CMakeFiles\main.dir
   OBJECT_FILE_DIR = CMakeFiles\main.dir
@@ -65,10 +65,10 @@ build CMakeFiles\main.dir\main.cc.obj: CXX_COMPILER__main_unscanned_Debug C$:\Us
 #############################################
 # Link the executable main.exe
 
-build main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles\main.dir\main.cc.obj | core\core.lib api\api.lib vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib vcpkg_installed\x64-windows\debug\lib\SDL2d.lib vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib core\core.lib || api\api.lib core\core.lib
+build main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles\main.dir\main.cc.obj | core\core.lib api\api.lib vcpkg_installed\x64-windows\debug\lib\SDL2d.lib vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib core\core.lib || api\api.lib core\core.lib
   FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
-  LINK_LIBRARIES = core\core.lib  api\api.lib  vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib  vcpkg_installed\x64-windows\debug\lib\SDL2d.lib  vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib  core\core.lib  shell32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+  LINK_LIBRARIES = core\core.lib  api\api.lib  vcpkg_installed\x64-windows\debug\lib\SDL2d.lib  vcpkg_installed\x64-windows\debug\lib\manual-link\SDL2maind.lib  core\core.lib  shell32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   OBJECT_DIR = CMakeFiles\main.dir
   POST_BUILD = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug && C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/rochm/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-debug/main.exe -installedDir C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-debug/vcpkg_installed/x64-windows/debug/bin -OutVariable out"
   PRE_LINK = cd .
@@ -126,24 +126,8 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_core: phony || .
 
-build core\CMakeFiles\core.dir\src\game_engine.cc.obj: CXX_COMPILER__core_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\src\game_engine.cc || cmake_object_order_depends_target_core
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
-  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include
-  OBJECT_DIR = core\CMakeFiles\core.dir
-  OBJECT_FILE_DIR = core\CMakeFiles\core.dir\src
-  TARGET_COMPILE_PDB = core\CMakeFiles\core.dir\core.pdb
-  TARGET_PDB = core\core.pdb
-
-build core\CMakeFiles\core.dir\src\graphics_renderer.cc.obj: CXX_COMPILER__core_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\src\graphics_renderer.cc || cmake_object_order_depends_target_core
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
-  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include
-  OBJECT_DIR = core\CMakeFiles\core.dir
-  OBJECT_FILE_DIR = core\CMakeFiles\core.dir\src
-  TARGET_COMPILE_PDB = core\CMakeFiles\core.dir\core.pdb
-  TARGET_PDB = core\core.pdb
-
-build core\CMakeFiles\core.dir\src\window.cc.obj: CXX_COMPILER__core_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\src\window.cc || cmake_object_order_depends_target_core
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
+build core\CMakeFiles\core.dir\src\empty.cc.obj: CXX_COMPILER__core_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\src\empty.cc || cmake_object_order_depends_target_core
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
   INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include
   OBJECT_DIR = core\CMakeFiles\core.dir
   OBJECT_FILE_DIR = core\CMakeFiles\core.dir\src
@@ -158,7 +142,7 @@ build core\CMakeFiles\core.dir\src\window.cc.obj: CXX_COMPILER__core_unscanned_D
 #############################################
 # Link the static library core\core.lib
 
-build core\core.lib: CXX_STATIC_LIBRARY_LINKER__core_Debug core\CMakeFiles\core.dir\src\game_engine.cc.obj core\CMakeFiles\core.dir\src\graphics_renderer.cc.obj core\CMakeFiles\core.dir\src\window.cc.obj
+build core\core.lib: CXX_STATIC_LIBRARY_LINKER__core_Debug core\CMakeFiles\core.dir\src\empty.cc.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = core\CMakeFiles\core.dir
@@ -177,9 +161,27 @@ build core\core.lib: CXX_STATIC_LIBRARY_LINKER__core_Debug core\CMakeFiles\core.
 
 build cmake_object_order_depends_target_core_test: phony || cmake_object_order_depends_target_core
 
-build core\CMakeFiles\core_test.dir\test\empty.cc.obj: CXX_COMPILER__core_test_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\test\empty.cc || cmake_object_order_depends_target_core_test
+build core\CMakeFiles\core_test.dir\test\test_vec2.cpp.obj: CXX_COMPILER__core_test_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\test\test_vec2.cpp || cmake_object_order_depends_target_core_test
   DEFINES = -DGTEST_LINKED_AS_SHARED_LIBRARY=1
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
+  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:W0
+  OBJECT_DIR = core\CMakeFiles\core_test.dir
+  OBJECT_FILE_DIR = core\CMakeFiles\core_test.dir\test
+  TARGET_COMPILE_PDB = core\CMakeFiles\core_test.dir\
+  TARGET_PDB = core\core_test.pdb
+
+build core\CMakeFiles\core_test.dir\test\test_vec3.cpp.obj: CXX_COMPILER__core_test_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\test\test_vec3.cpp || cmake_object_order_depends_target_core_test
+  DEFINES = -DGTEST_LINKED_AS_SHARED_LIBRARY=1
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
+  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:W0
+  OBJECT_DIR = core\CMakeFiles\core_test.dir
+  OBJECT_FILE_DIR = core\CMakeFiles\core_test.dir\test
+  TARGET_COMPILE_PDB = core\CMakeFiles\core_test.dir\
+  TARGET_PDB = core\core_test.pdb
+
+build core\CMakeFiles\core_test.dir\test\test_vec4.cpp.obj: CXX_COMPILER__core_test_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\test\test_vec4.cpp || cmake_object_order_depends_target_core_test
+  DEFINES = -DGTEST_LINKED_AS_SHARED_LIBRARY=1
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
   INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:W0
   OBJECT_DIR = core\CMakeFiles\core_test.dir
   OBJECT_FILE_DIR = core\CMakeFiles\core_test.dir\test
@@ -194,7 +196,7 @@ build core\CMakeFiles\core_test.dir\test\empty.cc.obj: CXX_COMPILER__core_test_u
 #############################################
 # Link the executable core\core_test.exe
 
-build core\core_test.exe: CXX_EXECUTABLE_LINKER__core_test_Debug core\CMakeFiles\core_test.dir\test\empty.cc.obj | core\core.lib vcpkg_installed\x64-windows\debug\lib\manual-link\gtest_main.lib vcpkg_installed\x64-windows\debug\lib\gtest.lib || core\core.lib
+build core\core_test.exe: CXX_EXECUTABLE_LINKER__core_test_Debug core\CMakeFiles\core_test.dir\test\test_vec2.cpp.obj core\CMakeFiles\core_test.dir\test\test_vec3.cpp.obj core\CMakeFiles\core_test.dir\test\test_vec4.cpp.obj | core\core.lib vcpkg_installed\x64-windows\debug\lib\manual-link\gtest_main.lib vcpkg_installed\x64-windows\debug\lib\gtest.lib || core\core.lib
   FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = core\core.lib  vcpkg_installed\x64-windows\debug\lib\manual-link\gtest_main.lib  vcpkg_installed\x64-windows\debug\lib\gtest.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -255,9 +257,25 @@ build core\rebuild_cache: phony core\CMakeFiles\rebuild_cache.util
 
 build cmake_object_order_depends_target_api: phony || cmake_object_order_depends_target_core
 
-build api\CMakeFiles\api.dir\src\empty.cc.obj: CXX_COMPILER__api_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\src\empty.cc || cmake_object_order_depends_target_api
-  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
-  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\include -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include
+build api\CMakeFiles\api.dir\src\game_engine.cc.obj: CXX_COMPILER__api_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\src\game_engine.cc || cmake_object_order_depends_target_api
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
+  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\include -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include\SDL2 -external:W0
+  OBJECT_DIR = api\CMakeFiles\api.dir
+  OBJECT_FILE_DIR = api\CMakeFiles\api.dir\src
+  TARGET_COMPILE_PDB = api\CMakeFiles\api.dir\api.pdb
+  TARGET_PDB = api\api.pdb
+
+build api\CMakeFiles\api.dir\src\graphics_renderer.cc.obj: CXX_COMPILER__api_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\src\graphics_renderer.cc || cmake_object_order_depends_target_api
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
+  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\include -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include\SDL2 -external:W0
+  OBJECT_DIR = api\CMakeFiles\api.dir
+  OBJECT_FILE_DIR = api\CMakeFiles\api.dir\src
+  TARGET_COMPILE_PDB = api\CMakeFiles\api.dir\api.pdb
+  TARGET_PDB = api\api.pdb
+
+build api\CMakeFiles\api.dir\src\window.cc.obj: CXX_COMPILER__api_unscanned_Debug C$:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\src\window.cc || cmake_object_order_depends_target_api
+  FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -std:c++20 -MDd
+  INCLUDES = -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\api\include -IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\core\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include -external:IC:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-debug\vcpkg_installed\x64-windows\include\SDL2 -external:W0
   OBJECT_DIR = api\CMakeFiles\api.dir
   OBJECT_FILE_DIR = api\CMakeFiles\api.dir\src
   TARGET_COMPILE_PDB = api\CMakeFiles\api.dir\api.pdb
@@ -271,7 +289,7 @@ build api\CMakeFiles\api.dir\src\empty.cc.obj: CXX_COMPILER__api_unscanned_Debug
 #############################################
 # Link the static library api\api.lib
 
-build api\api.lib: CXX_STATIC_LIBRARY_LINKER__api_Debug api\CMakeFiles\api.dir\src\empty.cc.obj || core\core.lib
+build api\api.lib: CXX_STATIC_LIBRARY_LINKER__api_Debug api\CMakeFiles\api.dir\src\game_engine.cc.obj api\CMakeFiles\api.dir\src\graphics_renderer.cc.obj api\CMakeFiles\api.dir\src\window.cc.obj || core\core.lib
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = api\CMakeFiles\api.dir
