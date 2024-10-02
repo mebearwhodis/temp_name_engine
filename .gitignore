@@ -17,6 +17,9 @@
 mono_crash.*
 
 # Build results
+cmake-build-debug/
+cmake-build-release/
+cmake-build-relwithdebinfo/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

@@ -1,4 +1,7 @@
 #include "game_engine.h"
+#include <./../../imgui/imgui.h>
+#include <./../../imgui/imgui_impl_sdl2.h>
+#include <./../../imgui/imgui_impl_sdlrenderer2.h>
 
 GameEngine::GameEngine()
 {
@@ -6,6 +9,16 @@ GameEngine::GameEngine()
     window_ = new Window("Game Engine", 800, 600);
     renderer_ = new GraphicsRenderer(window_->GetSDLWindow());
     is_running_ = true;
+    show_test_window_ = true;
+
+    //Setup ImGUI context
+     // IMGUI_CHECKVERSION();
+     // ImGui::CreateContext();
+     // ImGuiIO& io = ImGui::GetIO();
+     // (void)io;
+
+    //Setup Platform/Renderer bindings
+    // ImGui_ImplSDL2_InitForSDLRenderer(window_->GetSDLWindow(), renderer_->GetD);
 }
 
 GameEngine::~GameEngine()
@@ -46,7 +59,6 @@ void GameEngine::Run()
     //Begin()
     while (is_running_)
     {
-
         HandleEvents();
         renderer_->Clear();
         renderer_->DrawRectangle(0, 0, 200, 80, SDL_Color{ 255, 255, 255, 255 });
@@ -54,6 +66,8 @@ void GameEngine::Run()
         renderer_->DrawRectangle(520, 0, 200, 80, SDL_Color{ 255, 255, 0, 255 });
         renderer_->DrawRectangle(0, 0, 50, 50, SDL_Color{ 255, 0, 255, 255 });
         renderer_->DrawRectangle(0, 300, 500, 80, SDL_Color{ 0, 0, 255, 255 });
+
+        renderer_->DrawCircle(400, 300, 60, SDL_Color{ 0, 255, 255, 255 });
 
         renderer_->Draw();
     }

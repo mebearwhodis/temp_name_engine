@@ -4,7 +4,7 @@ waiting to take filesystem lock on C:\Users\rochm\vcpkg\.vcpkg-root...
 Detecting compiler hash for triplet x64-windows...
 Compiler found: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.40.33807/bin/Hostx64/x64/cl.exe
 All requested packages are currently installed.
-Total install time: 1.4 us
+Total install time: 900 ns
 The package gtest is compatible with built-in CMake targets:
 
     enable_testing()
@@ -30,6 +30,6 @@ tracy provides CMake targets:
   target_link_libraries(main PRIVATE Tracy::TracyClient)
 
 -- Running vcpkg install - done
--- Configuring done (6.0s)
+-- Configuring done (9.6s)
 -- Generating done (0.0s)
 -- Build files have been written to: C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo

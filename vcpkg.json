@@ -3,6 +3,6 @@
     "version-string": "1.0",
 	  "builtin-baseline": "b323a5992e8cc742deddac74df6224419d662c16",
     "dependencies": [
-        "gtest", "tracy", "sdl2", "imgui"
+        "gtest", "tracy", "sdl2"
     ]
 }

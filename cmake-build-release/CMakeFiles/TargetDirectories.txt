@@ -11,3 +11,7 @@ C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmak
 C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/api/CMakeFiles/test.dir
 C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/api/CMakeFiles/edit_cache.dir
 C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/api/CMakeFiles/rebuild_cache.dir
+C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/imgui/CMakeFiles/imgui.dir
+C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/imgui/CMakeFiles/test.dir
+C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/imgui/CMakeFiles/edit_cache.dir
+C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release/imgui/CMakeFiles/rebuild_cache.dir

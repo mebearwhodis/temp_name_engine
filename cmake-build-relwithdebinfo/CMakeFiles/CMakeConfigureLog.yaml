@@ -109,24 +109,25 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-wzxx5x"
-      binary: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-wzxx5x"
+      source: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-0qn5l3"
+      binary: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-0qn5l3"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
-      VCPKG_APPLOCAL_DEPS: "ON"
+      VCPKG_INSTALLED_DIR: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/vcpkg_installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
       VCPKG_TARGET_TRIPLET: "x64-windows"
       Z_VCPKG_ROOT_DIR: "C:/Users/rochm/vcpkg"
     buildResult:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-wzxx5x'
+        Change Dir: 'C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-0qn5l3'
         
-        Run Build Command(s): C:/Users/rochm/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -v cmTC_ff0e4
-        [1/2] C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\cl.exe  /nologo   /DWIN32 /D_WINDOWS  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\\cmTC_ff0e4.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_ff0e4.dir\\ /FS -c C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c
-        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe -E vs_link_exe --intdir=CMakeFiles\\cmTC_ff0e4.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_ff0e4.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_ff0e4.exe /implib:cmTC_ff0e4.lib /pdb:cmTC_ff0e4.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && C:\\Windows\\system32\\cmd.exe /C "cd /D C:\\Users\\rochm\\Documents\\SAE_923_Cours\\2nd_Year\\GameEngine\\temp_name_engine\\cmake-build-relwithdebinfo\\CMakeFiles\\CMakeScratch\\TryCompile-wzxx5x && C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/rochm/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-wzxx5x/cmTC_ff0e4.exe -installedDir C:/Users/rochm/vcpkg/installed/x64-windows/debug/bin -OutVariable out""
+        Run Build Command(s): C:/Users/rochm/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -v cmTC_56706
+        [1/2] C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\cl.exe  /nologo   /DWIN32 /D_WINDOWS  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\\cmTC_56706.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_56706.dir\\ /FS -c C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe -E vs_link_exe --intdir=CMakeFiles\\cmTC_56706.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_56706.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_56706.exe /implib:cmTC_56706.lib /pdb:cmTC_56706.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -
@@ -166,25 +167,26 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-8flaaj"
-      binary: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-8flaaj"
+      source: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-pngh8a"
+      binary: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-pngh8a"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
       CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
-      VCPKG_APPLOCAL_DEPS: "ON"
+      VCPKG_INSTALLED_DIR: "C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/vcpkg_installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
       VCPKG_TARGET_TRIPLET: "x64-windows"
       Z_VCPKG_ROOT_DIR: "C:/Users/rochm/vcpkg"
     buildResult:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-8flaaj'
+        Change Dir: 'C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-pngh8a'
         
-        Run Build Command(s): C:/Users/rochm/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -v cmTC_a7a63
-        [1/2] C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /GR /EHsc  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\\cmTC_a7a63.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_a7a63.dir\\ /FS -c C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp
-        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe -E vs_link_exe --intdir=CMakeFiles\\cmTC_a7a63.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_a7a63.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_a7a63.exe /implib:cmTC_a7a63.lib /pdb:cmTC_a7a63.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && C:\\Windows\\system32\\cmd.exe /C "cd /D C:\\Users\\rochm\\Documents\\SAE_923_Cours\\2nd_Year\\GameEngine\\temp_name_engine\\cmake-build-relwithdebinfo\\CMakeFiles\\CMakeScratch\\TryCompile-8flaaj && C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/rochm/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-relwithdebinfo/CMakeFiles/CMakeScratch/TryCompile-8flaaj/cmTC_a7a63.exe -installedDir C:/Users/rochm/vcpkg/installed/x64-windows/debug/bin -OutVariable out""
+        Run Build Command(s): C:/Users/rochm/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -v cmTC_fbe16
+        [1/2] C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /GR /EHsc  /Zi /Ob0 /Od /RTC1 -MDd /showIncludes /FoCMakeFiles\\cmTC_fbe16.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_fbe16.dir\\ /FS -c C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && C:\\Users\\rochm\\AppData\\Local\\Programs\\CLion\\bin\\cmake\\win\\x64\\bin\\cmake.exe -E vs_link_exe --intdir=CMakeFiles\\cmTC_fbe16.dir --rc=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\rc.exe --mt=C:\\PROGRA~2\\WI3CF2~1\\10\\bin\\100226~1.0\\x64\\mt.exe --manifests  -- C:\\PROGRA~1\\MICROS~4\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1440~1.338\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_fbe16.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_fbe16.exe /implib:cmTC_fbe16.lib /pdb:cmTC_fbe16.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -

@@ -12,6 +12,9 @@ public:
     void Clear();
     void Draw();
     void DrawRectangle(int x, int y, int width, int height, SDL_Color color);
+    void DrawCircle(int centerX, int centerY, int radius, SDL_Color color);
+
+    SDL_Renderer* GetSDLRenderer();
 
 private:
     SDL_Renderer* renderer_;

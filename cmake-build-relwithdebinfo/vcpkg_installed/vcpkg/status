@@ -3,14 +3,14 @@ Version: 2022-02-06
 Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: bead0846c6eb37acd85bccc0b9f3262196a82a18d100bb5cdca414fdcd59dfd6
+Abi: 1edd03b153b1153d6fc6401435897ba783d984046201b3a114bea1a6f2fd4a99
 Status: install ok installed
 
 Package: vcpkg-cmake
 Version: 2024-04-18
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 41e0fb539a973162c0c345f8efe49e45ef69e3dc35159ed7261ae1f0bc36d0e9
+Abi: 9c6c98ba5bc164da4dadd1f209d62355113ae7d035b51777a0e21bdf13cb54a3
 Status: install ok installed
 
 Package: gtest
@@ -19,8 +19,17 @@ Port-Version: 1
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: c9ea45e4a7b92118881abc95cbe95c960635865682d374c3ec0271cc1be582f0
+Abi: 8ae9471b04c6496803632ccea7a8c742d4897ca99a7bebb2d010213dc7cfa23d
 Description: Google Testing and Mocking Framework
+Status: install ok installed
+
+Package: sdl2
+Version: 2.30.1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 869d59b6a288d9a8836968b12abb85ebb168c8a63755aa58a7ffdce491cf8a3b
+Description: Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
 Status: install ok installed
 
 Package: tracy
@@ -29,7 +38,7 @@ Port-Version: 2
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 9146578c35b40d10693aedc37d2e742f28f94e16485fe7cc3cbf971afcfd9061
+Abi: 620d0d095f2459e4de0211a5480bc09e8de788b5bbbe620993caa67940078490
 Description: A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
 Default-Features: crash-handler
 Status: install ok installed
@@ -39,14 +48,5 @@ Feature: crash-handler
 Architecture: x64-windows
 Multi-Arch: same
 Description: Enable crash handler
-Status: install ok installed
-
-Package: sdl2
-Version: 2.30.1
-Depends: vcpkg-cmake, vcpkg-cmake-config
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 8e6f6667edcc510379b0c1e28f9d39f54e5e011b6cf0abd9d31f685a51e998d6
-Description: Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
 Status: install ok installed
 

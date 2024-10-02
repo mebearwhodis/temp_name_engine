@@ -14,6 +14,7 @@ public:
     void Run();
 private:
     bool is_running_;
+    bool show_test_window_;
     Window* window_;
     GraphicsRenderer* renderer_;
 
