@@ -1,6 +1,6 @@
 ﻿#ifndef CORE_MATHS_VEC2_H_
 #define CORE_MATHS_VEC2_H_
-#include <valarray>
+#include <cmath>
 
 namespace core
 {

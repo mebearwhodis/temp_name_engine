@@ -274,3 +274,4 @@ INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec2fOperatorFixture,
 		std::pair{ core::Vec2<float>{}, core::Vec2{1.93f,7.4f} }
 	)
 );
+

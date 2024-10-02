@@ -46,6 +46,7 @@ void GameEngine::Run()
     //Begin()
     while (is_running_)
     {
+
         HandleEvents();
         renderer_->Clear();
         renderer_->DrawRectangle(0, 0, 200, 80, SDL_Color{ 255, 255, 255, 255 });

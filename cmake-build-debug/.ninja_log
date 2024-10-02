@@ -1,11 +1,11 @@
 # ninja log v6
-1	2177	7493991088908227	build.ninja	91e90b7ae67c21d0
+1	2177	7495636727407184	build.ninja	91e90b7ae67c21d0
 31	73	7489770243963532	core/CMakeFiles/core_test.dir/test/empty.cc.obj	3bbf687d7aaee393
 19	64	7489770243833528	core/CMakeFiles/core.dir/src/empty.cc.obj	56009751a4d6cadb
 22	332	7489772107837787	CMakeFiles/main.dir/main.cc.obj	773323cdc150a2c
 15	465	7478528451097789	api/CMakeFiles/api.dir/src/empty.cc.obj	71cbd6dc1807230c
-106	509	7489770244708623	core/core_test.exe	ed0d372296138528
 65	106	7489770244298632	core/core.lib	8c349d61b4c09364
+1180	1902	7495624616148956	core/core_test.exe	4ab5de1822799b0
 328	353	7489772110887905	api/api.lib	e421b1d63b18f59c
 58	650	7488736406940284	core/CMakeFiles/core.dir/src/window.cc.obj	525ae8531a6cde65
 10	501	7489758296379786	core/CMakeFiles/core.dir/src/game_engine.cc.obj	f434254410d786e7
@@ -15,12 +15,9 @@
 20	307	7489772107807985	api/CMakeFiles/api.dir/src/window.cc.obj	88b8d909ba2903c2
 15	328	7489772107757848	api/CMakeFiles/api.dir/src/game_engine.cc.obj	c5249a940c10998d
 27	333	7493998035837254	core/CMakeFiles/core_test.dir/test/test_vec4.cpp.obj	22e641b5e9180aaf
-24	334	7493998035802116	core/CMakeFiles/core_test.dir/test/test_vec3.cpp.obj	4d232e014503c660
-18	1345	7493998035752110	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-1345	2146	7493998049018334	core/core_test.exe	4ab5de1822799b0
-3	1016	7494002106181281	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-2	1214	7494002295523970	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-11	1112	7494019085618843	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-3	1049	7494020238382984	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-42	1216	7494034345349022	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
-1217	1981	7494034357097233	core/core_test.exe	4ab5de1822799b0
+32	1180	7495624604673084	core/CMakeFiles/core_test.dir/test/test_vec3.cpp.obj	4d232e014503c660
+26	1175	7495624604613067	core/CMakeFiles/core_test.dir/test/test_vec2.cpp.obj	6ef5883a866f3230
+16	11427	7495636727407184	build.ninja	91e90b7ae67c21d0
+7	613	7495636727732469	main.exe	35bb11c9418f30d7
+4	1423	7495636727712465	core/CMakeFiles/core_test.dir/test/test_vec4.cpp.obj	22e641b5e9180aaf
+1423	1943	7495636741896160	core/core_test.exe	4ab5de1822799b0
