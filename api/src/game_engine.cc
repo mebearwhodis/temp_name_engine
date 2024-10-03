@@ -80,7 +80,7 @@ void GameEngine::Run()
 
         // Render ImGui window with a checkbox
         if (show_test_window_) {
-            // ImGui::ShowDemoWindow();
+            ImGui::ShowDemoWindow();
             // Create a window called "My First Tool", with a menu bar.
             ImGui::Begin("My First Tool", &show_test_window_, ImGuiWindowFlags_MenuBar);
             if (ImGui::BeginMenuBar())

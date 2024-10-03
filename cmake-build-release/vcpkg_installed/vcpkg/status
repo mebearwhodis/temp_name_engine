@@ -50,3 +50,28 @@ Multi-Arch: same
 Description: Enable crash handler
 Status: install ok installed
 
+Package: imgui
+Version: 1.90.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 5296d0ed4e342e1bcaba3240895fc1b583e8cbf621cf0ca421b27f06d11c730e
+Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Status: install ok installed
+
+Package: imgui
+Feature: sdl2-binding
+Depends: sdl2
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available SDL2 binding
+Status: install ok installed
+
+Package: imgui
+Feature: sdl2-renderer-binding
+Depends: sdl2
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available SDL2 Renderer binding
+Status: install ok installed
+
