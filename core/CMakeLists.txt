@@ -14,7 +14,7 @@ add_executable(core_test ${TEST_FILES}
 		test/test_vec2.cpp
 		test/test_vec3.cpp
 		test/test_vec4.cpp)
-target_link_libraries(core_test PRIVATE core imgui GTest::gtest GTest::gtest_main)
+target_link_libraries(core_test PRIVATE core GTest::gtest GTest::gtest_main)
 
 if(ENABLE_PROFILING)
 	target_link_libraries(core PUBLIC Tracy::TracyClient)
