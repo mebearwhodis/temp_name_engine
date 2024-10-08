@@ -1,15 +1,9 @@
-C:\Users\rochm\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=C:/Users/rochm/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -DCMAKE_TOOLCHAIN_FILE=C:/Users/rochm/vcpkg/scripts/buildsystems/vcpkg.cmake -G Ninja -S C:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine -B C:\Users\rochm\Documents\SAE_923_Cours\2nd_Year\GameEngine\temp_name_engine\cmake-build-release
+C:\Users\ratdo\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=D:/0Programming/vcpkg/scripts/buildsystems/vcpkg.cmake -G "NMake Makefiles" -S D:\0Programming\SAE\SecondYear\temp_name_engine -B D:\0Programming\SAE\SecondYear\temp_name_engine\cmake-build-release
 -- Running vcpkg install
-waiting to take filesystem lock on C:\Users\rochm\vcpkg\.vcpkg-root...
 Detecting compiler hash for triplet x64-windows...
 Compiler found: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.40.33807/bin/Hostx64/x64/cl.exe
-The following packages will be built and installed:
-    imgui[core,sdl2-binding,sdl2-renderer-binding]:x64-windows@1.90.2 -- C:\Users\rochm\vcpkg\buildtrees\versioning_\versions\imgui\d9be79046f87d6b17d50967e3b76f2460e0d1bf3
-Restored 1 package(s) from C:\Users\rochm\AppData\Local\vcpkg\archives in 170 ms. Use --debug to see more details.
-Installing 1/1 imgui[core,sdl2-binding,sdl2-renderer-binding]:x64-windows@1.90.2...
-Elapsed time to handle imgui:x64-windows: 14.7 ms
-imgui:x64-windows package ABI: 5296d0ed4e342e1bcaba3240895fc1b583e8cbf621cf0ca421b27f06d11c730e
-Total install time: 14.8 ms
+All requested packages are currently installed.
+Total install time: 2 us
 The package gtest is compatible with built-in CMake targets:
 
     enable_testing()
@@ -41,6 +35,6 @@ tracy provides CMake targets:
   target_link_libraries(main PRIVATE Tracy::TracyClient)
 
 -- Running vcpkg install - done
--- Configuring done (9.9s)
+-- Configuring done (2.6s)
 -- Generating done (0.0s)
--- Build files have been written to: C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/cmake-build-release
+-- Build files have been written to: D:/0Programming/SAE/SecondYear/temp_name_engine/cmake-build-release

@@ -3,14 +3,14 @@ Version: 2022-02-06
 Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 1edd03b153b1153d6fc6401435897ba783d984046201b3a114bea1a6f2fd4a99
+Abi: fc1e6a3c4e560d050c319a57b77ae96fced0ae87660ba4609dd14ff12608360e
 Status: install ok installed
 
 Package: vcpkg-cmake
 Version: 2024-04-18
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 9c6c98ba5bc164da4dadd1f209d62355113ae7d035b51777a0e21bdf13cb54a3
+Abi: 2332182f4a9df7e7d67cb4d15957c1f113fdad3a18cb1bc456a337290be51ed5
 Status: install ok installed
 
 Package: gtest
@@ -19,7 +19,7 @@ Port-Version: 1
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 8ae9471b04c6496803632ccea7a8c742d4897ca99a7bebb2d010213dc7cfa23d
+Abi: f18152bdf49415a6a2b35a3d8a60dd05a85fed8cfd6740a9e6fe1831d213e98c
 Description: Google Testing and Mocking Framework
 Status: install ok installed
 
@@ -28,26 +28,8 @@ Version: 2.30.1
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 869d59b6a288d9a8836968b12abb85ebb168c8a63755aa58a7ffdce491cf8a3b
+Abi: f2d5f4bb52fd02de5d8a58f41764d3ea34b95cc8148f4b7728e364971362557a
 Description: Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
-Status: install ok installed
-
-Package: tracy
-Version: 0.10.0
-Port-Version: 2
-Depends: vcpkg-cmake, vcpkg-cmake-config
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 620d0d095f2459e4de0211a5480bc09e8de788b5bbbe620993caa67940078490
-Description: A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
-Default-Features: crash-handler
-Status: install ok installed
-
-Package: tracy
-Feature: crash-handler
-Architecture: x64-windows
-Multi-Arch: same
-Description: Enable crash handler
 Status: install ok installed
 
 Package: imgui
@@ -55,7 +37,7 @@ Version: 1.90.2
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 5296d0ed4e342e1bcaba3240895fc1b583e8cbf621cf0ca421b27f06d11c730e
+Abi: 01d33b666ab62e405518ac7fc5dd7bcfafb5a658ef3ad939fd71915ed7b4b8ea
 Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
 Status: install ok installed
 
@@ -73,5 +55,23 @@ Depends: sdl2
 Architecture: x64-windows
 Multi-Arch: same
 Description: Make available SDL2 Renderer binding
+Status: install ok installed
+
+Package: tracy
+Version: 0.10.0
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3201d0f7fa42ca4efa16c6ea4474da52e783f1c006e2bea7ccfdd2e734812f64
+Description: A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
+Default-Features: crash-handler
+Status: install ok installed
+
+Package: tracy
+Feature: crash-handler
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable crash handler
 Status: install ok installed
 

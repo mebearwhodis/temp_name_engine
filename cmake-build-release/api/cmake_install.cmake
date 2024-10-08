@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/rochm/Documents/SAE_923_Cours/2nd_Year/GameEngine/temp_name_engine/api
+# Install script for directory: D:/0Programming/SAE/SecondYear/temp_name_engine/api
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
