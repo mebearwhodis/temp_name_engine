@@ -18,8 +18,8 @@ namespace core
         matrix2(const Vec2<T>& row1, const Vec2<T>& row2) : rows_{{row1, row2}} {}
 
         // Constructors with initializer lists (values and vectors)
-        matrix2(std::initializer_list<T> values) : rows_{values} {}
-        matrix2(std::initializer_list<Vec2<T>> rows) : rows_{rows} {}
+        //matrix2(std::initializer_list<T> values) : rows_{values} {}
+        //matrix2(std::initializer_list<Vec2<T>> rows) : rows_{rows} {}
 
         // Access row by index
         Vec2<T>& operator[](int index) {
