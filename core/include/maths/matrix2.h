@@ -9,61 +9,65 @@ namespace core
     template<typename T>
     struct matrix2
     {
-        std::array<Vec2<T>, 2> rows;
+        std::array<Vec2<T>, 2> rows_;
 
         // Default constructor
         matrix2() = default;
 
         // Constructor with parameters
-        matrix2(const Vec2<T>& row1, const Vec2<T>& row2) : rows{{row1, row2}} {}
+        matrix2(const Vec2<T>& row1, const Vec2<T>& row2) : rows_{{row1, row2}} {}
+
+        // Constructors with initializer lists (values and vectors)
+        matrix2(std::initializer_list<T> values) : rows_{values} {}
+        matrix2(std::initializer_list<Vec2<T>> rows) : rows_{rows} {}
 
         // Access row by index
         Vec2<T>& operator[](int index) {
-            if (index == 0) return rows[0];
-            if (index == 1) return rows[1];
+            if (index == 0) return rows_[0];
+            if (index == 1) return rows_[1];
             throw std::out_of_range("Index out of range for matrix2");
         }
 
         const Vec2<T>& operator[](int index) const {
-            if (index == 0) return rows[0];
-            if (index == 1) return rows[1];
+            if (index == 0) return rows_[0];
+            if (index == 1) return rows_[1];
             throw std::out_of_range("Index out of range for matrix2");
         }
 
         // Addition
         constexpr matrix2 operator+(const matrix2& other) const
         {
-            return matrix2(rows[0] + other[0], rows[1] + other[1]);
+            return matrix2(rows_[0] + other[0], rows_[1] + other[1]);
         }
 
         // Subtraction
         constexpr matrix2 operator-(const matrix2& other) const
         {
-            return matrix2(rows[0] - other[0], rows[1] - other[1]);
+            return matrix2(rows_[0] - other[0], rows_[1] - other[1]);
         }
 
         // Multiplication by scalar
         constexpr matrix2 operator*(T scalar) const
         {
-            return matrix2(rows[0] * scalar, rows[1] * scalar);
+            return matrix2(rows_[0] * scalar, rows_[1] * scalar);
         }
 
         // Multiplication by vector
         constexpr Vec2<T> operator*(const Vec2<T>& vec) const
         {
-            return Vec2<T>(rows[0].x * vec.x + rows[0].y * vec.y, rows[1].x * vec.x + rows[1].y * vec.y);
+            return Vec2<T>(rows_[0].x * vec.x + rows_[0].y * vec.y, rows_[1].x * vec.x + rows_[1].y * vec.y);
         }
 
         // Determinant 1 using the Laplace Method
         [[nodiscard]] constexpr T determinant() const
         {
-            return rows[0].x * rows[1].y - rows[0].y * rows[1].x;
+            return rows_[0].x * rows_[1].y - rows_[0].y * rows_[1].x;
         }
 
         // Transpose of the Matrix
         [[nodiscard]] constexpr matrix2 transpose() const
         {
-            return matrix2(Vec2<T>(rows[0].x, rows[1].x), Vec2<T>(rows[0].y, rows[1].y));
+            return matrix2(Vec2<T>(rows_[0].x, rows_[1].x), Vec2<T>(rows_[0].y, rows_[1].y));
         }
 
         // Inverse
@@ -71,7 +75,7 @@ namespace core
         {
             T det = determinant();
             if (det == 0) throw std::runtime_error("Matrix is not invertible");
-            return matrix2(Vec2<T>(rows[1].y / det, -rows[0].y / det), Vec2<T>(-rows[1].x / det, rows[0].x / det));
+            return matrix2(Vec2<T>(rows_[1].y / det, -rows_[0].y / det), Vec2<T>(-rows_[1].x / det, rows_[0].x / det));
         }
 
         // Rotation Matrix
