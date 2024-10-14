@@ -8,7 +8,7 @@ private:
     int width_;
     int height_;
 public:
-    Rectangle(core::Vec2i position, int width, int height, SDL_Color color);
+    Rectangle(math::Vec2i position, int width, int height, SDL_Color color);
     void Draw(SDL_Renderer* renderer) override;
 };
 

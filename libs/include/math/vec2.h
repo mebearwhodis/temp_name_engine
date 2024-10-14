@@ -1,9 +1,10 @@
-﻿#ifndef CORE_MATHS_VEC2_H_
-#define CORE_MATHS_VEC2_H_
+﻿#ifndef LIBS_MATHS_VEC2_H_
+#define LIBS_MATHS_VEC2_H_
 #include <cmath>
 #include <stdexcept>
+#include <cassert>
 
-namespace core
+namespace math
 {
     /**
      * \brief Vec2 is a mathematical object represented by two values of type T
@@ -17,7 +18,24 @@ namespace core
         Vec2() = default; // Default constructor
 
         // Constructor with parameters
-        Vec2(T x, T y) : x(x), y(y) {}
+        constexpr Vec2(T x, T y) : x(x), y(y) {}
+
+        constexpr Vec2(std::initializer_list<T> values) {
+            assert(values.size() == 2 && "Vector2 requires 2 values");
+            auto it = values.begin();
+            x = *it++;
+            y = *it;
+        }
+
+        static constexpr Vec2 zero()
+        {
+            return Vec2(static_cast<T>(0), static_cast<T>(0));
+        }
+
+        static constexpr Vec2 one()
+        {
+            return Vec2(static_cast<T>(1), static_cast<T>(1));
+        }
 
         //Addition
         constexpr Vec2 operator+(const Vec2& other) const
@@ -49,6 +67,12 @@ namespace core
             if (scalar == 0) return { 0,0 };
             return { x / scalar, y / scalar };
         }
+
+
+        // other option:
+        // T& Vec::GetElement(int index){if(index ≥ 3 || index <0){throw out of range} return (&x)[index];}
+        //this is safe because we have a check but we could get rid of it to gain speed
+        //(context is everything, we know our classes and won’t use an index that is out of range)
 
         T& operator[](int index) {
             if (index == 0) return x;
@@ -123,5 +147,5 @@ namespace core
     using Vec2i = Vec2<int>;
     using Vec2d = Vec2<double>;
 
-} // namespace core
-#endif //CORE_MATHS_VEC2_H_
+} // namespace math
+#endif //LIBS_MATHS_VEC2_H_

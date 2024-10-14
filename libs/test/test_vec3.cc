@@ -1,13 +1,13 @@
-﻿#include <maths/vec3.h>
+﻿#include <math/vec3.h>
 #include <gtest/gtest.h>
 
-#include "maths/vec2.h"
+#include "math/vec2.h"
 
 /**
  * \brief Tests for Vec3 with ints
  */
 struct Vec3iOperatorFixture :
-    public ::testing::TestWithParam<std::pair<core::Vec3<int>, core::Vec3<int>>>
+    public ::testing::TestWithParam<std::pair<math::Vec3<int>, math::Vec3<int>>>
 {
 
 };
@@ -42,14 +42,14 @@ TEST_P(Vec3iOperatorFixture, Sub)
 TEST_P(Vec3iOperatorFixture, Dot)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec3<int>::Dot(v1, v2);
+    const auto result = math::Vec3<int>::Dot(v1, v2);
     EXPECT_EQ(result, v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 }
 
 TEST_P(Vec3iOperatorFixture, Cross)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec3<int>::Cross(v1, v2);
+    const auto result = math::Vec3<int>::Cross(v1, v2);
     EXPECT_EQ(result.x, v1.y * v2.z - v1.z * v2.y);
     EXPECT_EQ(result.y, v1.z * v2.x - v1.x * v2.z);
     EXPECT_EQ(result.z, v1.x * v2.y - v1.y * v2.x);
@@ -100,13 +100,13 @@ TEST_P(Vec3iOperatorFixture, VectorLengths)
 // Example Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec3iOperatorFixture,
     testing::Values(
-        std::pair{ core::Vec3{-4, 3, 2}, core::Vec3{2, 4, -1} },
-        std::pair{ core::Vec3{-10, -15, 5}, core::Vec3{-25, 35, 0} },
-        std::pair{ core::Vec3{1, 3, 1}, core::Vec3{2, 4, 0} },
-        std::pair{ core::Vec3{10, 15, 10}, core::Vec3{25, 35, 5} },
-        std::pair{ core::Vec3<int>{}, core::Vec3<int>{} },
-        std::pair{ core::Vec3{1, 5, 2}, core::Vec3<int>{} },
-        std::pair{ core::Vec3<int>{}, core::Vec3{1, 7, 3} }
+        std::pair{ math::Vec3{-4, 3, 2}, math::Vec3{2, 4, -1} },
+        std::pair{ math::Vec3{-10, -15, 5}, math::Vec3{-25, 35, 0} },
+        std::pair{ math::Vec3{1, 3, 1}, math::Vec3{2, 4, 0} },
+        std::pair{ math::Vec3{10, 15, 10}, math::Vec3{25, 35, 5} },
+        std::pair{ math::Vec3<int>{}, math::Vec3<int>{} },
+        std::pair{ math::Vec3{1, 5, 2}, math::Vec3<int>{} },
+        std::pair{ math::Vec3<int>{}, math::Vec3{1, 7, 3} }
     )
 );
 
@@ -114,7 +114,7 @@ INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec3iOperatorFixture,
  * \brief Tests for Vec3 with floats
  */
 struct Vec3fOperatorFixture :
-    public ::testing::TestWithParam<std::pair<core::Vec3<float>, core::Vec3<float>>>
+    public ::testing::TestWithParam<std::pair<math::Vec3<float>, math::Vec3<float>>>
 {
 
 };
@@ -149,14 +149,14 @@ TEST_P(Vec3fOperatorFixture, Sub)
 TEST_P(Vec3fOperatorFixture, Dot)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec3<float>::Dot(v1, v2);
+    const auto result = math::Vec3<float>::Dot(v1, v2);
     EXPECT_FLOAT_EQ(result, v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 }
 
 TEST_P(Vec3fOperatorFixture, Cross)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec3<float>::Cross(v1, v2);
+    const auto result = math::Vec3<float>::Cross(v1, v2);
     EXPECT_FLOAT_EQ(result.x, v1.y * v2.z - v1.z * v2.y);
     EXPECT_FLOAT_EQ(result.y, v1.z * v2.x - v1.x * v2.z);
     EXPECT_FLOAT_EQ(result.z, v1.x * v2.y - v1.y * v2.x);
@@ -208,13 +208,13 @@ TEST_P(Vec3fOperatorFixture, VectorLengths)
 // Example Float Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec3fOperatorFixture,
     testing::Values(
-        std::pair{ core::Vec3{-4.1f, 3.2f, 2.5f}, core::Vec3{2.3f, 4.5f, -1.1f} },
-        std::pair{ core::Vec3{-10.5f, -15.3f, 5.0f}, core::Vec3{-25.8f, 35.2f, 0.0f} },
-        std::pair{ core::Vec3{1.0f, 3.0f, 1.5f}, core::Vec3{2.2f, 4.1f, 0.8f} },
-        std::pair{ core::Vec3{10.7f, 15.8f, 10.1f}, core::Vec3{25.3f, 35.4f, 5.5f} },
-        std::pair{ core::Vec3<float>{}, core::Vec3<float>{} },
-        std::pair{ core::Vec3{1.5f, 5.1f, 2.8f}, core::Vec3<float>{} },
-        std::pair{ core::Vec3<float>{}, core::Vec3{1.9f, 7.6f, 3.3f} }
+        std::pair{ math::Vec3{-4.1f, 3.2f, 2.5f}, math::Vec3{2.3f, 4.5f, -1.1f} },
+        std::pair{ math::Vec3{-10.5f, -15.3f, 5.0f}, math::Vec3{-25.8f, 35.2f, 0.0f} },
+        std::pair{ math::Vec3{1.0f, 3.0f, 1.5f}, math::Vec3{2.2f, 4.1f, 0.8f} },
+        std::pair{ math::Vec3{10.7f, 15.8f, 10.1f}, math::Vec3{25.3f, 35.4f, 5.5f} },
+        std::pair{ math::Vec3<float>{}, math::Vec3<float>{} },
+        std::pair{ math::Vec3{1.5f, 5.1f, 2.8f}, math::Vec3<float>{} },
+        std::pair{ math::Vec3<float>{}, math::Vec3{1.9f, 7.6f, 3.3f} }
     )
 
 );

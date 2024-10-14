@@ -1,9 +1,10 @@
-﻿#ifndef CORE_MATHS_VEC3_H_
-#define CORE_MATHS_VEC3_H_
+﻿#ifndef LIBS_MATHS_VEC3_H_
+#define LIBS_MATHS_VEC3_H_
+#include <cassert>
 #include <cmath>
 #include <stdexcept>
 
-namespace core
+namespace math
 {
     /**
      * \brief Vec3 is a mathematical object represented by three values of type T
@@ -13,10 +14,29 @@ namespace core
     {
         T x = 0, y = 0, z = 0;
 
-        // inline static const Vec3 Zero{0,0,0};
-        // inline static const Vec3 One{1,1,1};
+        // Default constructor
+        Vec3() = default; // Default constructor
 
+        // Constructor with parameters
+        constexpr Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
 
+        constexpr Vec3(std::initializer_list<T> values) {
+            assert(values.size() == 3 && "Vector3 requires 3 values");
+            auto it = values.begin();
+            x = *it++;
+            y = *it++;
+            z = *it;
+        }
+
+        static constexpr Vec3 zero()
+        {
+            return Vec3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0));
+        }
+
+        static constexpr Vec3 one()
+        {
+            return Vec3(static_cast<T>(1), static_cast<T>(1), static_cast<T>(1));
+        }
 
         //Addition
         constexpr Vec3 operator+(const Vec3& other) const
@@ -115,5 +135,5 @@ namespace core
         return { scalar * vec.x, scalar * vec.y, scalar * vec.z };
     }
 
-} // namespace core
-#endif // CORE_MATHS_VEC3_H_
+} // namespace math
+#endif // LIBS_MATHS_VEC3_H_

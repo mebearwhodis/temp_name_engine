@@ -1,5 +1,5 @@
 ﻿#include <gtest/gtest.h>
-#include <maths/matrix3.h>
+#include <math/matrix3.h>
 #include <numbers>
 
 struct Matrix3Fixture : public ::testing::Test
@@ -8,8 +8,8 @@ struct Matrix3Fixture : public ::testing::Test
 
 TEST_F(Matrix3Fixture, MatrixAddition)
 {
-    core::matrix3<float> mat1{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    core::matrix3<float> mat2{{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+    math::matrix3<float> mat1{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat2{{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
     auto result = mat1 + mat2;
 
     EXPECT_FLOAT_EQ(result[0].x, 11);
@@ -25,8 +25,8 @@ TEST_F(Matrix3Fixture, MatrixAddition)
 
 TEST_F(Matrix3Fixture, MatrixSubtraction)
 {
-    core::matrix3<float> mat1{{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
-    core::matrix3<float> mat2{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat1{{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+    math::matrix3<float> mat2{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     auto result = mat1 - mat2;
 
     EXPECT_FLOAT_EQ(result[0].x, 9);
@@ -42,7 +42,7 @@ TEST_F(Matrix3Fixture, MatrixSubtraction)
 
 TEST_F(Matrix3Fixture, ScalarMultiplication)
 {
-    core::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     auto result = mat * 2.0f;
 
     EXPECT_FLOAT_EQ(result[0].x, 2);
@@ -58,8 +58,8 @@ TEST_F(Matrix3Fixture, ScalarMultiplication)
 
 TEST_F(Matrix3Fixture, MultiplyByVec3)
 {
-    core::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    core::Vec3<float> vec{1, 1, 1};
+    math::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::Vec3<float> vec{1, 1, 1};
     auto result = mat * vec;
 
     EXPECT_FLOAT_EQ(result.x, 6);
@@ -69,21 +69,21 @@ TEST_F(Matrix3Fixture, MultiplyByVec3)
 
 TEST_F(Matrix3Fixture, DeterminantLaplace)
 {
-    core::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     auto det = mat.determinant();
     EXPECT_FLOAT_EQ(det, 0);
 }
 
 TEST_F(Matrix3Fixture, DeterminantSarrus)
 {
-    core::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     auto det = mat.determinantSarrus();
     EXPECT_FLOAT_EQ(det, 0);
 }
 
 TEST_F(Matrix3Fixture, Transpose)
 {
-    core::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    math::matrix3<float> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     auto transposed = mat.transpose();
 
     EXPECT_FLOAT_EQ(transposed[0].x, 1);
@@ -99,7 +99,7 @@ TEST_F(Matrix3Fixture, Transpose)
 
 TEST_F(Matrix3Fixture, Inverse)
 {
-    core::matrix3<float> mat{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    math::matrix3<float> mat{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     auto inv = mat.inverse();
 
     EXPECT_FLOAT_EQ(inv[0].x, 1);
@@ -115,7 +115,7 @@ TEST_F(Matrix3Fixture, Inverse)
 
 TEST_F(Matrix3Fixture, Rotation)
 {
-    core::matrix3<float> mat{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    math::matrix3<float> mat{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     auto rot = mat.rotation(std::numbers::pi_v<float> / 2);
 
     EXPECT_NEAR(rot[0].x, 0, 1e-6);

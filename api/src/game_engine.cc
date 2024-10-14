@@ -71,19 +71,19 @@ void GameEngine::Run()
     static float my_color[4] = {0.4f, 0.7f, 0.0f, 1.0f};
 
     //Begin():
-    Rectangle rectangle1(core::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle2(core::Vec2i(210, 0), 300, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle3(core::Vec2i(520, 0), 200, 80, SDL_Color{ 255, 255, 0, 255 });
-    Rectangle rectangle4(core::Vec2i(0, 0), 50, 50, SDL_Color{ 255, 0, 255, 255 });
-    Rectangle rectangle5(core::Vec2i(0, 300), 500, 80, SDL_Color{ 0, 0, 255, 255 });
+    Rectangle rectangle1(math::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
+    Rectangle rectangle2(math::Vec2i(210, 0), 300, 80, SDL_Color{ 255, 255, 255, 255 });
+    Rectangle rectangle3(math::Vec2i(520, 0), 200, 80, SDL_Color{ 255, 255, 0, 255 });
+    Rectangle rectangle4(math::Vec2i(0, 0), 50, 50, SDL_Color{ 255, 0, 255, 255 });
+    Rectangle rectangle5(math::Vec2i(0, 300), 500, 80, SDL_Color{ 0, 0, 255, 255 });
     rectangles_.emplace_back(rectangle1);
     rectangles_.emplace_back(rectangle2);
     rectangles_.emplace_back(rectangle3);
     rectangles_.emplace_back(rectangle4);
     rectangles_.emplace_back(rectangle5);
 
-    Circle test_circle(core::Vec2i(300, 200), 60, core::Vec2i(300,300), 50.0f, 20.0f, SDL_Color{ 0, 0, 255, 255 });
-    Circle test_circle2(core::Vec2i(50, 50), 20, core::Vec2i(300,300), 10.0f, 5.0f, SDL_Color{ 100, 100, 25, 255 });
+    Circle test_circle(math::Vec2i(300, 200), 60, math::Vec2i(300,300), 50.0f, 20.0f, SDL_Color{ 0, 0, 255, 255 });
+    Circle test_circle2(math::Vec2i(50, 50), 20, math::Vec2i(300,300), 10.0f, 5.0f, SDL_Color{ 100, 100, 25, 255 });
     circles_.emplace_back(test_circle);
     circles_.emplace_back(test_circle2);
 

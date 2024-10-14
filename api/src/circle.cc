@@ -3,7 +3,7 @@
 #include <numbers>
 #include <SDL_render.h>
 
-Circle::Circle(core::Vec2i center, int radius, core::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color): Shape(center, color)
+Circle::Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color): Shape(center, color)
 {
     radius_ = radius;
     orbit_center_ = orbit_center;

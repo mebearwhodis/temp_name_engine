@@ -15,7 +15,7 @@ find_package(GTest CONFIG REQUIRED)
 
 
 
-add_subdirectory(core/)
+add_subdirectory(libs/)
 add_subdirectory(api/)
 
 add_executable(main main.cc)

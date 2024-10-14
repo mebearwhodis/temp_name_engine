@@ -1,11 +1,11 @@
-﻿#include <maths/vec2.h>
+﻿#include <math/vec2.h>
 #include <gtest/gtest.h>
 
 /**
  * \brief Tests for Vec2 with ints
  */
 struct Vec2iOperatorFixture :
-	public ::testing::TestWithParam<std::pair<core::Vec2<int>, core::Vec2<int>>>
+	public ::testing::TestWithParam<std::pair<math::Vec2<int>, math::Vec2<int>>>
 {
 
 };
@@ -36,7 +36,7 @@ TEST_P(Vec2iOperatorFixture, Sub)
 TEST_P(Vec2iOperatorFixture, Dot)
 {
 	auto [v1, v2] = GetParam();
-	const auto result = core::Vec2<int>::Dot(v1, v2);
+	const auto result = math::Vec2<int>::Dot(v1, v2);
 	EXPECT_EQ(result, v1.x * v2.x + v1.y * v2.y);
 }
 
@@ -46,13 +46,13 @@ TEST_P(Vec2iOperatorFixture, Perpendicular)
 	auto [v1, v2] = GetParam();
 	const auto p1 = v1.Perpendicular();
 	const auto p2 = v2.Perpendicular();
-	EXPECT_EQ(core::Vec2<int>::Dot(v1, p1), 0);
-	EXPECT_EQ(core::Vec2<int>::Dot(v2, p2), 0);
+	EXPECT_EQ(math::Vec2<int>::Dot(v1, p1), 0);
+	EXPECT_EQ(math::Vec2<int>::Dot(v2, p2), 0);
 
 	const auto r1 = v1.Perpendicular2();
 	const auto r2 = v2.Perpendicular2();
-	EXPECT_EQ(core::Vec2<int>::Dot(v1, r1), 0);
-	EXPECT_EQ(core::Vec2<int>::Dot(v2, r2), 0);
+	EXPECT_EQ(math::Vec2<int>::Dot(v1, r1), 0);
+	EXPECT_EQ(math::Vec2<int>::Dot(v2, r2), 0);
 }
 
 TEST_P(Vec2iOperatorFixture, MultiplyByScalar)
@@ -105,13 +105,13 @@ TEST_P(Vec2iOperatorFixture, VectorLengths)
 //Example Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec2iOperatorFixture,
 	testing::Values(
-		std::pair{ core::Vec2{-4,3}, core::Vec2{2,4} },
-		std::pair{ core::Vec2{-10,-15}, core::Vec2{-25,35} },
-		std::pair{ core::Vec2{1,3}, core::Vec2{2,4} },
-		std::pair{ core::Vec2{10,15}, core::Vec2{25,35} },
-		std::pair{ core::Vec2<int>{}, core::Vec2<int>{} },
-		std::pair{ core::Vec2{1,5}, core::Vec2<int>{} },
-		std::pair{ core::Vec2<int>{}, core::Vec2{1,7} }
+		std::pair{ math::Vec2{-4,3}, math::Vec2{2,4} },
+		std::pair{ math::Vec2{-10,-15}, math::Vec2{-25,35} },
+		std::pair{ math::Vec2{1,3}, math::Vec2{2,4} },
+		std::pair{ math::Vec2{10,15}, math::Vec2{25,35} },
+		std::pair{ math::Vec2<int>{}, math::Vec2<int>{} },
+		std::pair{ math::Vec2{1,5}, math::Vec2<int>{} },
+		std::pair{ math::Vec2<int>{}, math::Vec2{1,7} }
 	)
 );
 
@@ -119,7 +119,7 @@ INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec2iOperatorFixture,
  * \brief Tests for Vec2 with floats
  */
 struct Vec2fOperatorFixture :
-	public ::testing::TestWithParam<std::pair<core::Vec2<float>, core::Vec2<float>>>
+	public ::testing::TestWithParam<std::pair<math::Vec2<float>, math::Vec2<float>>>
 {
 
 };
@@ -150,7 +150,7 @@ TEST_P(Vec2fOperatorFixture, Sub)
 TEST_P(Vec2fOperatorFixture, Dot)
 {
 	auto [v1, v2] = GetParam();
-	const auto result = core::Vec2<float>::Dot(v1, v2);
+	const auto result = math::Vec2<float>::Dot(v1, v2);
 	EXPECT_FLOAT_EQ(result, v1.x * v2.x + v1.y * v2.y);
 }
 
@@ -160,13 +160,13 @@ TEST_P(Vec2fOperatorFixture, Perpendicular)
 	auto [v1, v2] = GetParam();
 	const auto p1 = v1.Perpendicular();
 	const auto p2 = v2.Perpendicular();
-	EXPECT_FLOAT_EQ(core::Vec2<float>::Dot(v1, p1), 0);
-	EXPECT_FLOAT_EQ(core::Vec2<float>::Dot(v2, p2), 0);
+	EXPECT_FLOAT_EQ(math::Vec2<float>::Dot(v1, p1), 0);
+	EXPECT_FLOAT_EQ(math::Vec2<float>::Dot(v2, p2), 0);
 
 	const auto r1 = v1.Perpendicular2();
 	const auto r2 = v2.Perpendicular2();
-	EXPECT_FLOAT_EQ(core::Vec2<float>::Dot(v1, r1), 0);
-	EXPECT_FLOAT_EQ(core::Vec2<float>::Dot(v2, r2), 0);
+	EXPECT_FLOAT_EQ(math::Vec2<float>::Dot(v1, r1), 0);
+	EXPECT_FLOAT_EQ(math::Vec2<float>::Dot(v2, r2), 0);
 }
 
 TEST_P(Vec2fOperatorFixture, MultiplyByScalar)
@@ -265,13 +265,13 @@ TEST_P(Vec2fOperatorFixture, LERP)
 //Example Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec2fOperatorFixture,
 	testing::Values(
-		std::pair{ core::Vec2{-4.5f,3.2f}, core::Vec2{2.1f,4.05f} },
-		std::pair{ core::Vec2{-10.4f,-15.112f}, core::Vec2{-25.23f,35.7f} },
-		std::pair{ core::Vec2{1.33f,3.99f}, core::Vec2{2.005f,4.2f} },
-		std::pair{ core::Vec2{10.1f,15.6f}, core::Vec2{25.662f,35.22134f} },
-		std::pair{ core::Vec2<float>{}, core::Vec2<float>{} },
-		std::pair{ core::Vec2{1.1f,5.0007f}, core::Vec2<float>{} },
-		std::pair{ core::Vec2<float>{}, core::Vec2{1.93f,7.4f} }
+		std::pair{ math::Vec2{-4.5f,3.2f}, math::Vec2{2.1f,4.05f} },
+		std::pair{ math::Vec2{-10.4f,-15.112f}, math::Vec2{-25.23f,35.7f} },
+		std::pair{ math::Vec2{1.33f,3.99f}, math::Vec2{2.005f,4.2f} },
+		std::pair{ math::Vec2{10.1f,15.6f}, math::Vec2{25.662f,35.22134f} },
+		std::pair{ math::Vec2<float>{}, math::Vec2<float>{} },
+		std::pair{ math::Vec2{1.1f,5.0007f}, math::Vec2<float>{} },
+		std::pair{ math::Vec2<float>{}, math::Vec2{1.93f,7.4f} }
 	)
 );
 

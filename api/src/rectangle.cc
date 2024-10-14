@@ -1,6 +1,6 @@
 ﻿#include "rectangle.h"
 
-Rectangle::Rectangle(core::Vec2i position, int width, int height, SDL_Color color): Shape(position, color)
+Rectangle::Rectangle(math::Vec2i position, int width, int height, SDL_Color color): Shape(position, color)
 {
     width_ = width;
     height_ = height;

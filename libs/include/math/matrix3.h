@@ -1,12 +1,13 @@
-﻿#ifndef CORE_MATHS_MATRIX3_H_
-#define CORE_MATHS_MATRIX3_H_
+﻿#ifndef LIBS_MATHS_MATRIX3_H_
+#define LIBS_MATHS_MATRIX3_H_
 
+#include <cassert>
 #include <array>
 #include "vec3.h"
 #include "matrix2.h"  // For determinant using matrix2
 #include <stdexcept>
 
-namespace core
+namespace math
 {
     template<typename T>
     struct matrix3
@@ -16,10 +17,41 @@ namespace core
         // Default constructor
         matrix3() = default;
 
-        //TODO: constructor with initializer list
-
         // Constructor with parameters
-        matrix3(const Vec3<T>& row1, const Vec3<T>& row2, const Vec3<T>& row3) : rows_{{row1, row2, row3}} {}
+        constexpr matrix3(const Vec3<T>& row1, const Vec3<T>& row2, const Vec3<T>& row3) : rows_{{row1, row2, row3}} {}
+
+        // Constructors with initializer lists (values and vectors)
+        constexpr matrix3(std::initializer_list<T> values) {
+            assert(values.size() == 9 && "Matrix3 requires 9 values");
+            auto it = values.begin();
+            rows_[0].x = *it++;
+            rows_[0].y = *it++;
+            rows_[0].z = *it++;
+            rows_[1].x = *it++;
+            rows_[1].y = *it++;
+            rows_[1].z = *it++;
+            rows_[2].x = *it++;
+            rows_[2].y = *it++;
+            rows_[2].z = *it;
+        }
+
+        constexpr matrix3(std::initializer_list<Vec3<T>> vectors) {
+            assert(vectors.size() == 3 && "Matrix3 requires 3 Vec3");
+            auto it = vectors.begin();
+            rows_[0] = *it++;
+            rows_[1] = *it++;
+            rows_[2] = *it;
+        }
+
+        static constexpr matrix3 identity()
+        {
+            return matrix3{Vec3<T>(1, 0, 0), Vec3<T>(0, 1, 0), Vec3<T>(0, 0, 1)};
+        }
+
+        static constexpr matrix3 zero()
+        {
+            return matrix3{Vec3<T>(0, 0, 0), Vec3<T>(0, 0, 0), Vec3<T>(0, 0, 0)};
+        }
 
         // Access row by index
         Vec3<T>& operator[](int index) {
@@ -34,6 +66,17 @@ namespace core
             if (index == 1) return rows_[1];
             if (index == 2) return rows_[2];
             throw std::out_of_range("Index out of range for matrix3");
+        }
+
+        // Access specific item
+        T& operator()(int x, int y)
+        {
+            return rows_[x][y];
+        }
+
+        const T& operator()(int x, int y) const
+        {
+            return rows_[x][y];
         }
 
         // Addition
@@ -67,9 +110,9 @@ namespace core
         {
             // Calculate the determinant using the Laplace expansion
             // along the first row
-            return rows_[0].x * core::matrix2<T>(Vec2<T>(rows_[1].y, rows_[1].z), Vec2<T>(rows_[2].y, rows_[2].z)).determinant()
-                   - rows_[0].y * core::matrix2<T>(Vec2<T>(rows_[1].x, rows_[1].z), Vec2<T>(rows_[2].x, rows_[2].z)).determinant()
-                   + rows_[0].z * core::matrix2<T>(Vec2<T>(rows_[1].x, rows_[1].y), Vec2<T>(rows_[2].x, rows_[2].y)).determinant();
+            return rows_[0].x * math::matrix2<T>(Vec2<T>(rows_[1].y, rows_[1].z), Vec2<T>(rows_[2].y, rows_[2].z)).determinant()
+                   - rows_[0].y * math::matrix2<T>(Vec2<T>(rows_[1].x, rows_[1].z), Vec2<T>(rows_[2].x, rows_[2].z)).determinant()
+                   + rows_[0].z * math::matrix2<T>(Vec2<T>(rows_[1].x, rows_[1].y), Vec2<T>(rows_[2].x, rows_[2].y)).determinant();
         }
 
         // Determinant 2 using the Sarrus Method
@@ -137,6 +180,6 @@ namespace core
         return mat * scalar;
     }
 
-} // namespace core
+} // namespace math
 
-#endif // CORE_MATHS_MATRIX3_H_
+#endif // LIBS_MATHS_MATRIX3_H_

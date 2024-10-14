@@ -3,20 +3,20 @@
 #include <SDL_pixels.h>
 #include <SDL_render.h>
 
-#include "maths/vec2.h"
+#include "math/vec2.h"
 
 
 class Shape {
 protected:
-    core::Vec2i pos_;
+    math::Vec2i pos_;
     SDL_Color color_;
     virtual void Draw(SDL_Renderer* renderer) = 0;
 
 public:
-    Shape(core::Vec2i position, SDL_Color color);
+    Shape(math::Vec2i position, SDL_Color color);
 
     void set_color(SDL_Color color);
-    void set_position(core::Vec2i position);
+    void set_position(math::Vec2i position);
 
 };
 

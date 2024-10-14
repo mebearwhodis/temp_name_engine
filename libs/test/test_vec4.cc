@@ -1,11 +1,11 @@
-﻿#include <maths/vec4.h>
+﻿#include <math/vec4.h>
 #include <gtest/gtest.h>
 
 /**
  * \brief Tests for Vec4 with ints
  */
 struct Vec4iOperatorFixture :
-    public ::testing::TestWithParam<std::pair<core::Vec4<int>, core::Vec4<int>>>
+    public ::testing::TestWithParam<std::pair<math::Vec4<int>, math::Vec4<int>>>
 {
 
 };
@@ -44,7 +44,7 @@ TEST_P(Vec4iOperatorFixture, Sub)
 TEST_P(Vec4iOperatorFixture, Dot)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec4<int>::Dot(v1, v2);
+    const auto result = math::Vec4<int>::Dot(v1, v2);
     EXPECT_EQ(result, v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w);
 }
 
@@ -97,13 +97,13 @@ TEST_P(Vec4iOperatorFixture, VectorLengths)
 // Example Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec4iOperatorFixture,
     testing::Values(
-        std::pair{ core::Vec4{-4, 3, 2, 1}, core::Vec4{2, 4, -1, 0} },
-        std::pair{ core::Vec4{-10, -15, 5, 3}, core::Vec4{-25, 35, 0, 7} },
-        std::pair{ core::Vec4{1, 3, 1, 2}, core::Vec4{2, 4, 0, 1} },
-        std::pair{ core::Vec4{10, 15, 10, 5}, core::Vec4{25, 35, 5, 3} },
-        std::pair{ core::Vec4<int>{}, core::Vec4<int>{} },
-        std::pair{ core::Vec4{1, 5, 2, 1}, core::Vec4<int>{} },
-        std::pair{ core::Vec4<int>{}, core::Vec4{1, 7, 3, 1} }
+        std::pair{ math::Vec4{-4, 3, 2, 1}, math::Vec4{2, 4, -1, 0} },
+        std::pair{ math::Vec4{-10, -15, 5, 3}, math::Vec4{-25, 35, 0, 7} },
+        std::pair{ math::Vec4{1, 3, 1, 2}, math::Vec4{2, 4, 0, 1} },
+        std::pair{ math::Vec4{10, 15, 10, 5}, math::Vec4{25, 35, 5, 3} },
+        std::pair{ math::Vec4<int>{}, math::Vec4<int>{} },
+        std::pair{ math::Vec4{1, 5, 2, 1}, math::Vec4<int>{} },
+        std::pair{ math::Vec4<int>{}, math::Vec4{1, 7, 3, 1} }
     )
 );
 
@@ -111,7 +111,7 @@ INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec4iOperatorFixture,
  * \brief Tests for Vec4 with floats
  */
 struct Vec4fOperatorFixture :
-    public ::testing::TestWithParam<std::pair<core::Vec4<float>, core::Vec4<float>>>
+    public ::testing::TestWithParam<std::pair<math::Vec4<float>, math::Vec4<float>>>
 {
 
 };
@@ -150,7 +150,7 @@ TEST_P(Vec4fOperatorFixture, Sub)
 TEST_P(Vec4fOperatorFixture, Dot)
 {
     auto [v1, v2] = GetParam();
-    const auto result = core::Vec4<float>::Dot(v1, v2);
+    const auto result = math::Vec4<float>::Dot(v1, v2);
     EXPECT_FLOAT_EQ(result, v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w);
 }
 
@@ -203,12 +203,12 @@ TEST_P(Vec4fOperatorFixture, VectorLengths)
 // Example Float Vectors
 INSTANTIATE_TEST_SUITE_P(AllNumbers, Vec4fOperatorFixture,
     testing::Values(
-        std::pair{ core::Vec4{-4.1f, 3.2f, 2.5f, 1.0f}, core::Vec4{2.3f, 4.5f, -1.1f, 0.0f} },
-        std::pair{ core::Vec4{-10.5f, -15.3f, 5.0f, 3.8f}, core::Vec4{-25.8f, 35.2f, 0.0f, 7.2f} },
-        std::pair{ core::Vec4{1.0f, 3.0f, 1.5f, 2.2f}, core::Vec4{2.2f, 4.1f, 0.8f, 1.1f} },
-        std::pair{ core::Vec4{10.7f, 15.8f, 10.1f, 5.5f}, core::Vec4{25.3f, 35.4f, 5.5f, 3.3f} },
-        std::pair{ core::Vec4<float>{}, core::Vec4<float>{} },
-        std::pair{ core::Vec4{1.5f, 5.1f, 2.8f, 1.2f}, core::Vec4<float>{} },
-        std::pair{ core::Vec4<float>{}, core::Vec4{1.9f, 7.6f, 3.3f, 1.4f} }
+        std::pair{ math::Vec4{-4.1f, 3.2f, 2.5f, 1.0f}, math::Vec4{2.3f, 4.5f, -1.1f, 0.0f} },
+        std::pair{ math::Vec4{-10.5f, -15.3f, 5.0f, 3.8f}, math::Vec4{-25.8f, 35.2f, 0.0f, 7.2f} },
+        std::pair{ math::Vec4{1.0f, 3.0f, 1.5f, 2.2f}, math::Vec4{2.2f, 4.1f, 0.8f, 1.1f} },
+        std::pair{ math::Vec4{10.7f, 15.8f, 10.1f, 5.5f}, math::Vec4{25.3f, 35.4f, 5.5f, 3.3f} },
+        std::pair{ math::Vec4<float>{}, math::Vec4<float>{} },
+        std::pair{ math::Vec4{1.5f, 5.1f, 2.8f, 1.2f}, math::Vec4<float>{} },
+        std::pair{ math::Vec4<float>{}, math::Vec4{1.9f, 7.6f, 3.3f, 1.4f} }
     )
 );

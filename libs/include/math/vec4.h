@@ -1,8 +1,8 @@
-﻿// #ifndef CORE_MATHS_VEC4_H_
-// #define CORE_MATHS_VEC4_H_
+﻿// #ifndef LIBS_MATHS_VEC4_H_
+// #define LIBS_MATHS_VEC4_H_
 // #include <cmath>
 //
-// namespace core
+// namespace libs
 // {
 //     /**
 //      * \brief Vec4 is a mathematical object represented by four values of type T
@@ -15,7 +15,6 @@
 //         template<typename Other_T>
 //         Vec4(Vec4<Other_T> v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)), w(static_cast<T>(v.w)) {}
 //
-//         //TODO : add all constructors (Vec4 v = {...}, Vec4{....}) and test them - see std::initializer_list
 //
 //
 //         //Addition
@@ -89,15 +88,16 @@
 //         return { scalar * vec.x, scalar * vec.y, scalar * vec.z, scalar * vec.w };
 //     }
 //
-// } // namespace core
-// #endif // CORE_MATHS_VEC4_H_
+// } // namespace libs
+// #endif // LIBS_MATHS_VEC4_H_
 
-#ifndef CORE_MATHS_VEC4_H_
-#define CORE_MATHS_VEC4_H_
+#ifndef LIBS_MATHS_VEC4_H_
+#define LIBS_MATHS_VEC4_H_
+#include <cassert>
 #include <cmath>
 #include <stdexcept>
 
-namespace core
+namespace math
 {
     /**
      * \brief Vec4 is a mathematical object represented by four values of type T
@@ -106,6 +106,31 @@ namespace core
     struct Vec4
     {
         T x = 0, y = 0, z = 0, w = 0;
+
+        // Default constructor
+        Vec4() = default; // Default constructor
+
+        // Constructor with parameters
+        constexpr Vec4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
+
+        constexpr Vec4(std::initializer_list<T> values) {
+            assert(values.size() == 4 && "Vector4 requires 4 values");
+            auto it = values.begin();
+            x = *it++;
+            y = *it++;
+            z = *it++;
+            w = *it;
+        }
+
+        static constexpr Vec4 zero()
+        {
+            return Vec4(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0), static_cast<T>(0));
+        }
+
+        static constexpr Vec4 one()
+        {
+            return Vec4(static_cast<T>(1), static_cast<T>(1), static_cast<T>(1), static_cast<T>(1));
+        }
 
         //Addition
         constexpr Vec4 operator+(const Vec4& other) const
@@ -194,6 +219,6 @@ namespace core
         return { scalar * vec.x, scalar * vec.y, scalar * vec.z, scalar * vec.w };
     }
 
-} // namespace core
-#endif // CORE_MATHS_VEC4_H_
+} // namespace math
+#endif // LIBS_MATHS_VEC4_H_
 

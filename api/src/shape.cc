@@ -1,13 +1,13 @@
 ﻿#include "shape.h"
 
-Shape::Shape(core::Vec2i position, SDL_Color color)
+Shape::Shape(math::Vec2i position, SDL_Color color)
 {
     pos_ = position;
     color_ = color;
 }
 
 
-void Shape::set_position(core::Vec2i position)
+void Shape::set_position(math::Vec2i position)
 {
     pos_ = position;
 }

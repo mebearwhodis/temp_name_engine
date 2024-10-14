@@ -1,5 +1,5 @@
 ﻿#include <gtest/gtest.h>
-#include <maths/matrix4.h>
+#include <math/matrix4.h>
 #include <numbers>
 
 struct Matrix4Fixture : public ::testing::Test
@@ -8,8 +8,8 @@ struct Matrix4Fixture : public ::testing::Test
 
 TEST_F(Matrix4Fixture, MatrixAddition)
 {
-    core::matrix4<float> mat1{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
-    core::matrix4<float> mat2{{17, 18, 19, 20}, {21, 22, 23, 24}, {25, 26, 27, 28}, {29, 30, 31, 32}};
+    math::matrix4<float> mat1{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    math::matrix4<float> mat2{{17, 18, 19, 20}, {21, 22, 23, 24}, {25, 26, 27, 28}, {29, 30, 31, 32}};
     auto result = mat1 + mat2;
 
     EXPECT_FLOAT_EQ(result[0].x, 18);
@@ -32,8 +32,8 @@ TEST_F(Matrix4Fixture, MatrixAddition)
 
 TEST_F(Matrix4Fixture, MatrixSubtraction)
 {
-    core::matrix4<float> mat1{{17, 18, 19, 20}, {21, 22, 23, 24}, {25, 26, 27, 28}, {29, 30, 31, 32}};
-    core::matrix4<float> mat2{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    math::matrix4<float> mat1{{17, 18, 19, 20}, {21, 22, 23, 24}, {25, 26, 27, 28}, {29, 30, 31, 32}};
+    math::matrix4<float> mat2{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
     auto result = mat1 - mat2;
 
     EXPECT_FLOAT_EQ(result[0].x, 16);
@@ -56,7 +56,7 @@ TEST_F(Matrix4Fixture, MatrixSubtraction)
 
 TEST_F(Matrix4Fixture, ScalarMultiplication)
 {
-    core::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    math::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
     auto result = mat * 2.0f;
 
     EXPECT_FLOAT_EQ(result[0].x, 2);
@@ -79,8 +79,8 @@ TEST_F(Matrix4Fixture, ScalarMultiplication)
 
 TEST_F(Matrix4Fixture, MultiplyByVec4)
 {
-    core::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
-    core::Vec4<float> vec{1, 1, 1, 1};
+    math::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    math::Vec4<float> vec{1, 1, 1, 1};
     auto result = mat * vec;
 
     EXPECT_FLOAT_EQ(result.x, 10);
@@ -91,21 +91,21 @@ TEST_F(Matrix4Fixture, MultiplyByVec4)
 
 TEST_F(Matrix4Fixture, DeterminantLaplace)
 {
-    core::matrix4<float> mat{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+    math::matrix4<float> mat{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
     auto det = mat.determinant();
     EXPECT_FLOAT_EQ(det, 1);
 }
 
 TEST_F(Matrix4Fixture, DeterminantSarrus)
 {
-    core::matrix4<float> mat{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
+    math::matrix4<float> mat{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
     auto det = mat.determinantSarrus();
     EXPECT_FLOAT_EQ(det, 1);
 }
 
 TEST_F(Matrix4Fixture, Transpose)
 {
-    core::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    math::matrix4<float> mat{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
     auto transposed = mat.transpose();
 
     EXPECT_FLOAT_EQ(transposed[0].x, 1);

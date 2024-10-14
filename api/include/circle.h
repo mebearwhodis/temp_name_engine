@@ -7,14 +7,14 @@ class Circle final : public Shape {
 
 private:
     int radius_;
-    core::Vec2i orbit_center_;
+    math::Vec2i orbit_center_;
     float orbit_radius_;
     float orbit_angle_;
     float orbit_speed_;
 
 public:
     // Constructor
-    Circle(core::Vec2i center, int radius, core::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color);
+    Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color);
 
     void UpdateOrbit();
 
