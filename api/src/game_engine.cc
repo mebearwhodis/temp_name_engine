@@ -69,21 +69,21 @@ void GameEngine::HandleEvents()
 void GameEngine::Run()
 {
     static float my_color[4] = {0.4f, 0.7f, 0.0f, 1.0f};
-    //Begin()
 
-    Rectangle rectangle1(0, 0, 200, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle2(210, 0, 300, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle3(520, 0, 200, 80, SDL_Color{ 255, 255, 0, 255 });
-    Rectangle rectangle4(0, 0, 50, 50, SDL_Color{ 255, 0, 255, 255 });
-    Rectangle rectangle5(0, 300, 500, 80, SDL_Color{ 0, 0, 255, 255 });
+    //Begin():
+    Rectangle rectangle1(core::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
+    Rectangle rectangle2(core::Vec2i(210, 0), 300, 80, SDL_Color{ 255, 255, 255, 255 });
+    Rectangle rectangle3(core::Vec2i(520, 0), 200, 80, SDL_Color{ 255, 255, 0, 255 });
+    Rectangle rectangle4(core::Vec2i(0, 0), 50, 50, SDL_Color{ 255, 0, 255, 255 });
+    Rectangle rectangle5(core::Vec2i(0, 300), 500, 80, SDL_Color{ 0, 0, 255, 255 });
     rectangles_.emplace_back(rectangle1);
     rectangles_.emplace_back(rectangle2);
     rectangles_.emplace_back(rectangle3);
     rectangles_.emplace_back(rectangle4);
     rectangles_.emplace_back(rectangle5);
 
-    Circle test_circle(300, 200, 60, SDL_Color{ 0, 0, 255, 255 });
-    Circle test_circle2(50, 50, 20, SDL_Color{ 100, 100, 25, 255 });
+    Circle test_circle(core::Vec2i(300, 200), 60, core::Vec2i(300,300), 50.0f, 20.0f, SDL_Color{ 0, 0, 255, 255 });
+    Circle test_circle2(core::Vec2i(50, 50), 20, core::Vec2i(300,300), 10.0f, 5.0f, SDL_Color{ 100, 100, 25, 255 });
     circles_.emplace_back(test_circle);
     circles_.emplace_back(test_circle2);
 
@@ -139,14 +139,19 @@ void GameEngine::Run()
         renderer_->Clear();
 
         // Here we draw stuff
-        for (auto c : circles_)
-        {
-            c.Draw(renderer_->GetSDLRenderer());
-        }
         for (auto r : rectangles_)
         {
             r.Draw(renderer_->GetSDLRenderer());
         }
+        for (auto c : circles_)
+        {
+            c.UpdateOrbit();
+        }
+        for (auto c : circles_)
+        {
+            c.Draw(renderer_->GetSDLRenderer());
+        }
+
         // Render ImGui on top of SDL renderer
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 
