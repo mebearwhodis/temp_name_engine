@@ -14,6 +14,8 @@ namespace math
         std::array<T, 4> y;
         std::array<T, 4> z;
 
+        FourVec3() = default;
+
         explicit constexpr FourVec3(const std::array<Vec3<T>, 4>& vec)
         {
             for (int i = 0; i < 4; i++)
@@ -35,6 +37,8 @@ namespace math
         std::array<int, 4> x;
         std::array<int, 4> y;
         std::array<int, 4> z;
+
+        FourVec3() = default;
 
         explicit FourVec3(const std::array<int, 4>& vec)
         {
@@ -96,6 +100,8 @@ namespace math
         std::array<float, 4> x;
         std::array<float, 4> y;
         std::array<float, 4> z;
+
+        FourVec3() = default;
 
         explicit FourVec3(const std::array<Vec3<float>, 4>& vec)
         {

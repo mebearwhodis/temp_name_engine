@@ -14,6 +14,8 @@ namespace math
         std::array<T, 4> x;
         std::array<T, 4> y;
 
+        FourVec2() = default;
+
         explicit constexpr FourVec2(const std::array<Vec2<T>, 4>& vec)
         {
             for (int i = 0; i < 4; i++)
@@ -34,6 +36,8 @@ namespace math
         std::array<int, 4> x;
         std::array<int, 4> y;
 
+        FourVec2() = default;
+
         explicit FourVec2(const std::array<int, 4>& vec)
         {
             for (int i = 0; i < 4; i++)
@@ -47,10 +51,10 @@ namespace math
         FourVec2<int> operator+(const FourVec2<int>& other) const
         {
             FourVec2<int> result;
-            __m128i x1 = _mm_loadu_si128_si128(reinterpret_cast<const __m128i*>(x.data()));
-            __m128i x2 = _mm_loadu_si128_si128(reinterpret_cast<const __m128i*>(other.x.data()));
-            __m128i y1 = _mm_loadu_si128_si128(reinterpret_cast<const __m128i*>(y.data()));
-            __m128i y2 = _mm_loadu_si128_si128(reinterpret_cast<const __m128i*>(other.y.data()));
+            __m128i x1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(x.data()));
+            __m128i x2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.x.data()));
+            __m128i y1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(y.data()));
+            __m128i y2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.y.data()));
 
             __m128i x_res = _mm_add_epi32(x1, x2);
             __m128i y_res = _mm_add_epi32(y1, y2);
@@ -86,6 +90,8 @@ namespace math
     {
         std::array<float, 4> x;
         std::array<float, 4> y;
+
+        FourVec2() = default;
 
         explicit FourVec2(const std::array<Vec2<float>, 4>& vec)
         {
