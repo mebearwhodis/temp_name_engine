@@ -9,7 +9,7 @@
 GameEngine::GameEngine()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    window_ = new Window("Game Engine", 800, 600);
+    window_ = new Window("Game Engine", 1600, 1200);
     renderer_ = new GraphicsRenderer(window_->GetSDLWindow());
     is_running_ = true;
     show_test_window_ = true;
@@ -82,12 +82,12 @@ void GameEngine::Run()
     rectangles_.emplace_back(rectangle4);
     rectangles_.emplace_back(rectangle5);
 
-    Circle test_circle(math::Vec2i(300, 200), 60, math::Vec2i(300,300), 50.0f, 20.0f, SDL_Color{ 0, 0, 255, 255 });
-    Circle test_circle2(math::Vec2i(50, 50), 20, math::Vec2i(300,300), 10.0f, 5.0f, SDL_Color{ 100, 100, 25, 255 });
+    Circle* test_circle = new Circle(math::Vec2i(300, 200), 60, math::Vec2i(800,600), 500.0f, 0.002f, SDL_Color{ 0, 0, 255, 255 });
+    Circle* test_circle2 = new Circle(math::Vec2i(50, 50), 20, math::Vec2i(800,600), 100.0f, 0.005f, SDL_Color{ 100, 100, 25, 255 });
     circles_.emplace_back(test_circle);
     circles_.emplace_back(test_circle2);
 
-    //Update:
+    //Update():
     while (is_running_)
     {
 
@@ -145,17 +145,22 @@ void GameEngine::Run()
         }
         for (auto c : circles_)
         {
-            c.UpdateOrbit();
+            c->UpdateOrbit();
         }
         for (auto c : circles_)
         {
-            c.Draw(renderer_->GetSDLRenderer());
+            c->Draw(renderer_->GetSDLRenderer());
         }
 
         // Render ImGui on top of SDL renderer
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 
         renderer_->Draw();
+    }
+    // End()
+    for (auto c : circles_)
+    {
+        delete c;
     }
 }
 

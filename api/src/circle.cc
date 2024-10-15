@@ -1,6 +1,8 @@
 ﻿#include "circle.h"
 
+#include <iostream>
 #include <numbers>
+#include <ostream>
 #include <SDL_render.h>
 
 Circle::Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color): Shape(center, color)
@@ -14,7 +16,7 @@ Circle::Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float o
 void Circle::UpdateOrbit()
 {
     pos_.x = static_cast<int>(orbit_center_.x + orbit_radius_ * cos(orbit_angle_));
-    pos_.y = static_cast<int>(orbit_center_.y + orbit_radius_ * cos(orbit_angle_));
+    pos_.y = static_cast<int>(orbit_center_.y + orbit_radius_ * sin(orbit_angle_));
 
     orbit_angle_ += orbit_speed_;
     if(orbit_angle_ >= 2 * std::numbers::pi_v<float>)

@@ -22,7 +22,7 @@ private:
     Window* window_;
     GraphicsRenderer* renderer_;
 
-    std::vector<Circle> circles_;
+    std::vector<Circle*> circles_;
     std::vector<Rectangle> rectangles_;
 
     void HandleEvents();
