@@ -1,24 +1,24 @@
 ﻿#include "circle.h"
 
-#include <iostream>
 #include <numbers>
-#include <ostream>
 #include <SDL_render.h>
 
-Circle::Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color): Shape(center, color)
+Circle::Circle(const math::Vec2i center, const int radius, const math::Vec2i orbit_center, const float orbit_radius, const float angular_velocity, const SDL_Color color): Shape(center, color)
 {
     radius_ = radius;
     orbit_center_ = orbit_center;
     orbit_radius_ = orbit_radius;
-    orbit_speed_ = speed;
+    angular_velocity_ = angular_velocity;
 }
 
 void Circle::UpdateOrbit()
 {
-    pos_.x = static_cast<int>(orbit_center_.x + orbit_radius_ * cos(orbit_angle_));
-    pos_.y = static_cast<int>(orbit_center_.y + orbit_radius_ * sin(orbit_angle_));
+    //TODO position & force rather than angle and radius (can have a radius and angle to spawn them but then convert in a position)
+    //and have the 'planet' or sun at the center apply a force on it
+    pos_.x = static_cast<int>(orbit_center_.x + orbit_radius_ * std::cos(orbit_angle_));
+    pos_.y = static_cast<int>(orbit_center_.y + orbit_radius_ * std::sin(orbit_angle_));
 
-    orbit_angle_ += orbit_speed_;
+    orbit_angle_ += angular_velocity_;
     if(orbit_angle_ >= 2 * std::numbers::pi_v<float>)
     {
         orbit_angle_ -= 2 * std::numbers::pi_v<float>;
@@ -27,6 +27,8 @@ void Circle::UpdateOrbit()
 
 void Circle::Draw(SDL_Renderer* renderer)
 {
+    //TODO Make circles with triangles rather than points with SDL_RenderGeometry
+    // ((see splash online main samples 02_planets.cpp))
     SDL_SetRenderDrawColor(renderer, color_.r, color_.g, color_.b, color_.a);
 
     for(int w = 0; w < radius_ * 2; w++)

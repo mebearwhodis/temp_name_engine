@@ -11,5 +11,11 @@ namespace math
     {
         return abs(value - target) <= Epsilon;
     }
+
+    //TODO in class angles:
+    //    constexpr float ToRadian(float degree)
+    //    {
+    //      return degree*(pi/180.0f);
+    //    }
 }// namespace math
 #endif // LIBS_MATHS_COMMON_

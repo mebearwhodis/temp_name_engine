@@ -92,6 +92,10 @@ namespace math
             return v1.x * v2.x + v1.y * v2.y;
         }
 
+        [[nodiscard]] constexpr T Dot(Vec2 v) const{
+          return x*v.x + y*v.y;
+        }
+
         //First perpendicular vector
         [[nodiscard]] constexpr Vec2 Perpendicular() const
         {

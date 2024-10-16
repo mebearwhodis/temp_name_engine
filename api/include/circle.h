@@ -10,11 +10,11 @@ private:
     math::Vec2i orbit_center_;
     float orbit_radius_;
     float orbit_angle_;
-    float orbit_speed_;
+    float angular_velocity_;
 
 public:
     // Constructor
-    Circle(math::Vec2i center, int radius, math::Vec2i orbit_center, float orbit_radius, float speed, SDL_Color color);
+    Circle(const math::Vec2i center, const int radius, const math::Vec2i orbit_center, const float orbit_radius, const float angular_velocity, const SDL_Color color);
 
     void UpdateOrbit();
 
