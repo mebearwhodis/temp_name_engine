@@ -3,6 +3,7 @@
 
 #include <array>
 #include <emmintrin.h>
+#include <cassert>
 #include "vec3.h"
 
 namespace math
@@ -10,9 +11,9 @@ namespace math
     template <typename T>
     struct FourVec3
     {
-        std::array<T, 4> x;
-        std::array<T, 4> y;
-        std::array<T, 4> z;
+        std::array<T, 4> x{};
+        std::array<T, 4> y{};
+        std::array<T, 4> z{};
 
         FourVec3() = default;
 
@@ -28,133 +29,37 @@ namespace math
 
         FourVec3<T> operator+(const FourVec3<T>& other) const;
         FourVec3<T> operator-(const FourVec3<T>& other) const;
+        FourVec3<T> operator-() const; //Opposite
+        FourVec3<T> operator*(const float scalar) const; //Multiply by scalar
+        FourVec3<T> operator/(const float scalar) const; //Divide by scalar
+        std::array<float, 4> Dot(const FourVec3<T>& other) const; //Dot
+        std::array<float, 4> SquareMagnitude() const; //SquareMagnitude
+        std::array<float, 4> Magnitude() const;//Magnitude/Sqrroot
+        FourVec3<T> Normalize() const;//Normalize
     };
 
-    // Specialization for int
-    template<>
-    struct FourVec3<int>
-    {
-        std::array<int, 4> x;
-        std::array<int, 4> y;
-        std::array<int, 4> z;
+    using FourVec3i = FourVec3<int32_t>;
+    using FourVec3f = FourVec3<float>;
 
-        FourVec3() = default;
-
-        explicit FourVec3(const std::array<int, 4>& vec)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                x[i] = vec[i];
-                y[i] = vec[i];
-                z[i] = vec[i];
-            }
-        }
-
-        FourVec3<int> operator+(const FourVec3<int>& other) const
-        {
-            FourVec3<int> result;
-            __m128i x1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(x.data()));
-            __m128i x2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.x.data()));
-            __m128i y1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(y.data()));
-            __m128i y2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.y.data()));
-            __m128i z1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(z.data()));
-            __m128i z2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.z.data()));
-
-            __m128i x_res = _mm_add_epi32(x1, x2);
-            __m128i y_res = _mm_add_epi32(y1, y2);
-            __m128i z_res = _mm_add_epi32(z1, z2);
-
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.x.data()), x_res);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.y.data()), y_res);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.z.data()), z_res);
-
-            return result;
-        }
-
-        FourVec3<int> operator-(const FourVec3<int>& other) const
-        {
-            FourVec3<int> result;
-            __m128i x1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(x.data()));
-            __m128i x2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.x.data()));
-            __m128i y1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(y.data()));
-            __m128i y2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.y.data()));
-            __m128i z1 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(z.data()));
-            __m128i z2 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(other.z.data()));
-
-            __m128i x_res = _mm_sub_epi32(x1, x2);
-            __m128i y_res = _mm_sub_epi32(y1, y2);
-            __m128i z_res = _mm_sub_epi32(z1, z2);
-
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.x.data()), x_res);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.y.data()), y_res);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(result.z.data()), z_res);
-
-            return result;
-        }
-    };
-
-    // Specialization for float
+    //Specialization for float
     template <>
-    struct FourVec3<float>
-    {
-        std::array<float, 4> x;
-        std::array<float, 4> y;
-        std::array<float, 4> z;
-
-        FourVec3() = default;
-
-        explicit FourVec3(const std::array<Vec3<float>, 4>& vec)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                x[i] = vec[i].x;
-                y[i] = vec[i].y;
-                z[i] = vec[i].z;
-            }
-        }
-
-        FourVec3<float> operator+(const FourVec3<float>& other) const
-        {
-            FourVec3<float> result;
-            __m128 x1 = _mm_loadu_ps(x.data());
-            __m128 x2 = _mm_loadu_ps(other.x.data());
-            __m128 y1 = _mm_loadu_ps(y.data());
-            __m128 y2 = _mm_loadu_ps(other.y.data());
-            __m128 z1 = _mm_loadu_ps(z.data());
-            __m128 z2 = _mm_loadu_ps(other.z.data());
-
-            __m128 x_res = _mm_add_ps(x1, x2);
-            __m128 y_res = _mm_add_ps(y1, y2);
-            __m128 z_res = _mm_add_ps(z1, z2);
-
-            _mm_storeu_ps(result.x.data(), x_res);
-            _mm_storeu_ps(result.y.data(), y_res);
-            _mm_storeu_ps(result.z.data(), z_res);
-
-            return result;
-        }
-
-        FourVec3<float> operator-(const FourVec3<float>& other) const
-        {
-            FourVec3<float> result;
-            __m128 x1 = _mm_loadu_ps(x.data());
-            __m128 x2 = _mm_loadu_ps(other.x.data());
-            __m128 y1 = _mm_loadu_ps(y.data());
-            __m128 y2 = _mm_loadu_ps(other.y.data());
-            __m128 z1 = _mm_loadu_ps(z.data());
-            __m128 z2 = _mm_loadu_ps(other.z.data());
-
-            __m128 x_res = _mm_sub_ps(x1, x2);
-            __m128 y_res = _mm_sub_ps(y1, y2);
-            __m128 z_res = _mm_sub_ps(z1, z2);
-
-            _mm_storeu_ps(result.x.data(), x_res);
-            _mm_storeu_ps(result.y.data(), y_res);
-            _mm_storeu_ps(result.z.data(), z_res);
-
-            return result;
-        }
-    };
+    FourVec3f FourVec3<float>::operator+(const FourVec3f& other) const;
+    template <>
+    FourVec3f FourVec3<float>::operator-(const FourVec3f& other) const;
+    template <>
+    FourVec3f FourVec3<float>::operator-() const;
+    template <>
+    FourVec3f FourVec3<float>::operator*(const float scalar) const;
+    template <>
+    FourVec3f FourVec3<float>::operator/(const float scalar) const;
+    template <>
+    std::array<float, 4> FourVec3<float>::Dot(const FourVec3f& other) const;
+    template <>
+    std::array<float, 4> FourVec3<float>::SquareMagnitude() const;
+    template <>
+    std::array<float, 4> FourVec3<float>::Magnitude() const;
+    template <>
+    FourVec3f FourVec3<float>::Normalize() const;
 }
 
-#endif // LIBS_MATHS_FOUR_VEC3_H_
+#endif //LIBS_MATHS_FOUR_VEC3_H_
