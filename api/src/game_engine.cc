@@ -1,5 +1,6 @@
 #include "game_engine.h"
 #include <./imgui_interface.h>
+#include <ctime>
 
 #include "circle.h"
 
@@ -7,12 +8,14 @@
 GameEngine::GameEngine()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    window_ = new Window("Game Engine", 1600, 1200);
+    window_ = new Window("Game Engine", 1200, 800);
     renderer_ = new GraphicsRenderer(window_->GetSDLWindow());
     is_running_ = true;
     show_imgui_window_ = true;
     imgui_interface_ = new ImGuiInterface();
     imgui_interface_->Initialize(window_, renderer_);
+
+    std::srand(std::time(nullptr)); // use current time as seed for random generator
 }
 
 GameEngine::~GameEngine()
@@ -50,27 +53,26 @@ void GameEngine::HandleEvents()
                 window_->Resize(event.window.data1, event.window.data2);
             }
         }
+        else if (event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            if (event.button.button == SDL_BUTTON_LEFT)
+            {
+                int random_value = std::rand();
+                Circle* test_circle = new Circle(math::Vec2i(0, 0), random_value%20, math::Vec2i(600,400), random_value%1000, 0.006f, SDL_Color{ 255, 13, 132, 255 });
+                circles_.emplace_back(test_circle);
+            }
+        }
     }
 }
 
 void GameEngine::Run()
 {
     //Begin():
-    Rectangle rectangle1(math::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle2(math::Vec2i(210, 0), 300, 80, SDL_Color{ 255, 255, 255, 255 });
-    Rectangle rectangle3(math::Vec2i(520, 0), 200, 80, SDL_Color{ 255, 255, 0, 255 });
-    Rectangle rectangle4(math::Vec2i(0, 0), 50, 50, SDL_Color{ 255, 0, 255, 255 });
-    Rectangle rectangle5(math::Vec2i(0, 300), 500, 80, SDL_Color{ 0, 0, 255, 255 });
-    rectangles_.emplace_back(rectangle1);
-    rectangles_.emplace_back(rectangle2);
-    rectangles_.emplace_back(rectangle3);
-    rectangles_.emplace_back(rectangle4);
-    rectangles_.emplace_back(rectangle5);
-
-    Circle* test_circle = new Circle(math::Vec2i(300, 200), 60, math::Vec2i(800,600), 500.0f, 0.002f, SDL_Color{ 0, 0, 255, 255 });
-    Circle* test_circle2 = new Circle(math::Vec2i(50, 50), 20, math::Vec2i(800,600), 100.0f, 0.005f, SDL_Color{ 100, 100, 25, 255 });
-    circles_.emplace_back(test_circle);
-    circles_.emplace_back(test_circle2);
+    // Rectangle rectangle1(math::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
+    // rectangles_.emplace_back(rectangle1);
+    //
+    // Circle* test_circle = new Circle(math::Vec2i(300, 200), 60, math::Vec2i(800,600), 500.0f, 0.002f, SDL_Color{ 0, 0, 255, 255 });
+    // circles_.emplace_back(test_circle);
 
     //Update():
     while (is_running_)

@@ -20,7 +20,7 @@ add_subdirectory(api/)
 
 add_executable(main main.cc)
 
-target_link_libraries(main PUBLIC  core api SDL2::SDL2 SDL2::SDL2main imgui::imgui)
+target_link_libraries(main PUBLIC core api SDL2::SDL2 SDL2::SDL2main imgui::imgui)
 
 
 

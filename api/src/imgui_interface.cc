@@ -25,7 +25,7 @@ void ImGuiInterface::Update(bool& show_imgui)
     if (show_imgui) {
         ImGui::ShowDemoWindow();
         // Create a window called "My First Tool", with a menu bar.
-        ImGui::Begin("My First Tool", nullptr, ImGuiWindowFlags_MenuBar);
+        ImGui::Begin("Dagobert", nullptr, ImGuiWindowFlags_MenuBar);
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
