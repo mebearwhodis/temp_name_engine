@@ -9,7 +9,9 @@ add_library(api ${SRC_FILES} ${HEADER_FILES}
 		src/circle.cc
 		include/circle.h
 		src/rectangle.cc
-		include/rectangle.h)
+		include/rectangle.h
+		include/imgui_interface.h
+		src/imgui_interface.cc)
 target_include_directories(api PUBLIC include/)
 
 target_link_libraries(api PUBLIC core SDL2::SDL2 SDL2::SDL2main)

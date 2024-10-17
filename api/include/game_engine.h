@@ -7,6 +7,7 @@
 #include "SDL2/SDL.h"
 #include "window.h"
 #include "graphics_renderer.h"
+#include "imgui_interface.h"
 #include "rectangle.h"
 
 class GameEngine
@@ -18,9 +19,10 @@ public:
     void Run();
 private:
     bool is_running_;
-    bool show_test_window_;
+    bool show_imgui_window_;
     Window* window_;
     GraphicsRenderer* renderer_;
+    ImGuiInterface* imgui_interface_;
 
     std::vector<Circle*> circles_;
     std::vector<Rectangle> rectangles_;

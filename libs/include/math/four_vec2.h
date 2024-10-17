@@ -20,7 +20,7 @@ namespace math
 //        constexpr FourVec2(std::initializer_list<Vec2<T>> vectors) {
 //          assert(vectors.size() == 4 && "FourVec2 requires 4 vectors");
 //          auto it = vectors.begin();
-//          // TODO: finish this
+//          // TODO: finish this constructor
 //        }
 
         explicit constexpr FourVec2(const std::array<Vec2<T>, 4>& vec)
@@ -45,7 +45,7 @@ namespace math
     using FourVec2i = FourVec2<int32_t>;
     using FourVec2f = FourVec2<float>;
 
-    //TODO + Activer LTO, nodiscard, constexpr si besoin
+    //TODO + LTO, use nodiscard, constexpr where needed
 
     //Specialization for float
     template<>
