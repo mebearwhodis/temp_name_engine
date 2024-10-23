@@ -1,7 +1,7 @@
 ﻿#include <imgui_interface.h>
 
 
-void ImGuiInterface::Initialize(Window* window, GraphicsRenderer* renderer)
+void ImGuiInterface::Initialize(Display* display)
 {
     //Setup ImGUI context
     IMGUI_CHECKVERSION();
@@ -10,8 +10,8 @@ void ImGuiInterface::Initialize(Window* window, GraphicsRenderer* renderer)
     (void)io;
 
     //Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForSDLRenderer(window->GetSDLWindow(), renderer->GetSDLRenderer());
-    ImGui_ImplSDLRenderer2_Init(renderer->GetSDLRenderer());
+    ImGui_ImplSDL2_InitForSDLRenderer(display->window(), display->renderer());
+    ImGui_ImplSDLRenderer2_Init(display->renderer());
 }
 
 void ImGuiInterface::Update(bool& show_imgui)

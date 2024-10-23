@@ -27,12 +27,12 @@ namespace math
             y = *it;
         }
 
-        static constexpr Vec2 zero()
+        static constexpr Vec2 Zero()
         {
             return Vec2(static_cast<T>(0), static_cast<T>(0));
         }
 
-        static constexpr Vec2 one()
+        static constexpr Vec2 One()
         {
             return Vec2(static_cast<T>(1), static_cast<T>(1));
         }
@@ -41,6 +41,14 @@ namespace math
         constexpr Vec2 operator+(const Vec2& other) const
         {
             return Vec2{ x + other.x, y + other.y };
+        }
+
+        constexpr Vec2<T> operator+=(const Vec2<T> vec) noexcept
+        {
+            x += vec.x;
+            y += vec.y;
+
+            return *this;
         }
 
         //Subtraction

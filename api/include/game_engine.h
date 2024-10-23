@@ -3,31 +3,29 @@
 
 #include <vector>
 
-#include "circle.h"
-#include "SDL2/SDL.h"
-#include "window.h"
-#include "graphics_renderer.h"
+#include "display.h"
 #include "imgui_interface.h"
-#include "rectangle.h"
+#include "planet_system.h"
+#include "shape_manager.h"
 
 class GameEngine
 {
+private:
+    bool is_running_;
+
+    Display* display_;
+    ShapeManager* shape_manager_;
+    PlanetSystem* planet_system_;
+
+    ImGuiInterface* imgui_interface_;
+
+    void HandleEvents();
+
 public:
     GameEngine();
     ~GameEngine();
 
     void Run();
-private:
-    bool is_running_;
-    bool show_imgui_window_;
-    Window* window_;
-    GraphicsRenderer* renderer_;
-    ImGuiInterface* imgui_interface_;
-
-    std::vector<Circle*> circles_;
-    std::vector<Rectangle> rectangles_;
-
-    void HandleEvents();
 };
 
 #endif // KUMAENGINE_API_GAME_ENGINE_H_

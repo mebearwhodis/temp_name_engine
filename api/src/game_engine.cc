@@ -1,30 +1,27 @@
 #include "game_engine.h"
 #include <./imgui_interface.h>
 #include <ctime>
+#include <SDL_events.h>
 
-#include "circle.h"
 
 
 GameEngine::GameEngine()
 {
-    SDL_Init(SDL_INIT_EVERYTHING);
-    window_ = new Window("Game Engine", 1200, 800);
-    renderer_ = new GraphicsRenderer(window_->GetSDLWindow());
+    display_ = new Display();
+    shape_manager_ = new ShapeManager();
+    planet_system_ = new PlanetSystem();
     is_running_ = true;
-    show_imgui_window_ = true;
     imgui_interface_ = new ImGuiInterface();
-    imgui_interface_->Initialize(window_, renderer_);
-
-    std::srand(std::time(nullptr)); // use current time as seed for random generator
+    imgui_interface_->Initialize(display_);
 }
 
 GameEngine::~GameEngine()
 {
 
     delete imgui_interface_;
-    delete window_;
-    delete renderer_;
-    SDL_Quit();
+    delete planet_system_;
+    delete shape_manager_;
+    delete display_;
 }
 
 void GameEngine::HandleEvents()
@@ -46,20 +43,14 @@ void GameEngine::HandleEvents()
                 is_running_ = false;
             }
         }
-        else if (event.type == SDL_WINDOWEVENT)
-        {
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED)
-            {
-                window_->Resize(event.window.data1, event.window.data2);
-            }
-        }
         else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                int random_value = std::rand();
-                Circle* test_circle = new Circle(math::Vec2i(0, 0), random_value%20, math::Vec2i(600,400), random_value%1000, 0.006f, SDL_Color{ 255, 13, 132, 255 });
-                circles_.emplace_back(test_circle);
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+                planet_system_->CreatePlanet(mouse_pos, 20);
             }
         }
     }
@@ -68,44 +59,38 @@ void GameEngine::HandleEvents()
 void GameEngine::Run()
 {
     //Begin():
-    // Rectangle rectangle1(math::Vec2i(0, 0), 200, 80, SDL_Color{ 255, 255, 255, 255 });
-    // rectangles_.emplace_back(rectangle1);
-    //
-    // Circle* test_circle = new Circle(math::Vec2i(300, 200), 60, math::Vec2i(800,600), 500.0f, 0.002f, SDL_Color{ 0, 0, 255, 255 });
-    // circles_.emplace_back(test_circle);
 
-    //Update():
+
+
     while (is_running_)
     {
+        //Update()
 
         HandleEvents();
 
-        imgui_interface_->Update(show_imgui_window_);
+        imgui_interface_->Update(is_running_);
 
-        renderer_->Clear();
+        display_->Clear();
 
-        // Here we draw stuff
-        for (auto r : rectangles_)
+        planet_system_->UpdatePlanets();
+
+        shape_manager_->Clear();
+        for(auto p : planet_system_->planets())
         {
-            r.Draw(renderer_->GetSDLRenderer());
+            shape_manager_->CreateCircle(p.position(), 50, SDL_Color{ 255, 13, 132, 255 });
         }
-        for (auto c : circles_)
-        {
-            c->UpdateOrbit();
-        }
-        for (auto c : circles_)
-        {
-            c->Draw(renderer_->GetSDLRenderer());
-        }
+
+
+        SDL_RenderGeometry(display_->renderer(),
+            nullptr,
+            shape_manager_->vertices().data(),
+            shape_manager_->vertices().size(),
+            shape_manager_->indices().data(),
+            shape_manager_->indices().size());
 
         imgui_interface_->Render();
-
-        renderer_->Draw();
+        SDL_RenderPresent(display_->renderer());
     }
     // End()
-    for (auto c : circles_)
-    {
-        delete c;
-    }
 }
 
