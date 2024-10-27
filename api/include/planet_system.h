@@ -21,6 +21,8 @@ public:
 
     void CreatePlanet(math::Vec2f position, float radius);
     void UpdatePlanets();
+    void UpdatePlanetsSIMD();
+
 
     std::vector<Body> planets() { return planets_; };
 };

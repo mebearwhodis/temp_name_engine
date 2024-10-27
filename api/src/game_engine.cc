@@ -8,7 +8,7 @@
 GameEngine::GameEngine()
 {
     display_ = new Display();
-    shape_manager_ = new ShapeManager();
+    shape_manager_ = new GraphicalShape();
     planet_system_ = new PlanetSystem();
     is_running_ = true;
     imgui_interface_ = new ImGuiInterface();
@@ -72,7 +72,7 @@ void GameEngine::Run()
 
         display_->Clear();
 
-        planet_system_->UpdatePlanets();
+        planet_system_->UpdatePlanetsSIMD();
 
         shape_manager_->Clear();
         for(auto p : planet_system_->planets())

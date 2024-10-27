@@ -93,6 +93,30 @@ namespace math
         EXPECT_EQ(result.y[3], 16.0f);
     }
 
+    // Test for multiplication by an array of scalars
+    TEST(FourVec2Test, ElementWiseMultiplication)
+    {
+        std::array<Vec2<float>, 4> a_arr = {
+            Vec2<float>{1.0f, 2.0f}, Vec2<float>{3.0f, 4.0f}, Vec2<float>{5.0f, 6.0f}, Vec2<float>{7.0f, 8.0f}
+        };
+        std::array<float, 4> scalars = {2.0f, 3.0f, 4.0f, 5.0f};
+
+        FourVec2<float> a(a_arr);
+        FourVec2<float> result = a * scalars;
+
+        // Check x components after element-wise multiplication
+        EXPECT_EQ(result.x[0], 1.0f * 2.0f);
+        EXPECT_EQ(result.x[1], 3.0f * 3.0f);
+        EXPECT_EQ(result.x[2], 5.0f * 4.0f);
+        EXPECT_EQ(result.x[3], 7.0f * 5.0f);
+
+        // Check y components after element-wise multiplication
+        EXPECT_EQ(result.y[0], 2.0f * 2.0f);
+        EXPECT_EQ(result.y[1], 4.0f * 3.0f);
+        EXPECT_EQ(result.y[2], 6.0f * 4.0f);
+        EXPECT_EQ(result.y[3], 8.0f * 5.0f);
+    }
+
     // Test for scalar division operator (/)
     TEST(FourVec2Test, ScalarDivision)
     {

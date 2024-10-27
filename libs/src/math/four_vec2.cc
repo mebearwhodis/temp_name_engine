@@ -77,6 +77,29 @@ namespace math
     }
 
     template <>
+    FourVec2f FourVec2<float>::operator*(const std::array<float, 4> scalars) const
+    {
+        FourVec2<float> result;
+
+        // Load x and y components of the current FourVec2f object
+        __m128 x1 = _mm_loadu_ps(x.data());
+        __m128 y1 = _mm_loadu_ps(y.data());
+
+        // Load scalar values into SIMD register
+        __m128 scalar_reg = _mm_loadu_ps(scalars.data());
+
+        // Perform element-wise multiplication
+        __m128 x_res = _mm_mul_ps(x1, scalar_reg);
+        __m128 y_res = _mm_mul_ps(y1, scalar_reg);
+
+        // Store results back into the result's x and y arrays
+        _mm_storeu_ps(result.x.data(), x_res);
+        _mm_storeu_ps(result.y.data(), y_res);
+
+        return result;
+    }
+
+    template <>
     FourVec2f FourVec2<float>::operator/(const float scalar) const
     {
         FourVec2<float> result;

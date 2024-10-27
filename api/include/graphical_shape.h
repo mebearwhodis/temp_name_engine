@@ -7,15 +7,15 @@
 
 static constexpr size_t kCircleVertexCount = 30;
 
-class ShapeManager
+class GraphicalShape
 {
 private:
   std::vector<SDL_Vertex> vertices_;
   std::vector<int> indices_;
 
 public:
-  ShapeManager() = default;
-  ~ShapeManager() = default;
+  GraphicalShape() = default;
+  ~GraphicalShape() = default;
 
   std::vector<SDL_Vertex>& vertices() { return vertices_; }
   std::vector<int>& indices() { return indices_; }

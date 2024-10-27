@@ -6,7 +6,7 @@
 #include "display.h"
 #include "imgui_interface.h"
 #include "planet_system.h"
-#include "shape_manager.h"
+#include "graphical_shape.h"
 
 class GameEngine
 {
@@ -14,7 +14,7 @@ private:
     bool is_running_;
 
     Display* display_;
-    ShapeManager* shape_manager_;
+    GraphicalShape* shape_manager_;
     PlanetSystem* planet_system_;
 
     ImGuiInterface* imgui_interface_;

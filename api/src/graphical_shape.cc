@@ -1,8 +1,8 @@
-﻿#include "shape_manager.h"
+﻿#include "graphical_shape.h"
 
 #include "common.h"
 
-void ShapeManager::AddVertex(const math::Vec2f position, const SDL_Color color)
+void GraphicalShape::AddVertex(const math::Vec2f position, const SDL_Color color)
 {
     //const SDL_Vertex vertex = {position.x, position.y, color.r, color.g, color.b};
     SDL_Vertex vertex;
@@ -15,13 +15,13 @@ void ShapeManager::AddVertex(const math::Vec2f position, const SDL_Color color)
     vertices_.push_back(vertex);
 }
 
-void ShapeManager::Clear()
+void GraphicalShape::Clear()
 {
     vertices_.clear();
     indices_.clear();
 }
 
-void ShapeManager::CreateCircle(math::Vec2f center, float radius, SDL_Color color)
+void GraphicalShape::CreateCircle(math::Vec2f center, float radius, SDL_Color color)
 {
     //Track where the new circle's vertices start
     const size_t starting_index = vertices_.size();

@@ -41,7 +41,6 @@ public:
     void set_mass(const float new_mass) { mass_ = new_mass; }
     void set_type(const BodyType new_type) { type_ = new_type; }
 
-    //TODO check with or without /mass
     void ApplyForce(const math::Vec2f force) { acceleration_ += force / mass_; }
 
     void ResetForce() { acceleration_ = math::Vec2f::Zero(); }
