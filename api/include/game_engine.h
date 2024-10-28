@@ -7,6 +7,7 @@
 #include "imgui_interface.h"
 #include "planet_system.h"
 #include "graphical_shape.h"
+#include "trigger_system.h"
 
 class GameEngine
 {
@@ -16,6 +17,7 @@ private:
     Display* display_;
     GraphicalShape* shape_manager_;
     PlanetSystem* planet_system_;
+    TriggerSystem* trigger_system_;
 
     ImGuiInterface* imgui_interface_;
 

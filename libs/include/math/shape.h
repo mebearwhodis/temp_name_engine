@@ -1,9 +1,7 @@
 ﻿#ifndef SHAPE_H
 #define SHAPE_H
 #include <algorithm>
-#include <iostream>
 #include <vector>
-
 #include "vec2.h"
 
 namespace math
@@ -67,11 +65,11 @@ namespace math
         std::vector<Vec2f> vertices_;
 
         public:
-        constexpr Polygon(std::vector<Vec2f> vertices) : vertices_(vertices){}
+        explicit constexpr Polygon(const std::vector<Vec2f>& vertices) : vertices_(vertices){}
 
         [[nodiscard]] constexpr std::vector<Vec2f> vertices() const { return vertices_; }
 
-        void set_vertices(const std::vector<Vec2f> vertices) { vertices_ = vertices; }
+        void set_vertices(const std::vector<Vec2f>& vertices) { vertices_ = vertices; }
 
         [[nodiscard]] constexpr int VertexCount() const { return vertices_.size(); }
     };
@@ -82,36 +80,36 @@ namespace math
         const Vec2f segment = segment_end - segment_start;
         const Vec2f point_to_start = compare_point - segment_start;
         const float t = std::clamp(point_to_start.Dot(segment) / segment.SquareMagnitude(), 0.0f, 1.0f);
-        Vec2f closest_point = segment_start + segment * t;
+        const Vec2f closest_point = segment_start + segment * t;
 
         return closest_point;
     }
 
     //Intersections between shapes
-    [[nodiscard]] constexpr bool Intersect(Circle& circle_a, Circle& circle_b)
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle_a, const Circle& circle_b)
     {
         return (circle_b.center() - circle_a.center()).SquareMagnitude() >= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
     }
 
-    [[nodiscard]] constexpr bool Intersect(Circle& circle, AABB& aabb)
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const AABB& aabb)
     {
-        auto center = circle.center();
+        const auto center = circle.center();
         //Check if the AABB contains the circle's center
         if(aabb.Contains(center)) return true;
 
         //If not, expand the AABB bounds by the radius and check if those contain the center
-        auto radius = circle.radius();
-        auto min_bound = aabb.min_bound();
-        auto max_bound = aabb.max_bound();
+        const auto radius = circle.radius();
+        const auto min_bound = aabb.min_bound();
+        const auto max_bound = aabb.max_bound();
 
-        auto min_bound_x = min_bound - Vec2f(radius, 0);
-        auto max_bound_x = max_bound + Vec2f(radius, 0);
+        const auto min_bound_x = min_bound - Vec2f(radius, 0);
+        const auto max_bound_x = max_bound + Vec2f(radius, 0);
 
-        auto min_bound_y = min_bound - Vec2f(0, radius);
-        auto max_bound_y = max_bound + Vec2f(0, radius);
+        const auto min_bound_y = min_bound - Vec2f(0, radius);
+        const auto max_bound_y = max_bound + Vec2f(0, radius);
 
-        AABB extended_x(min_bound_x, max_bound_x);
-        AABB extended_y(min_bound_y, max_bound_y);
+        const AABB extended_x(min_bound_x, max_bound_x);
+        const AABB extended_y(min_bound_y, max_bound_y);
 
         if(extended_x.Contains(center)) return true;
         if(extended_y.Contains(center)) return true;
@@ -126,10 +124,10 @@ namespace math
         return false;
     }
 
-    [[nodiscard]] constexpr bool Intersect(Circle& circle, Polygon& polygon)
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const Polygon& polygon)
     {
-        auto vertices = polygon.vertices();
-        auto center = circle.center();
+        const auto vertices = polygon.vertices();
+        const auto center = circle.center();
         auto radius = circle.radius();
 
         //Check if any vertex of the polygon is inside the circle
@@ -141,42 +139,38 @@ namespace math
         //Check if the circle intersects with any of the polygon's edges
         for(size_t i = 0, j = polygon.VertexCount() - 1; i < polygon.VertexCount(); j = i++)
         {
-            Vec2f start = vertices[i];
-            Vec2f end = vertices[j];
+            const Vec2f start = vertices[i];
+            const Vec2f end = vertices[j];
 
-            Vec2f closest_point = ClosestPointOnSegment(start, end, center);
-
-            if(circle.Contains(closest_point)) return true;
+            if(const Vec2f closest_point = ClosestPointOnSegment(start, end, center); circle.Contains(closest_point)) return true;
         }
         //If no intersection is found, return false
         return false;
     }
 
-    [[nodiscard]] constexpr bool Intersect(AABB& aabb, Circle& circle) { return Intersect(circle, aabb); }
+    [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Circle& circle) { return Intersect(circle, aabb); }
 
-    [[nodiscard]] constexpr bool Intersect(AABB& aabb_a, AABB& aabb_b)
+    [[nodiscard]] constexpr bool Intersect(const AABB& aabb_a, const AABB& aabb_b)
     {
         if(aabb_a.max_bound().x < aabb_b.min_bound().x || aabb_a.min_bound().x > aabb_b.max_bound().x) return false;
         if(aabb_a.max_bound().y < aabb_b.min_bound().y || aabb_a.min_bound().y > aabb_b.max_bound().y) return false;
         return true;
     }
 
-    [[nodiscard]] constexpr bool Intersect(Polygon& polygon, Circle& circle) { return Intersect(circle, polygon); }
+    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const Circle& circle) { return Intersect(circle, polygon); }
 
     [[nodiscard]] constexpr bool Intersect(const Polygon& polygon_a, const Polygon& polygon_b)
     {
-        auto polygons = {polygon_a, polygon_b};
-
-        for (const auto& polygon : polygons)
+        for (const auto polygons = {polygon_a, polygon_b}; const auto& polygon : polygons)
         {
             const auto& vertices = polygon.vertices();
-            size_t vertex_count = polygon.VertexCount();
+            const size_t vertex_count = polygon.VertexCount();
 
             for (size_t i = 0; i < vertex_count; ++i)
             {
                 //Compute the edge and perpendicular axis
                 Vec2f edge = vertices[(i + 1) % vertex_count] - vertices[i];
-                Vec2f axis = edge.Perpendicular();
+                const Vec2f axis = edge.Perpendicular();
 
                 //Project all vertices of polygon_a onto the axis
                 float min_a = vertices[0].Dot(axis);
@@ -211,19 +205,19 @@ namespace math
         return true;
     }
 
-    [[nodiscard]] constexpr bool Intersect(AABB& aabb, Polygon& polygon)
+    [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Polygon& polygon)
     {
-        std::vector<Vec2f> aabb_vertices = {
+        const std::vector<Vec2f> aabb_vertices = {
             aabb.min_bound(),
             Vec2f(aabb.min_bound().x, aabb.max_bound().y),
             aabb.max_bound(),
             Vec2f(aabb.max_bound().x, aabb.min_bound().y)
         };
-        Polygon aabb_polygon(aabb_vertices);
+        const Polygon aabb_polygon(aabb_vertices);
         return Intersect(polygon, aabb_polygon);
     }
 
-    [[nodiscard]] constexpr bool Intersect(Polygon& polygon, AABB& aabb) { return Intersect(aabb, polygon); }
+    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const AABB& aabb) { return Intersect(aabb, polygon); }
 }
 
 #endif //SHAPE_H

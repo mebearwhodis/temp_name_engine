@@ -2,7 +2,8 @@
 #define BODY_H
 #include "math/vec2.h"
 
-//namespace
+namespace physics
+{
 enum class BodyType
 {
     Static,
@@ -45,4 +46,5 @@ public:
 
     void ResetForce() { acceleration_ = math::Vec2f::Zero(); }
 };
+}
 #endif //BODY_H

@@ -4,7 +4,6 @@
 
 void GraphicalShape::AddVertex(const math::Vec2f position, const SDL_Color color)
 {
-    //const SDL_Vertex vertex = {position.x, position.y, color.r, color.g, color.b};
     SDL_Vertex vertex;
     vertex.position.x = position.x;
     vertex.position.y = position.y;

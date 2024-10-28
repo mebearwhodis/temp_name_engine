@@ -4,7 +4,7 @@
 
 void PlanetSystem::CreatePlanet(math::Vec2f position, float radius)
 {
-    auto planet = Body(position, math::Vec2f::Zero(), planet_mass_);
+    auto planet = physics::Body(position, math::Vec2f::Zero(), planet_mass_);
 
     math::Vec2f u = star_.position() - planet.position();
     float r = u.Magnitude();
@@ -100,7 +100,7 @@ void PlanetSystem::UpdatePlanetsSIMD()
 
 PlanetSystem::PlanetSystem()
 {
-    star_ = Body(math::Vec2f(600, 400), math::Vec2f::Zero(), star_mass_);
+    star_ = physics::Body(math::Vec2f(600, 400), math::Vec2f::Zero(), star_mass_);
     for (std::size_t i = 0; i < starting_number_of_planets_; i++)
     {
         float test_pos = (std::rand() % 500) + 100;

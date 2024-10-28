@@ -1,6 +1,8 @@
 #include "game_engine.h"
 #include <./imgui_interface.h>
 #include <ctime>
+#include <iostream>
+#include <ostream>
 #include <SDL_events.h>
 
 
@@ -10,6 +12,7 @@ GameEngine::GameEngine()
     display_ = new Display();
     shape_manager_ = new GraphicalShape();
     planet_system_ = new PlanetSystem();
+    trigger_system_ = new TriggerSystem();
     is_running_ = true;
     imgui_interface_ = new ImGuiInterface();
     imgui_interface_->Initialize(display_);
@@ -19,6 +22,7 @@ GameEngine::~GameEngine()
 {
 
     delete imgui_interface_;
+    delete trigger_system_;
     delete planet_system_;
     delete shape_manager_;
     delete display_;
@@ -47,10 +51,11 @@ void GameEngine::HandleEvents()
         {
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                int mouse_x, mouse_y;
-                SDL_GetMouseState(&mouse_x, &mouse_y);
-                auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
-                planet_system_->CreatePlanet(mouse_pos, 20);
+                // PLANET SYSTEM:
+                // int mouse_x, mouse_y;
+                // SDL_GetMouseState(&mouse_x, &mouse_y);
+                // auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+                // planet_system_->CreatePlanet(mouse_pos, 20);
             }
         }
     }
@@ -71,22 +76,30 @@ void GameEngine::Run()
         imgui_interface_->Update(is_running_);
 
         display_->Clear();
-
-        planet_system_->UpdatePlanetsSIMD();
-
         shape_manager_->Clear();
-        for(auto p : planet_system_->planets())
+
+        //PLANET SYSTEM:
+        //planet_system_->UpdatePlanetsSIMD();
+        // for(auto p : planet_system_->planets())
+        // {
+        //     shape_manager_->CreateCircle(p.position(), 50, SDL_Color{ 255, 13, 132, 255 });
+        // }
+
+        //TRIGGER SYSTEM:
+        trigger_system_->UpdateShapes();
+        for(auto g : trigger_system_->objects())
         {
-            shape_manager_->CreateCircle(p.position(), 50, SDL_Color{ 255, 13, 132, 255 });
+            shape_manager_->CreateCircle(g.position(), g.radius(), g.color());
         }
 
-
+        //Render
         SDL_RenderGeometry(display_->renderer(),
             nullptr,
             shape_manager_->vertices().data(),
             shape_manager_->vertices().size(),
             shape_manager_->indices().data(),
             shape_manager_->indices().size());
+
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());
