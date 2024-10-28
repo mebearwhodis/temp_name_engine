@@ -94,6 +94,9 @@ namespace math
             throw std::out_of_range("Index out of range for Vec2");
         }
 
+        bool operator==(const Vec2& vec2) const {
+        return x == vec2.x && y == vec2.y;};
+
         //Dot product
         static constexpr T Dot(Vec2 v1, Vec2 v2)
         {

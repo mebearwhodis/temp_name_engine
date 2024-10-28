@@ -18,7 +18,7 @@ public:
     ~GameObject() = default;
 
     [[nodiscard]] physics::Body& body() { return body_; }
-    [[nodiscard]] physics::Collider collider() const { return collider_; }
+    [[nodiscard]] physics::Collider& collider() { return collider_; }
     [[nodiscard]] float radius() const { return radius_; }
     [[nodiscard]] SDL_Color color() const { return color_; }
     [[nodiscard]] math::Vec2f position() const { return body_.position(); }

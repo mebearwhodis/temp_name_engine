@@ -1,4 +1,5 @@
 ﻿#include "trigger_system.h"
+
 #include "random.h"
 
 TriggerSystem::TriggerSystem()
@@ -62,11 +63,17 @@ void TriggerSystem::SolveBroadPhase()
 {
     for(int i = 0; i < starting_number_of_shapes_; i++)
     {
-        for(int j = 0; j < starting_number_of_shapes_; j++)
+        for(int j = i + 1; j < starting_number_of_shapes_; j++)
         {
-            // auto shape_a = objects_[i].collider().shape();
-            // auto shape_b = objects_[j].collider().shape();
-            // math::Intersect(shape_a, shape_b);
+            auto& collider_a = objects_[i].collider();
+            auto& collider_b = objects_[j].collider();
+            if(std::visit([](auto&& shape_a, auto&& shape_b)
+            {
+                return math::Intersect(shape_a, shape_b);
+            }, collider_a.shape(), collider_b.shape()))
+            {
+                objects_[j].set_color(SDL_Color{ 255, 0, 0, 255 });
+            }
         }
     }
 }

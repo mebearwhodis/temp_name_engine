@@ -86,7 +86,7 @@ void GameEngine::Run()
         // }
 
         //TRIGGER SYSTEM:
-        trigger_system_->UpdateShapes();
+        trigger_system_->Update();
         for(auto g : trigger_system_->objects())
         {
             shape_manager_->CreateCircle(g.position(), g.radius(), g.color());

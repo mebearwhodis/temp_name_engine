@@ -27,6 +27,10 @@ namespace math
         {
             return (point - center_).SquareMagnitude() <= radius_ * radius_;
         }
+
+        bool operator==(const Circle& other) const {
+            return center_ == other.center_ && radius_ == other.radius_;
+        }
     };
 
     class AABB
@@ -57,6 +61,10 @@ namespace math
         {
             return AABB(center - radius, center + radius);
         }
+
+        bool operator==(const AABB& other) const {
+            return min_bound_ == other.min_bound_ && max_bound_ == other.max_bound_;
+        }
     };
 
     class Polygon
@@ -72,6 +80,10 @@ namespace math
         void set_vertices(const std::vector<Vec2f>& vertices) { vertices_ = vertices; }
 
         [[nodiscard]] constexpr int VertexCount() const { return vertices_.size(); }
+
+        bool operator==(const Polygon& other) const {
+            return vertices_ == other.vertices_;
+        }
     };
 
     //Find the point of a segment that is closest to a specified point
