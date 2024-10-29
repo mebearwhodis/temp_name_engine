@@ -1,6 +1,7 @@
 ﻿#include "trigger_system.h"
 
 #include <iostream>
+#include <ranges>
 
 #include "random.h"
 
@@ -41,7 +42,7 @@ void TriggerSystem::Update()
 {
     UpdateShapes();
     BroadPhase();
-    // NarrowPhase();
+    NarrowPhase();
 }
 
 void TriggerSystem::UpdateShapes()
@@ -83,66 +84,92 @@ void TriggerSystem::UpdateShapes()
     }
 }
 
-void TriggerSystem::BroadPhase()
+void TriggerSystem::SimplisticBroadPhase()
 {
-    // //Reset all objects to the default color
-    // for (auto& object : objects_)
-    // {
-    //     object.set_color(SDL_Color{ 255, 13, 132, 255 });
-    // }
-    //
-    // for(int i = 0; i < objects_.size(); i++)
-    // {
-    //     for(int j = i + 1; j < objects_.size(); j++)
-    //     {
-    //         auto& collider_a = objects_[i].collider();
-    //         auto& collider_b = objects_[j].collider();
-    //         bool intersects = std::visit([](auto&& shape_a, auto&& shape_b)
-    //         {
-    //             return math::Intersect(shape_a, shape_b);
-    //         }, collider_a.shape(), collider_b.shape());
-    //
-    //         if(intersects)
-    //         {
-    //             objects_[i].set_color(SDL_Color{ 0, 255, 0, 255 });
-    //             objects_[j].set_color(SDL_Color{ 0, 255, 0, 255 });
-    //         }
-    //     }
-    // }
+    //Reset all objects to the default color
+    for (auto& object : objects_)
+    {
+        object.set_color(SDL_Color{ 255, 13, 132, 255 });
+    }
 
-    std::unordered_map<GameObjectPair, bool> newActivePairs;
+    for(int i = 0; i < objects_.size(); i++)
+    {
+        for(int j = i + 1; j < objects_.size(); j++)
+        {
+            auto& collider_a = objects_[i].collider();
+            auto& collider_b = objects_[j].collider();
+            bool intersects = std::visit([](auto&& shape_a, auto&& shape_b)
+            {
+                return math::Intersect(shape_a, shape_b);
+            }, collider_a.shape(), collider_b.shape());
+
+            if(intersects)
+            {
+                objects_[i].set_color(SDL_Color{ 0, 255, 0, 255 });
+                objects_[j].set_color(SDL_Color{ 0, 255, 0, 255 });
+            }
+        }
+    }
+}
+
+void TriggerSystem::BroadPhase() {
+    std::unordered_map<GameObjectPair, bool> newPotentialPairs;
 
     quadtree_->Clear();
     for (auto& object : objects_) {
         quadtree_->Insert(&object.collider());
     }
 
+    // Use AABB tests for broad phase
     for (auto& object : objects_) {
         auto& collider = object.collider();
+        // Get the AABB of the collider for broad phase test
         auto range = collider.GetBoundingBox();
         auto potentialColliders = quadtree_->Query(range);
 
         for (auto& otherCollider : potentialColliders) {
             if (&collider != otherCollider) {  // Avoid self-collision
-                GameObject* otherObject = collider_to_object_map_[otherCollider]; // Get the corresponding GameObject
-                GameObjectPair pair{&object, otherObject}; // Create the pair with GameObjects
-                newActivePairs[pair] = true;
+                // Only test AABB overlap in broad phase
+                if (math::Intersect(range, otherCollider->GetBoundingBox())) {
+                    GameObject* objectA = collider_to_object_map_[&collider];
+                    GameObject* objectB = collider_to_object_map_[otherCollider];
+                    if (objectA && objectB) {
+                        GameObjectPair pair{objectA, objectB};
+                        newPotentialPairs[pair] = true;
+                    }
+                }
             }
         }
     }
 
-    // Now update active_pairs_ based on newActivePairs
-    for (const auto& [pair, active] : newActivePairs) {
-        if (active_pairs_.find(pair) == active_pairs_.end()) {
-            // New collision
-            OnTriggerEnter(pair);
+    // Update the potential pairs for narrow phase to process
+    potential_pairs_ = std::move(newPotentialPairs);
+}
+
+void TriggerSystem::NarrowPhase() {
+    std::unordered_map<GameObjectPair, bool> newActivePairs;
+
+    // Process all potential pairs from broad phase
+    for (const auto& pair : potential_pairs_ | std::views::keys) {
+        // Perform precise collision test using actual collider shapes
+        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b) {
+            return math::Intersect(shape_a, shape_b);
+        }, pair.gameObjectA_->collider().shape(),
+           pair.gameObjectB_->collider().shape());
+
+        if (intersect) {
+            newActivePairs[pair] = true;
+
+            // If this is a new collision
+            if (!active_pairs_.contains(pair)) {
+                OnTriggerEnter(pair);
+            }
         }
-        active_pairs_[pair] = true;
     }
 
     // Check for collisions that have ended
     for (auto it = active_pairs_.begin(); it != active_pairs_.end();) {
-        if (newActivePairs.find(it->first) == newActivePairs.end()) {
+        if (!newActivePairs.contains(it->first)) {
             // Collision has ended
             OnTriggerExit(it->first);
             it = active_pairs_.erase(it);
@@ -150,23 +177,10 @@ void TriggerSystem::BroadPhase()
             ++it;
         }
     }
-}
 
-// void TriggerSystem::NarrowPhase() {
-//     for (auto& pair : active_pairs_) {
-//         bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
-//                 {
-//                     return math::Intersect(shape_a, shape_b);
-//                 }, pair.first.collider_a_->shape(), pair.first.collider_b_->shape());
-//         if (intersect) {
-//             //OnTriggerEnter(pair.first);
-//             pair.first.collider_a_.
-//         } else {
-//             //OnTriggerExit(pair.first);
-//             std::cout << "End intersect" << std::endl;
-//         }
-//     }
-// }
+    // Update active pairs
+    active_pairs_ = std::move(newActivePairs);
+}
 
 //Called on the first collision frame
 void TriggerSystem::OnTriggerEnter(const GameObjectPair& pair)

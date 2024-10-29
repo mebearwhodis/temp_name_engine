@@ -13,6 +13,7 @@ private:
     physics::Quadtree* quadtree_;
     std::vector<GameObject> objects_;
 
+    std::unordered_map<GameObjectPair, bool> potential_pairs_;
     std::unordered_map<GameObjectPair, bool> active_pairs_;
 
     std::unordered_map<physics::Collider*, GameObject*> collider_to_object_map_; // Mapping from Collider to GameObject
@@ -33,6 +34,7 @@ public:
     void Update();
     void UpdateShapes();
 
+    void SimplisticBroadPhase();
     void BroadPhase();
     void NarrowPhase();
 
