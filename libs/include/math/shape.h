@@ -6,33 +6,6 @@
 
 namespace math
 {
-    class Circle
-    {
-    private:
-        Vec2f center_ = Vec2f::Zero();
-        float radius_ = 0.0f;
-
-    public:
-        constexpr Circle(const Vec2f center, const float radius) : center_(center), radius_(radius){}
-
-        explicit constexpr Circle(const float radius) : center_(Vec2f::Zero()), radius_(radius){}
-
-        [[nodiscard]] constexpr Vec2f center() const { return center_; }
-        [[nodiscard]] constexpr float radius() const { return radius_; }
-
-        void set_center(const Vec2f center) { center_ = center; }
-        void set_radius(const float radius) { radius_ = radius; }
-
-        [[nodiscard]] bool Contains(Vec2f point) const
-        {
-            return (point - center_).SquareMagnitude() <= radius_ * radius_;
-        }
-
-        bool operator==(const Circle& other) const {
-            return center_ == other.center_ && radius_ == other.radius_;
-        }
-    };
-
     class AABB
     {
     private:
@@ -57,13 +30,46 @@ namespace math
             return true;
         }
 
-        static constexpr AABB AABBFromCenter(Vec2f center, Vec2f radius)
-        {
-            return AABB(center - radius, center + radius);
+        [[nodiscard]] AABB GetBoundingBox() const {
+            return *this;
         }
 
         bool operator==(const AABB& other) const {
             return min_bound_ == other.min_bound_ && max_bound_ == other.max_bound_;
+        }
+    };
+
+    class Circle
+    {
+    private:
+        Vec2f center_ = Vec2f::Zero();
+        float radius_ = 0.0f;
+
+    public:
+        constexpr Circle(const Vec2f center, const float radius) : center_(center), radius_(radius){}
+
+        explicit constexpr Circle(const float radius) : center_(Vec2f::Zero()), radius_(radius){}
+
+        [[nodiscard]] constexpr Vec2f center() const { return center_; }
+        [[nodiscard]] constexpr float radius() const { return radius_; }
+
+        void set_center(const Vec2f center) { center_ = center; }
+        void set_radius(const float radius) { radius_ = radius; }
+
+        [[nodiscard]] bool Contains(Vec2f point) const
+        {
+            return (point - center_).SquareMagnitude() <= radius_ * radius_;
+        }
+
+        [[nodiscard]] AABB GetBoundingBox() const
+        {
+            Vec2f min = center_ - Vec2f(radius_, radius_);
+            Vec2f max = center_ + Vec2f(radius_, radius_);
+            return AABB(min, max);
+        }
+
+        bool operator==(const Circle& other) const {
+            return center_ == other.center_ && radius_ == other.radius_;
         }
     };
 
@@ -80,6 +86,20 @@ namespace math
         void set_vertices(const std::vector<Vec2f>& vertices) { vertices_ = vertices; }
 
         [[nodiscard]] constexpr int VertexCount() const { return vertices_.size(); }
+
+        [[nodiscard]] AABB GetBoundingBox() const {
+            Vec2f min = vertices_[0];
+            Vec2f max = vertices_[0];
+
+            for (const auto& vertex : vertices_) {
+                min.x = std::min(min.x, vertex.x);
+                min.y = std::min(min.y, vertex.y);
+                max.x = std::max(max.x, vertex.x);
+                max.y = std::max(max.y, vertex.y);
+            }
+
+            return AABB(min, max);
+        }
 
         bool operator==(const Polygon& other) const {
             return vertices_ == other.vertices_;
@@ -98,70 +118,6 @@ namespace math
     }
 
     //Intersections between shapes
-    [[nodiscard]] constexpr bool Intersect(const Circle& circle_a, const Circle& circle_b)
-    {
-        return (circle_b.center() - circle_a.center()).SquareMagnitude() >= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
-    }
-
-    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const AABB& aabb)
-    {
-        const auto center = circle.center();
-        //Check if the AABB contains the circle's center
-        if(aabb.Contains(center)) return true;
-
-        //If not, expand the AABB bounds by the radius and check if those contain the center
-        const auto radius = circle.radius();
-        const auto min_bound = aabb.min_bound();
-        const auto max_bound = aabb.max_bound();
-
-        const auto min_bound_x = min_bound - Vec2f(radius, 0);
-        const auto max_bound_x = max_bound + Vec2f(radius, 0);
-
-        const auto min_bound_y = min_bound - Vec2f(0, radius);
-        const auto max_bound_y = max_bound + Vec2f(0, radius);
-
-        const AABB extended_x(min_bound_x, max_bound_x);
-        const AABB extended_y(min_bound_y, max_bound_y);
-
-        if(extended_x.Contains(center)) return true;
-        if(extended_y.Contains(center)) return true;
-
-        //If not, check if the circle contains one of the corners of the AABB
-        if(circle.Contains(min_bound)) return true;
-        if(circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
-        if(circle.Contains(max_bound)) return true;
-        if(circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
-
-        //If not, they don't intersect
-        return false;
-    }
-
-    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const Polygon& polygon)
-    {
-        const auto vertices = polygon.vertices();
-        const auto center = circle.center();
-        auto radius = circle.radius();
-
-        //Check if any vertex of the polygon is inside the circle
-        for(const auto& vertex : vertices)
-        {
-            if(circle.Contains(vertex)) return true;
-        }
-
-        //Check if the circle intersects with any of the polygon's edges
-        for(size_t i = 0, j = polygon.VertexCount() - 1; i < polygon.VertexCount(); j = i++)
-        {
-            const Vec2f start = vertices[i];
-            const Vec2f end = vertices[j];
-
-            if(const Vec2f closest_point = ClosestPointOnSegment(start, end, center); circle.Contains(closest_point)) return true;
-        }
-        //If no intersection is found, return false
-        return false;
-    }
-
-    [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Circle& circle) { return Intersect(circle, aabb); }
-
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb_a, const AABB& aabb_b)
     {
         if(aabb_a.max_bound().x < aabb_b.min_bound().x || aabb_a.min_bound().x > aabb_b.max_bound().x) return false;
@@ -169,7 +125,14 @@ namespace math
         return true;
     }
 
-    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const Circle& circle) { return Intersect(circle, polygon); }
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle_a, const Circle& circle_b)
+    {
+        Vec2f delta = circle_a.center() - circle_b.center();
+        float distanceSquared = delta.SquareMagnitude();
+        float radiusSum = circle_a.radius() + circle_b.radius();
+        return distanceSquared < radiusSum * radiusSum;
+        //return (circle_b.center() - circle_a.center()).SquareMagnitude() <= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
+    }
 
     [[nodiscard]] constexpr bool Intersect(const Polygon& polygon_a, const Polygon& polygon_b)
     {
@@ -217,6 +180,39 @@ namespace math
         return true;
     }
 
+    [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Circle& circle)
+    {
+        const auto center = circle.center();
+        //Check if the AABB contains the circle's center
+        if(aabb.Contains(center)) return true;
+
+        //If not, expand the AABB bounds by the radius and check if those contain the center
+        const auto radius = circle.radius();
+        const auto min_bound = aabb.min_bound();
+        const auto max_bound = aabb.max_bound();
+
+        const auto min_bound_x = min_bound - Vec2f(radius, 0);
+        const auto max_bound_x = max_bound + Vec2f(radius, 0);
+
+        const auto min_bound_y = min_bound - Vec2f(0, radius);
+        const auto max_bound_y = max_bound + Vec2f(0, radius);
+
+        const AABB extended_x(min_bound_x, max_bound_x);
+        const AABB extended_y(min_bound_y, max_bound_y);
+
+        if(extended_x.Contains(center)) return true;
+        if(extended_y.Contains(center)) return true;
+
+        //If not, check if the circle contains one of the corners of the AABB
+        if(circle.Contains(min_bound)) return true;
+        if(circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
+        if(circle.Contains(max_bound)) return true;
+        if(circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
+
+        //If not, they don't intersect
+        return false;
+    }
+
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Polygon& polygon)
     {
         const std::vector<Vec2f> aabb_vertices = {
@@ -228,6 +224,34 @@ namespace math
         const Polygon aabb_polygon(aabb_vertices);
         return Intersect(polygon, aabb_polygon);
     }
+
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const Polygon& polygon)
+    {
+        const auto vertices = polygon.vertices();
+        const auto center = circle.center();
+        auto radius = circle.radius();
+
+        //Check if any vertex of the polygon is inside the circle
+        for(const auto& vertex : vertices)
+        {
+            if(circle.Contains(vertex)) return true;
+        }
+
+        //Check if the circle intersects with any of the polygon's edges
+        for(size_t i = 0, j = polygon.VertexCount() - 1; i < polygon.VertexCount(); j = i++)
+        {
+            const Vec2f start = vertices[i];
+            const Vec2f end = vertices[j];
+
+            if(const Vec2f closest_point = ClosestPointOnSegment(start, end, center); circle.Contains(closest_point)) return true;
+        }
+        //If no intersection is found, return false
+        return false;
+    }
+
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const AABB& aabb){ return Intersect(aabb, circle); }
+
+    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const Circle& circle) { return Intersect(circle, polygon); }
 
     [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const AABB& aabb) { return Intersect(aabb, polygon); }
 }

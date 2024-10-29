@@ -3,12 +3,14 @@
 #include <vector>
 
 #include "game_object.h"
+#include "physics/quadtree.h"
 
 
 class TriggerSystem {
 private:
     static constexpr size_t starting_number_of_shapes_ = 50;
 
+    physics::Quadtree* quadtree_;
     std::vector<GameObject> objects_;
 public:
     TriggerSystem();
@@ -22,8 +24,8 @@ public:
     void Update();
     void UpdateShapes();
 
-    void SolveBroadPhase();
-    void SolveNarrowPhase();
+    void BroadPhase();
+    void NarrowPhase();
 
     void OnTriggerEnter();
     void OnTriggerExit();

@@ -38,6 +38,12 @@ namespace physics
   void set_friction(const float friction){ friction_ = friction; }
   void set_is_trigger(const bool is_trigger){ is_trigger_ = is_trigger; }
 
+  [[nodiscard]] math::AABB GetBoundingBox() const {
+   return std::visit([](auto&& shape) {
+       return shape.GetBoundingBox();
+   }, shape_);
+  }
+
   bool operator==(const Collider& other) const
   {
    return shape_ == other.shape_ &&
