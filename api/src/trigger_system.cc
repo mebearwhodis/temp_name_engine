@@ -6,7 +6,7 @@
 
 TriggerSystem::TriggerSystem()
 {
-    quadtree_ = new physics::Quadtree();
+    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0,0), math::Vec2f(1200,800)));
     for(size_t i = 0; i < starting_number_of_shapes_; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
@@ -97,8 +97,52 @@ void TriggerSystem::BroadPhase()
     //         }
     //     }
     // }
+
+    quadtree_->Clear();
+    for (auto& object : objects_) {
+        quadtree_->Insert(&object.collider()); // Assuming Insert now accepts Collider*
+    }
+
+    for (auto& object : objects_) {
+        auto& collider = object.collider();
+        auto range = collider.GetBoundingBox();
+        auto potentialColliders = quadtree_->Query(range);
+
+        for (auto& shape : potentialColliders) {
+            // Assuming shape corresponds to a collider in your objects_ vector
+            for (auto& otherObject : objects_) {
+                bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                {
+                    return math::Intersect(shape_a, shape_b);
+                }, object.collider().shape(), otherObject.collider().shape());
+                if (intersect) {
+                    physics::ColliderPair pair{ &collider, &otherObject.collider() };
+                    activePairs_[pair] = true; // Add to active pairs
+                }
+            }
+        }
+    }
 }
 
-void TriggerSystem::NarrowPhase()
+void TriggerSystem::NarrowPhase() {
+    for (auto& pair : activePairs_) {
+        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                {
+                    return math::Intersect(shape_a, shape_b);
+                }, pair.first.collider_a_->shape(), pair.first.collider_b_->shape());
+        if (intersect) {
+            //OnTriggerEnter(pair.first);
+        } else {
+            //OnTriggerExit(pair.first);
+        }
+    }
+}
+
+void TriggerSystem::OnTriggerEnter(physics::ColliderPair& pair)
+{
+
+}
+
+void TriggerSystem::OnTriggerExit(physics::ColliderPair& pair)
 {
 }

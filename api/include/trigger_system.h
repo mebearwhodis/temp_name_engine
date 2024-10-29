@@ -12,6 +12,9 @@ private:
 
     physics::Quadtree* quadtree_;
     std::vector<GameObject> objects_;
+
+    std::unordered_map<physics::ColliderPair, bool> activePairs_;
+
 public:
     TriggerSystem();
 
@@ -27,8 +30,8 @@ public:
     void BroadPhase();
     void NarrowPhase();
 
-    void OnTriggerEnter();
-    void OnTriggerExit();
+    void OnTriggerEnter(physics::ColliderPair& pair);
+    void OnTriggerExit(physics::ColliderPair& pair);
 };
 
 
