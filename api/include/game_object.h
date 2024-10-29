@@ -11,10 +11,14 @@ private:
     physics::Body body_;
     physics::Collider collider_;
     float radius_ = 0.f;
-    SDL_Color color_ = SDL_Color{ 255, 13, 132, 255 };
+    SDL_Color color_ = SDL_Color{255, 13, 132, 255};
 
 public:
-    GameObject(const physics::Body& body, const physics::Collider& collider, const float radius) : body_(body), collider_(collider), radius_(radius) {}
+    GameObject(const physics::Body& body, const physics::Collider& collider, const float radius) : body_(body),
+        collider_(collider), radius_(radius)
+    {
+    }
+
     ~GameObject() = default;
 
     [[nodiscard]] physics::Body& body() { return body_; }
@@ -27,5 +31,33 @@ public:
     void set_collider(const physics::Collider& collider) { collider_ = collider; }
     void set_radius(const float radius) { radius_ = radius; }
     void set_color(const SDL_Color& color) { color_ = color; }
+};
+
+struct GameObjectPair
+{
+    GameObject* gameObjectA_;
+    GameObject* gameObjectB_;
+
+    bool operator==(const GameObjectPair& other) const
+    {
+        return (gameObjectA_ == other.gameObjectA_ && gameObjectB_ == other.gameObjectB_) ||
+            (gameObjectA_ == other.gameObjectB_ && gameObjectB_ == other.gameObjectA_);
+    }
+};
+
+namespace std
+{
+    template <>
+    struct std::hash<GameObjectPair>
+    {
+        std::size_t operator()(const GameObjectPair& pair) const noexcept
+        {
+            //Hash the pointer values
+            std::size_t h1 = std::hash<const GameObject*>{}(pair.gameObjectA_);
+            std::size_t h2 = std::hash<const GameObject*>{}(pair.gameObjectB_);
+            //Combine hashes
+            return h1 ^ (h2 << 1);
+        }
+    };
 };
 #endif //GAME_OBJECT_H

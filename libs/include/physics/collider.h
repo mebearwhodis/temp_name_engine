@@ -54,28 +54,34 @@ namespace physics
   }
  };
 
- struct ColliderPair
- {
-  Collider* collider_a_;
-  Collider* collider_b_;
-
-  bool operator==(const ColliderPair& other) const
-  {
-   return (collider_a_ == other.collider_a_ && collider_b_ == other.collider_b_) ||
-          (collider_a_ == other.collider_b_ && collider_b_ == other.collider_a_);
-  }
-
-  struct Hash
-  {
-   std::size_t operator()(const ColliderPair& pair) const
-   {
-    //Hash the pointer values
-    std::size_t h1 = std::hash<const Collider*>{}(pair.collider_a_);
-    std::size_t h2 = std::hash<const Collider*>{}(pair.collider_b_);
-    //Combine hashes
-    return h1 ^ (h2 << 1);
-   }
-  };
- };
+//  struct ColliderPair
+//  {
+//   Collider* collider_a_;
+//   Collider* collider_b_;
+//
+//   bool operator==(const ColliderPair& other) const
+//   {
+//    return (collider_a_ == other.collider_a_ && collider_b_ == other.collider_b_) ||
+//           (collider_a_ == other.collider_b_ && collider_b_ == other.collider_a_);
+//   }
+//  };
+//
+//
+// }
+// namespace std
+// {
+//  template <>
+//  struct std::hash<physics::ColliderPair>
+//  {
+//   std::size_t operator()(const physics::ColliderPair& pair) const noexcept
+//   {
+//    //Hash the pointer values
+//    std::size_t h1 = std::hash<const physics::Collider*>{}(pair.collider_a_);
+//    std::size_t h2 = std::hash<const physics::Collider*>{}(pair.collider_b_);
+//    //Combine hashes
+//    return h1 ^ (h2 << 1);
+//   }
+//  };
 }
+
 #endif //COLLIDER_H

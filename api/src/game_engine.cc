@@ -100,6 +100,7 @@ void GameEngine::Run()
             shape_manager_->indices().data(),
             shape_manager_->indices().size());
 
+        trigger_system_->quadtree()->Draw(display_->renderer());
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());

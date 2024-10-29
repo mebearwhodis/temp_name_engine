@@ -22,14 +22,26 @@ void TriggerSystem::CreateObject(math::Circle& circle)
     physics::Body body(circle.center(), velocity, 0);
     physics::Collider collider(circle, 0, 0, true);
     GameObject object(body, collider, circle.radius());
+
+    RegisterObject(object);
     objects_.push_back(object);
+}
+
+void TriggerSystem::RegisterObject(GameObject& object)
+{
+    collider_to_object_map_[&object.collider()] = &object;
+}
+
+void TriggerSystem::UnregisterObject(GameObject& object)
+{
+    collider_to_object_map_.erase(&object.collider());
 }
 
 void TriggerSystem::Update()
 {
     UpdateShapes();
     BroadPhase();
-    NarrowPhase();
+    // NarrowPhase();
 }
 
 void TriggerSystem::UpdateShapes()
@@ -98,9 +110,11 @@ void TriggerSystem::BroadPhase()
     //     }
     // }
 
+    std::unordered_map<GameObjectPair, bool> newActivePairs;
+
     quadtree_->Clear();
     for (auto& object : objects_) {
-        quadtree_->Insert(&object.collider()); // Assuming Insert now accepts Collider*
+        quadtree_->Insert(&object.collider());
     }
 
     for (auto& object : objects_) {
@@ -108,41 +122,70 @@ void TriggerSystem::BroadPhase()
         auto range = collider.GetBoundingBox();
         auto potentialColliders = quadtree_->Query(range);
 
-        for (auto& shape : potentialColliders) {
-            // Assuming shape corresponds to a collider in your objects_ vector
-            for (auto& otherObject : objects_) {
-                bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
-                {
-                    return math::Intersect(shape_a, shape_b);
-                }, object.collider().shape(), otherObject.collider().shape());
-                if (intersect) {
-                    physics::ColliderPair pair{ &collider, &otherObject.collider() };
-                    activePairs_[pair] = true; // Add to active pairs
-                }
+        for (auto& otherCollider : potentialColliders) {
+            if (&collider != otherCollider) {  // Avoid self-collision
+                GameObject* otherObject = collider_to_object_map_[otherCollider]; // Get the corresponding GameObject
+                GameObjectPair pair{&object, otherObject}; // Create the pair with GameObjects
+                newActivePairs[pair] = true;
             }
         }
     }
-}
 
-void TriggerSystem::NarrowPhase() {
-    for (auto& pair : activePairs_) {
-        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
-                {
-                    return math::Intersect(shape_a, shape_b);
-                }, pair.first.collider_a_->shape(), pair.first.collider_b_->shape());
-        if (intersect) {
-            //OnTriggerEnter(pair.first);
+    // Now update active_pairs_ based on newActivePairs
+    for (const auto& [pair, active] : newActivePairs) {
+        if (active_pairs_.find(pair) == active_pairs_.end()) {
+            // New collision
+            OnTriggerEnter(pair);
+        }
+        active_pairs_[pair] = true;
+    }
+
+    // Check for collisions that have ended
+    for (auto it = active_pairs_.begin(); it != active_pairs_.end();) {
+        if (newActivePairs.find(it->first) == newActivePairs.end()) {
+            // Collision has ended
+            OnTriggerExit(it->first);
+            it = active_pairs_.erase(it);
         } else {
-            //OnTriggerExit(pair.first);
+            ++it;
         }
     }
 }
 
-void TriggerSystem::OnTriggerEnter(physics::ColliderPair& pair)
-{
+// void TriggerSystem::NarrowPhase() {
+//     for (auto& pair : active_pairs_) {
+//         bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+//                 {
+//                     return math::Intersect(shape_a, shape_b);
+//                 }, pair.first.collider_a_->shape(), pair.first.collider_b_->shape());
+//         if (intersect) {
+//             //OnTriggerEnter(pair.first);
+//             pair.first.collider_a_.
+//         } else {
+//             //OnTriggerExit(pair.first);
+//             std::cout << "End intersect" << std::endl;
+//         }
+//     }
+// }
 
+//Called on the first collision frame
+void TriggerSystem::OnTriggerEnter(const GameObjectPair& pair)
+{
+    if (pair.gameObjectA_) {
+        pair.gameObjectA_->set_color(SDL_Color{ 0, 255, 0, 255 });
+    }
+    if (pair.gameObjectB_) {
+        pair.gameObjectB_->set_color(SDL_Color{ 0, 255, 0, 255 });
+    }
 }
 
-void TriggerSystem::OnTriggerExit(physics::ColliderPair& pair)
+//Called on the last collision frame
+void TriggerSystem::OnTriggerExit(const GameObjectPair& pair)
 {
+    if (pair.gameObjectA_) {
+        pair.gameObjectA_->set_color(SDL_Color{ 255, 13, 132, 255 }); // Revert to original color
+    }
+    if (pair.gameObjectB_) {
+        pair.gameObjectB_->set_color(SDL_Color{ 255, 13, 132, 255 }); // Revert to original color
+    }
 }
