@@ -1,6 +1,5 @@
 ﻿#include "trigger_system.h"
 
-#include <iostream>
 #include <ranges>
 
 #include "random.h"
@@ -8,24 +7,24 @@
 TriggerSystem::TriggerSystem()
 {
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0,0), math::Vec2f(1200,800)));
-    for(size_t i = 0; i < starting_number_of_shapes_; i++)
+    for(size_t i = 0; i < kNumberOfShapes; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
         float radius = random::Range(5.f, 20.f);
         math::Circle circle(position, radius);
-        CreateObject(circle);
+        CreateObject(i, circle);
     }
 }
 
-void TriggerSystem::CreateObject(math::Circle& circle)
+void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
 {
     math::Vec2f velocity(random::Range(-0.05f, 0.05f), random::Range(-0.05f, 0.05f));
     physics::Body body(circle.center(), velocity, 0);
     physics::Collider collider(circle, 0, 0, true);
     GameObject object(body, collider, circle.radius());
 
-    RegisterObject(object);
-    objects_.push_back(object);
+    objects_[index] = object;
+    RegisterObject(objects_[index]);
 }
 
 void TriggerSystem::RegisterObject(GameObject& object)
@@ -149,9 +148,11 @@ void TriggerSystem::BroadPhase() {
 void TriggerSystem::NarrowPhase() {
     std::unordered_map<GameObjectPair, bool> newActivePairs;
 
-    // Process all potential pairs from broad phase
     for (const auto& pair : potential_pairs_ | std::views::keys) {
-        // Perform precise collision test using actual collider shapes
+        if (!pair.gameObjectA_ || !pair.gameObjectB_) {
+            continue;
+        }
+
         bool intersect = std::visit([](auto&& shape_a, auto&& shape_b) {
             return math::Intersect(shape_a, shape_b);
         }, pair.gameObjectA_->collider().shape(),
@@ -167,18 +168,13 @@ void TriggerSystem::NarrowPhase() {
         }
     }
 
-    // Check for collisions that have ended
-    for (auto it = active_pairs_.begin(); it != active_pairs_.end();) {
-        if (!newActivePairs.contains(it->first)) {
-            // Collision has ended
-            OnTriggerExit(it->first);
-            it = active_pairs_.erase(it);
-        } else {
-            ++it;
+    // Check for ended collisions
+    for (const auto& [pair, _] : active_pairs_) {
+        if (!newActivePairs.contains(pair)) {
+            OnTriggerExit(pair);
         }
     }
 
-    // Update active pairs
     active_pairs_ = std::move(newActivePairs);
 }
 

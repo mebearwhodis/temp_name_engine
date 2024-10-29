@@ -14,10 +14,9 @@ private:
     SDL_Color color_ = SDL_Color{255, 13, 132, 255};
 
 public:
+    GameObject() = default;
     GameObject(const physics::Body& body, const physics::Collider& collider, const float radius) : body_(body),
-        collider_(collider), radius_(radius)
-    {
-    }
+        collider_(collider), radius_(radius){}
 
     ~GameObject() = default;
 

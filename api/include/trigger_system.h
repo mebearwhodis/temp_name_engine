@@ -8,10 +8,10 @@
 
 class TriggerSystem {
 private:
-    static constexpr size_t starting_number_of_shapes_ = 200;
+    static constexpr size_t kNumberOfShapes = 20;
 
     physics::Quadtree* quadtree_;
-    std::vector<GameObject> objects_;
+    std::array<GameObject, kNumberOfShapes> objects_ = {};
 
     std::unordered_map<GameObjectPair, bool> potential_pairs_;
     std::unordered_map<GameObjectPair, bool> active_pairs_;
@@ -21,10 +21,10 @@ private:
 public:
     TriggerSystem();
 
-    std::vector<GameObject> objects() { return objects_; };
+    std::array<GameObject, kNumberOfShapes> objects() { return objects_; };
     physics::Quadtree* quadtree() const { return quadtree_; };
 
-    void CreateObject(math::Circle& circle);
+    void CreateObject(size_t index, math::Circle& circle);
     void CreateObject(math::AABB& aabb);
     void CreateObject(math::Polygon& polygon);
 
