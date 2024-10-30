@@ -1,8 +1,7 @@
-﻿#include "graphical_shape.h"
-
+﻿#include "graphics_manager.h"
 #include "common.h"
 
-void GraphicalShape::AddVertex(const math::Vec2f position, const SDL_Color color)
+void GraphicsManager::AddVertex(const math::Vec2f position, const SDL_Color color)
 {
     SDL_Vertex vertex;
     vertex.position.x = position.x;
@@ -14,13 +13,13 @@ void GraphicalShape::AddVertex(const math::Vec2f position, const SDL_Color color
     vertices_.push_back(vertex);
 }
 
-void GraphicalShape::Clear()
+void GraphicsManager::Clear()
 {
     vertices_.clear();
     indices_.clear();
 }
 
-void GraphicalShape::CreateCircle(math::Vec2f center, float radius, SDL_Color color)
+void GraphicsManager::CreateCircle(const math::Vec2f center, const float radius, const SDL_Color color)
 {
     //Track where the new circle's vertices start
     const size_t starting_index = vertices_.size();
@@ -33,7 +32,7 @@ void GraphicalShape::CreateCircle(math::Vec2f center, float radius, SDL_Color co
     //Generate vertices
     for (size_t i = 0; i < kCircleVertexCount; i++)
     {
-        const float angle = i * angle_step;
+        const float angle = static_cast<float>(i) * angle_step;
         const float x = center.x + radius * std::cos(angle);
         const float y = center.y + radius * std::sin(angle);
 
@@ -43,15 +42,15 @@ void GraphicalShape::CreateCircle(math::Vec2f center, float radius, SDL_Color co
     //Generate indices
     for (size_t i = 0; i < kCircleVertexCount - 1; i++)
     {
-        indices_.push_back(starting_index);          // Center vertex
-        indices_.push_back(starting_index + i + 1);  // Current outer vertex
-        indices_.push_back(starting_index + i + 2);  // Next outer vertex
+        indices_.push_back(static_cast<int>(starting_index));          //Center vertex
+        indices_.push_back(static_cast<int>(starting_index) + i + 1);  //Current outer vertex
+        indices_.push_back(static_cast<int>(starting_index) + i + 2);  //Next outer vertex
     }
 
 
     //Last triangle, closing the circle
-    indices_.push_back(starting_index);
-    indices_.push_back(starting_index + kCircleVertexCount);
-    indices_.push_back(starting_index + 1);
+    indices_.push_back(static_cast<int>(starting_index));
+    indices_.push_back(static_cast<int>(starting_index) + kCircleVertexCount);
+    indices_.push_back(static_cast<int>(starting_index) + 1);
 
 }

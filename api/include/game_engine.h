@@ -6,16 +6,18 @@
 #include "display.h"
 #include "imgui_interface.h"
 #include "planet_system.h"
-#include "graphical_shape.h"
+#include "graphics_manager.h"
 #include "trigger_system.h"
+
 
 class GameEngine
 {
 private:
+    int selected_system_= 0; //This will change, it's a temporary way to switch systems
     bool is_running_;
 
     Display* display_;
-    GraphicalShape* shape_manager_;
+    GraphicsManager* graphics_manager_;
     PlanetSystem* planet_system_;
     TriggerSystem* trigger_system_;
 

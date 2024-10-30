@@ -17,6 +17,7 @@ public:
     GameObject() = default;
     GameObject(const physics::Body& body, const physics::Collider& collider, const float radius) : body_(body),
         collider_(collider), radius_(radius){}
+    GameObject(const physics::Body& body, const float radius, const SDL_Color& color) : body_(body), radius_(radius), color_(color){}
 
     ~GameObject() = default;
 

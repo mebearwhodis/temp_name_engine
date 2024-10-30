@@ -13,7 +13,8 @@ namespace math
         Vec2f max_bound_ = Vec2f::Zero();
 
     public:
-        constexpr AABB(Vec2f min_bound, Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound){}
+        constexpr AABB(const Vec2f min_bound, const Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound){}
+        AABB() = default;
 
         [[nodiscard]] constexpr Vec2f min_bound() const { return min_bound_; }
         [[nodiscard]] constexpr Vec2f max_bound() const { return max_bound_; }
@@ -21,7 +22,7 @@ namespace math
         void set_min_bound(const Vec2f bound) { min_bound_ = bound; }
         void set_max_bound(const Vec2f bound) { max_bound_ = bound; }
 
-        [[nodiscard]] constexpr bool Contains(Vec2f point) const
+        [[nodiscard]] constexpr bool Contains(const Vec2f point) const
         {
             if (point.x < min_bound_.x) return false;
             if (point.x > max_bound_.x) return false;
@@ -56,16 +57,17 @@ namespace math
         void set_center(const Vec2f center) { center_ = center; }
         void set_radius(const float radius) { radius_ = radius; }
 
-        [[nodiscard]] bool Contains(Vec2f point) const
+        [[nodiscard]] bool Contains(const Vec2f point) const
         {
             return (point - center_).SquareMagnitude() <= radius_ * radius_;
         }
 
         [[nodiscard]] AABB GetBoundingBox() const
         {
-            Vec2f min = center_ - Vec2f(radius_, radius_);
-            Vec2f max = center_ + Vec2f(radius_, radius_);
-            return AABB(min, max);
+            const Vec2f min = center_ - Vec2f(radius_, radius_);
+            const Vec2f max = center_ + Vec2f(radius_, radius_);
+            const AABB box(min, max);
+            return box;
         }
 
         bool operator==(const Circle& other) const {
@@ -127,9 +129,9 @@ namespace math
 
     [[nodiscard]] constexpr bool Intersect(const Circle& circle_a, const Circle& circle_b)
     {
-        Vec2f delta = circle_a.center() - circle_b.center();
-        float distanceSquared = delta.SquareMagnitude();
-        float radiusSum = circle_a.radius() + circle_b.radius();
+        const Vec2f delta = circle_a.center() - circle_b.center();
+        const float distanceSquared = delta.SquareMagnitude();
+        const float radiusSum = circle_a.radius() + circle_b.radius();
         return distanceSquared < radiusSum * radiusSum;
         //return (circle_b.center() - circle_a.center()).SquareMagnitude() <= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
     }

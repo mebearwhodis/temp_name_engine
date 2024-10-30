@@ -10,7 +10,7 @@ TriggerSystem::TriggerSystem()
     for(size_t i = 0; i < kNumberOfShapes; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        float radius = random::Range(5.f, 20.f);
+        const float radius = random::Range(5.f, 20.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
@@ -72,12 +72,11 @@ void TriggerSystem::UpdateShapes()
         body.set_position(position);
         body.set_velocity(velocity);
 
-        // Update the collider's position
+        //Update the collider's position
         collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon> {
             if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>) {
                 shape.set_center(position);
             }
-            // Add cases for other shape types if needed
             return shape;
         }, collider.shape()));
     }
@@ -112,7 +111,7 @@ void TriggerSystem::SimplisticBroadPhase()
 }
 
 void TriggerSystem::BroadPhase() {
-    std::unordered_map<GameObjectPair, bool> newPotentialPairs;
+    std::unordered_map<GameObjectPair, bool> new_potential_pairs;
 
     quadtree_->Clear();
     for (auto& object : objects_) {
@@ -134,7 +133,7 @@ void TriggerSystem::BroadPhase() {
                     GameObject* objectB = collider_to_object_map_[otherCollider];
                     if (objectA && objectB) {
                         GameObjectPair pair{objectA, objectB};
-                        newPotentialPairs[pair] = true;
+                        new_potential_pairs[pair] = true;
                     }
                 }
             }
@@ -142,7 +141,7 @@ void TriggerSystem::BroadPhase() {
     }
 
     // Update the potential pairs for narrow phase to process
-    potential_pairs_ = std::move(newPotentialPairs);
+    potential_pairs_ = std::move(new_potential_pairs);
 }
 
 void TriggerSystem::NarrowPhase() {
@@ -189,6 +188,7 @@ void TriggerSystem::OnTriggerEnter(const GameObjectPair& pair)
     }
 }
 
+//TODO: find a way to check if it's still colliding with something else when Exit
 //Called on the last collision frame
 void TriggerSystem::OnTriggerExit(const GameObjectPair& pair)
 {

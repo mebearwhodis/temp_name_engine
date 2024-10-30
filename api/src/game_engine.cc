@@ -5,12 +5,13 @@
 #include <ostream>
 #include <SDL_events.h>
 
+#include "random.h"
 
 
 GameEngine::GameEngine()
 {
     display_ = new Display();
-    shape_manager_ = new GraphicalShape();
+    graphics_manager_ = new GraphicsManager();
     planet_system_ = new PlanetSystem();
     trigger_system_ = new TriggerSystem();
     is_running_ = true;
@@ -24,7 +25,7 @@ GameEngine::~GameEngine()
     delete imgui_interface_;
     delete trigger_system_;
     delete planet_system_;
-    delete shape_manager_;
+    delete graphics_manager_;
     delete display_;
 }
 
@@ -51,11 +52,21 @@ void GameEngine::HandleEvents()
         {
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                // PLANET SYSTEM:
-                // int mouse_x, mouse_y;
-                // SDL_GetMouseState(&mouse_x, &mouse_y);
-                // auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
-                // planet_system_->CreatePlanet(mouse_pos, 20);
+                if(selected_system_ == 0)
+                {
+                    // PLANET SYSTEM:
+                    planet_system_->ToggleSpawner();
+                }
+            }
+        }
+        else if (event.type == SDL_MOUSEBUTTONUP)
+        {
+            if (event.button.button == SDL_BUTTON_LEFT)
+            {
+                if(selected_system_ == 0)
+                {
+                    planet_system_->ToggleSpawner();
+                }
             }
         }
     }
@@ -70,37 +81,53 @@ void GameEngine::Run()
     while (is_running_)
     {
         //Update()
-
         HandleEvents();
 
         imgui_interface_->Update(is_running_);
 
         display_->Clear();
-        shape_manager_->Clear();
+        graphics_manager_->Clear();
 
         //PLANET SYSTEM:
-        //planet_system_->UpdatePlanetsSIMD();
-        // for(auto p : planet_system_->planets())
-        // {
-        //     shape_manager_->CreateCircle(p.position(), 50, SDL_Color{ 255, 13, 132, 255 });
-        // }
+        if(selected_system_ == 0)
+        {
+            int mouse_x, mouse_y;
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+            const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+            planet_system_->SpawnPlanets(mouse_pos);
+
+
+            planet_system_->UpdatePlanetsSIMD();
+             for(auto p : planet_system_->planets())
+             {
+                 graphics_manager_->CreateCircle(p.position(), p.radius(), p.color());
+             }
+        }
+
 
         //TRIGGER SYSTEM:
-        trigger_system_->Update();
-        for(auto g : trigger_system_->objects())
+        if(selected_system_ == 1)
         {
-            shape_manager_->CreateCircle(g.position(), g.radius(), g.color());
+            trigger_system_->Update();
+            for(auto g : trigger_system_->objects())
+            {
+                graphics_manager_->CreateCircle(g.position(), g.radius(), g.color());
+            }
         }
+
 
         //Render
         SDL_RenderGeometry(display_->renderer(),
             nullptr,
-            shape_manager_->vertices().data(),
-            shape_manager_->vertices().size(),
-            shape_manager_->indices().data(),
-            shape_manager_->indices().size());
+            graphics_manager_->vertices().data(),
+            graphics_manager_->vertices().size(),
+            graphics_manager_->indices().data(),
+            graphics_manager_->indices().size());
 
-        trigger_system_->quadtree()->Draw(display_->renderer());
+        if(selected_system_ == 1)
+        {
+            trigger_system_->quadtree()->Draw(display_->renderer());
+        }
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());

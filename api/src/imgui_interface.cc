@@ -16,15 +16,15 @@ void ImGuiInterface::Initialize(Display* display)
 
 void ImGuiInterface::Update(bool& show_imgui)
 {
-    // Start new ImGui frame
+    //Start new ImGui frame
     ImGui_ImplSDLRenderer2_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    // Render ImGui window with a checkbox
+    //Render ImGui window with a checkbox
     if (show_imgui) {
         ImGui::ShowDemoWindow();
-        // Create a window called "My First Tool", with a menu bar.
+        //Create a window called "My First Tool", with a menu bar.
         ImGui::Begin("Dagobert", nullptr, ImGuiWindowFlags_MenuBar);
         if (ImGui::BeginMenuBar())
         {
@@ -43,7 +43,7 @@ void ImGuiInterface::Update(bool& show_imgui)
 
 void ImGuiInterface::Render()
 {
-    // Render ImGui on top of SDL renderer
+    //Render ImGui on top of SDL renderer
     ImGui::Render();
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
 }
@@ -55,7 +55,7 @@ void ImGuiInterface::PassEvents(SDL_Event& event)
 
 ImGuiInterface::~ImGuiInterface()
 {
-    // Cleanup ImGui
+    //Cleanup ImGui
     ImGui_ImplSDLRenderer2_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();

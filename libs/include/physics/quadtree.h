@@ -14,19 +14,19 @@ namespace physics
     static constexpr int kMaxDepth_ = 5;
     static constexpr int kMaxShapeCount_ = 8;
 
-    struct QuadtreeNode
+    struct QuadtreeNode //TODO: make it a class with private things, and ideally no methods (see nekophysics)
     {
-        math::AABB bounding_box_;
-        std::array<std::unique_ptr<QuadtreeNode>, 4> children_; // Unique pointers for automatic memory management
-        std::vector<Collider*> colliders_; // Colliders stored in each node
+        math::AABB bounding_box_{};
+        std::array<std::unique_ptr<QuadtreeNode>, 4> children_{}; //Unique pointers for automatic memory management
+        std::vector<Collider*> colliders_; //Colliders stored in each node
         int depth_;
 
-        explicit QuadtreeNode(const math::AABB& box, int depth = 0)
+        explicit QuadtreeNode(const math::AABB& box, const int depth = 0)
             : bounding_box_(box), depth_(depth)
         {
         }
 
-        // Subdivide the node into 4 child quadrants
+        //Subdivide the node into 4 child quadrants
         void Subdivide()
         {
             math::Vec2f halfSize = (bounding_box_.max_bound() - bounding_box_.min_bound()) * 0.5f;
@@ -44,7 +44,7 @@ namespace physics
             children_[3] = std::make_unique<QuadtreeNode>(math::AABB(center, bounding_box_.max_bound()), depth_ + 1);
         }
 
-        // Insert a collider into this node or its children
+        //Insert a collider into this node or its children
         bool Insert(Collider* collider)
         {
             math::AABB shapeAABB = collider->GetBoundingBox();
@@ -73,11 +73,11 @@ namespace physics
                 }
             }
 
-            colliders_.push_back(collider); // If shape overlaps multiple quadrants, keep it in this node
+            colliders_.push_back(collider); //If shape overlaps multiple quadrants, keep it in this node
             return true;
         }
 
-        // Query colliders within a given area
+        //Query colliders within a given area
         void Query(const math::AABB& range, std::vector<Collider*>& foundColliders) const
         {
             if (!math::Intersect(bounding_box_, range))
@@ -102,20 +102,20 @@ namespace physics
             }
         }
 
-        // Method to draw the quadtree node
+        //Method to draw the quadtree node
         void Draw(SDL_Renderer* renderer) const
         {
-            // Draw the bounding box of this node
+            //Draw the bounding box of this node
             SDL_Rect rect;
             rect.x = static_cast<int>(bounding_box_.min_bound().x);
             rect.y = static_cast<int>(bounding_box_.min_bound().y);
             rect.w = static_cast<int>(bounding_box_.max_bound().x - bounding_box_.min_bound().x);
             rect.h = static_cast<int>(bounding_box_.max_bound().y - bounding_box_.min_bound().y);
 
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Set color to white
-            SDL_RenderDrawRect(renderer, &rect); // Draw the rectangle
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderDrawRect(renderer, &rect); //Draw the rectangle
 
-            // Recursively draw the children
+            //Recursively draw the children
             for (const auto& child : children_)
             {
                 if (child)
@@ -157,7 +157,7 @@ namespace physics
             root_ = std::make_unique<QuadtreeNode>(root_->bounding_box_);
         }
 
-        // Method to draw the quadtree
+        //Method to draw the quadtree, for testing purposes
         void Draw(SDL_Renderer* renderer) const
         {
             root_->Draw(renderer);

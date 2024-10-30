@@ -26,6 +26,8 @@ Display::Display()
         printf("Failed to create renderer: %s\n", SDL_GetError());
         exit(1);
     }
+
+    SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
 }
 
 Display::~Display()

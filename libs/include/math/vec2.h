@@ -82,13 +82,13 @@ namespace math
         //this is safe because we have a check but we could get rid of it to gain speed
         //(context is everything, we know our classes and won’t use an index that is out of range)
 
-        T& operator[](int index) {
+        T& operator[](const int index) {
             if (index == 0) return x;
             if (index == 1) return y;
             throw std::out_of_range("Index out of range for Vec2");
         }
 
-        const T& operator[](int index) const {
+        const T& operator[](const int index) const {
             if (index == 0) return x;
             if (index == 1) return y;
             throw std::out_of_range("Index out of range for Vec2");

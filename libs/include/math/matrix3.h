@@ -54,14 +54,14 @@ namespace math
         }
 
         // Access row by index
-        Vec3<T>& operator[](int index) {
+        Vec3<T>& operator[](const int index) {
             if (index == 0) return rows[0];
             if (index == 1) return rows[1];
             if (index == 2) return rows[2];
             throw std::out_of_range("Index out of range for matrix3");
         }
 
-        const Vec3<T>& operator[](int index) const {
+        const Vec3<T>& operator[](const int index) const {
             if (index == 0) return rows[0];
             if (index == 1) return rows[1];
             if (index == 2) return rows[2];

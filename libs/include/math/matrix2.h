@@ -46,13 +46,13 @@ namespace math
         }
 
         // Access row by index
-        Vec2<T>& operator[](int index) {
+        Vec2<T>& operator[](const int index) {
             if (index == 0) return rows[0];
             if (index == 1) return rows[1];
             throw std::out_of_range("Index out of range for matrix2");
         }
 
-        const Vec2<T>& operator[](int index) const {
+        const Vec2<T>& operator[](const int index) const {
             if (index == 0) return rows[0];
             if (index == 1) return rows[1];
             throw std::out_of_range("Index out of range for matrix2");

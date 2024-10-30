@@ -69,14 +69,14 @@ namespace math
             return { x / scalar, y / scalar, z / scalar };
         }
 
-        T& operator[](int index) {
+        T& operator[](const int index) {
             if (index == 0) return x;
             if (index == 1) return y;
             if (index == 2) return z;
             throw std::out_of_range("Index out of range for Vec3");
         }
 
-        const T& operator[](int index) const {
+        const T& operator[](const int index) const {
             if (index == 0) return x;
             if (index == 1) return y;
             if (index == 2) return z;
