@@ -1,6 +1,6 @@
 ﻿#include "timer.h"
 
-void Timer::Initialize() noexcept
+Timer::Timer()
 {
     starting_time_ = std::chrono::high_resolution_clock::now();
 }

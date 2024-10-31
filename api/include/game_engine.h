@@ -7,6 +7,7 @@
 #include "imgui_interface.h"
 #include "planet_system.h"
 #include "graphics_manager.h"
+#include "timer.h"
 #include "trigger_system.h"
 
 
@@ -17,6 +18,7 @@ private:
     bool is_running_;
 
     Display* display_;
+    Timer* timer_;
     GraphicsManager* graphics_manager_;
     PlanetSystem* planet_system_;
     TriggerSystem* trigger_system_;

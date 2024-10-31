@@ -101,12 +101,12 @@ void PlanetSystem::UpdatePlanetsSIMD()
 
 void PlanetSystem::SpawnPlanets(math::Vec2f position)
 {
-    if(spawner_ == true)
-    {
+    // if(spawner_ == true)
+    // {
         float radius = random::Range(5.f, 20.f);
         uint8_t alpha = random::Range(10, 255);
         CreatePlanet(position, radius, SDL_Color{ 255, 13, 132, alpha });
-    }
+    // }
 }
 
 

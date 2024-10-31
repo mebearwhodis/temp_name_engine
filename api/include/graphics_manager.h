@@ -23,6 +23,8 @@ public:
   void AddVertex(math::Vec2f position, SDL_Color color);
   void Clear();
   void CreateCircle(math::Vec2f center, float radius, SDL_Color color);
+  void CreateAABB(math::Vec2f min, math::Vec2f max, SDL_Color color, bool fill_status);
+  void CreatePolygon(std::vector<math::Vec2f> points, SDL_Color color, bool fill_status);
 };
 
 

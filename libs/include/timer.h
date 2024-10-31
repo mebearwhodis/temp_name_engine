@@ -9,7 +9,7 @@ private:
     std::chrono::duration<float> delta_time_ = std::chrono::duration<float>(0);
 
 public:
-    void Initialize() noexcept;
+    Timer();
     void Tick() noexcept;
     [[nodiscard]] float DeltaTime() const noexcept;
     [[nodiscard]] float TotalTime() const noexcept;

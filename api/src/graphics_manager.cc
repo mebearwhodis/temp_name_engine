@@ -54,3 +54,23 @@ void GraphicsManager::CreateCircle(const math::Vec2f center, const float radius,
     indices_.push_back(static_cast<int>(starting_index) + 1);
 
 }
+
+void GraphicsManager::CreateAABB(math::Vec2f min, math::Vec2f max, SDL_Color color, bool fill_status)
+{
+    //TODO Maybe we'll use SDL_RenderDrawRects instead (for empty Rect), and then Fill for the filled? Idk how this works exactly
+    const size_t starting_index = vertices_.size();
+    AddVertex(min, color);
+    AddVertex(math::Vec2f{min.x, max.y}, color);
+    AddVertex(max, color);
+    AddVertex(math::Vec2f{max.x, min.y}, color);
+
+    //Last triangle, closing the circle
+    indices_.push_back(static_cast<int>(starting_index));
+    indices_.push_back(static_cast<int>(starting_index) + kCircleVertexCount);
+    indices_.push_back(static_cast<int>(starting_index) + 1);
+}
+
+void GraphicsManager::CreatePolygon(std::vector<math::Vec2f> points, SDL_Color color, bool fill_status)
+{
+    //SDL_RenderLines() ??
+}

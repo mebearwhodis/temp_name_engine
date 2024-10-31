@@ -11,6 +11,7 @@
 GameEngine::GameEngine()
 {
     display_ = new Display();
+    timer_ = new Timer();
     graphics_manager_ = new GraphicsManager();
     planet_system_ = new PlanetSystem();
     trigger_system_ = new TriggerSystem();
@@ -55,20 +56,19 @@ void GameEngine::HandleEvents()
                 if(selected_system_ == 0)
                 {
                     // PLANET SYSTEM:
-                    planet_system_->ToggleSpawner();
+                    int mouse_x, mouse_y;
+                    SDL_GetMouseState(&mouse_x, &mouse_y);
+                    const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+                    planet_system_->SpawnPlanets(mouse_pos);
                 }
             }
         }
-        else if (event.type == SDL_MOUSEBUTTONUP)
-        {
-            if (event.button.button == SDL_BUTTON_LEFT)
-            {
-                if(selected_system_ == 0)
-                {
-                    planet_system_->ToggleSpawner();
-                }
-            }
-        }
+        // else if (event.type == SDL_MOUSEBUTTONUP)
+        // {
+        //     if (event.button.button == SDL_BUTTON_LEFT)
+        //     {
+        //     }
+        // }
     }
 }
 
@@ -76,11 +76,10 @@ void GameEngine::Run()
 {
     //Begin():
 
-
-
     while (is_running_)
     {
         //Update()
+        timer_->Tick();
         HandleEvents();
 
         imgui_interface_->Update(is_running_);
@@ -91,11 +90,9 @@ void GameEngine::Run()
         //PLANET SYSTEM:
         if(selected_system_ == 0)
         {
-            int mouse_x, mouse_y;
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-            const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
-            planet_system_->SpawnPlanets(mouse_pos);
 
+
+            //graphics_manager_->CreateAABB(math::Vec2f(50, 50), math::Vec2f(250, 550), SDL_Color(0, 0, 255, 255), true);
 
             planet_system_->UpdatePlanetsSIMD();
              for(auto p : planet_system_->planets())
@@ -103,7 +100,6 @@ void GameEngine::Run()
                  graphics_manager_->CreateCircle(p.position(), p.radius(), p.color());
              }
         }
-
 
         //TRIGGER SYSTEM:
         if(selected_system_ == 1)
@@ -123,6 +119,7 @@ void GameEngine::Run()
             graphics_manager_->vertices().size(),
             graphics_manager_->indices().data(),
             graphics_manager_->indices().size());
+
 
         if(selected_system_ == 1)
         {
