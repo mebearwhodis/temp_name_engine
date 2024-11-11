@@ -6,6 +6,14 @@
 
 namespace math
 {
+    enum class ShapeType
+    {
+        kAABB,
+        kCircle,
+        kPolygon,
+        kNone
+    };
+
     class AABB
     {
     private:
@@ -30,10 +38,10 @@ namespace math
             if (point.y > max_bound_.y) return false;
             return true;
         }
-
         [[nodiscard]] AABB GetBoundingBox() const {
             return *this;
         }
+        [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kAABB; }
 
         bool operator==(const AABB& other) const {
             return min_bound_ == other.min_bound_ && max_bound_ == other.max_bound_;
@@ -69,6 +77,7 @@ namespace math
             const AABB box(min, max);
             return box;
         }
+        [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kCircle; }
 
         bool operator==(const Circle& other) const {
             return center_ == other.center_ && radius_ == other.radius_;
@@ -102,6 +111,7 @@ namespace math
 
             return AABB(min, max);
         }
+        [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kPolygon; }
 
         bool operator==(const Polygon& other) const {
             return vertices_ == other.vertices_;

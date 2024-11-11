@@ -4,7 +4,7 @@
 #include <vector>
 #include <array>
 #include <memory>
-#include <SDL_render.h>
+#include "../../../cmake-build-relwithdebinfo/vcpkg_installed/x64-windows/include/SDL2/SDL_render.h"
 
 #include "math/shape.h"
 #include "physics/collider.h"
@@ -14,7 +14,7 @@ namespace physics
     static constexpr int kMaxDepth_ = 5;
     static constexpr int kMaxShapeCount_ = 8;
 
-    struct QuadtreeNode //TODO: make it a class with private things, and ideally no methods (see nekophysics)
+    struct QuadtreeNode
     {
         math::AABB bounding_box_{};
         std::array<std::unique_ptr<QuadtreeNode>, 4> children_{}; //Unique pointers for automatic memory management
@@ -164,4 +164,38 @@ namespace physics
         }
     };
 }
+
+
+// namespace physics
+// {
+//     struct QuadTreeNode2
+//     {
+//         math::AABB bounding_box_{};
+//         std::array<QuadTreeNode2*, 4> children_{};
+//         std::vector<Collider*> colliders_;
+//     };
+//
+//     class Quadtree
+//     {
+//     public:
+//         explicit Quadtree(const math::AABB& boundary);
+//         ~Quadtree();
+//
+//         void Insert(Collider* collider);
+//         [[nodiscard]] std::vector<Collider*> Query(const math::AABB& range) const;
+//         void Clear();
+//         void Draw(SDL_Renderer* renderer) const;
+//
+//     private:
+//         void Insert(Collider* collider, QuadTreeNode2* node, int depth);
+//         void Query(const QuadTreeNode2* node, const math::AABB& range, std::vector<Collider*>& foundColliders) const;
+//         void Subdivide(QuadTreeNode2* node);
+//         void DrawNode(SDL_Renderer* renderer, const QuadTreeNode2* node) const;
+//
+//         QuadTreeNode2* root_;
+//         static constexpr std::size_t kMaxDepth = 2;
+//         static constexpr std::size_t kMaxColliders = 8;
+//     };
+// }
+
 #endif //QUADTREE_H

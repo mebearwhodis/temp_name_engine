@@ -6,12 +6,14 @@
 #include "physics/quadtree.h"
 
 
+static constexpr size_t kNumberOfShapes = 500;
+
 class TriggerSystem {
 private:
-    static constexpr size_t kNumberOfShapes = 50;
+
+    std::array<GameObject, kNumberOfShapes> objects_ = {};
 
     physics::Quadtree* quadtree_;
-    std::array<GameObject, kNumberOfShapes> objects_ = {};
 
     std::unordered_map<GameObjectPair, bool> potential_pairs_;
     std::unordered_map<GameObjectPair, bool> active_pairs_;
@@ -38,7 +40,7 @@ public:
     void BroadPhase();
     void NarrowPhase();
 
-    static void OnTriggerEnter(const GameObjectPair& pair);
+    static void OnPairCollide(const GameObjectPair& pair);
     static void OnTriggerExit(const GameObjectPair& pair);
 };
 

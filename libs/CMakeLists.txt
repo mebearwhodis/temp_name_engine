@@ -12,7 +12,8 @@ add_library(core ${SRC_FILES} ${HEADER_FILES}
 		include/math/matrix3.h
 		include/math/matrix4.h
 		src/timer.cc
-		include/timer.h)
+		include/timer.h
+		src/physics/quadtree2.cc)
 target_include_directories(core PUBLIC include/)
 
 add_executable(core_test ${TEST_FILES})

@@ -1,7 +1,6 @@
 #ifndef KUMAENGINE_API_GAME_ENGINE_H_
 #define KUMAENGINE_API_GAME_ENGINE_H_
 
-#include <vector>
 
 #include "display.h"
 #include "imgui_interface.h"
@@ -14,7 +13,7 @@
 class GameEngine
 {
 private:
-    int selected_system_= 0; //This will change, it's a temporary way to switch systems
+    int selected_system_= 1; //This will change, it's a temporary way to switch systems
     bool is_running_;
 
     Display* display_;

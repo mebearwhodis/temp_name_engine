@@ -90,14 +90,18 @@ void GameEngine::Run()
         //PLANET SYSTEM:
         if(selected_system_ == 0)
         {
+            std::vector<math::Vec2f> points = {{1100, 700},{800, 600},{1000, 400}, {1050, 300},{1100,400}};
 
+            graphics_manager_->CreateAABB(math::Vec2f(50, 50), math::Vec2f(250, 550), SDL_Color(0, 0, 255, 255), true);
+            graphics_manager_->CreateAABB(math::Vec2f(100, 100), math::Vec2f(150, 150), SDL_Color(0, 255, 0, 255), true);
+            graphics_manager_->CreateAABB(math::Vec2f(300, 600), math::Vec2f(400, 800), SDL_Color(0, 255, 0, 255), true);
 
-            //graphics_manager_->CreateAABB(math::Vec2f(50, 50), math::Vec2f(250, 550), SDL_Color(0, 0, 255, 255), true);
+            graphics_manager_->CreatePolygon(points, math::Vec2f(1040,500), SDL_Color(0, 255, 255, 255), true);
 
             planet_system_->UpdatePlanetsSIMD();
              for(auto p : planet_system_->planets())
              {
-                 graphics_manager_->CreateCircle(p.position(), p.radius(), p.color());
+                 graphics_manager_->CreateCircle(p.position(), p.radius(), p.color(), false);
              }
         }
 
@@ -107,8 +111,9 @@ void GameEngine::Run()
             trigger_system_->Update();
             for(auto g : trigger_system_->objects())
             {
-                graphics_manager_->CreateCircle(g.position(), g.radius(), g.color());
+                graphics_manager_->CreateCircle(g.position(), g.radius(), g.color(), false);
             }
+            trigger_system_->quadtree()->Draw(display_->renderer());
         }
 
 
@@ -121,10 +126,7 @@ void GameEngine::Run()
             graphics_manager_->indices().size());
 
 
-        if(selected_system_ == 1)
-        {
-            trigger_system_->quadtree()->Draw(display_->renderer());
-        }
+
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());

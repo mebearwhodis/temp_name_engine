@@ -10,7 +10,7 @@ TriggerSystem::TriggerSystem()
     for(size_t i = 0; i < kNumberOfShapes; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        const float radius = random::Range(5.f, 20.f);
+        const float radius = random::Range(5.f, 5.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
@@ -162,7 +162,7 @@ void TriggerSystem::NarrowPhase() {
 
             // If this is a new collision
             if (!active_pairs_.contains(pair)) {
-                OnTriggerEnter(pair);
+                OnPairCollide(pair);
             }
         }
     }
@@ -178,15 +178,15 @@ void TriggerSystem::NarrowPhase() {
 }
 
 //Called on the first collision frame
-void TriggerSystem::OnTriggerEnter(const GameObjectPair& pair)
+void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
 {
-    if (pair.gameObjectA_) {
-        pair.gameObjectA_->set_color(SDL_Color{ 0, 255, 0, 255 });
-    }
-    if (pair.gameObjectB_) {
-        pair.gameObjectB_->set_color(SDL_Color{ 0, 255, 0, 255 });
+    if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
+    {
+        pair.gameObjectA_->OnTriggerEnter();
+        pair.gameObjectB_->OnTriggerEnter();
     }
 }
+
 
 //TODO: find a way to check if it's still colliding with something else when Exit
 //Called on the last collision frame

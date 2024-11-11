@@ -44,6 +44,12 @@ namespace physics
    }, shape_);
   }
 
+  [[nodiscard]] math::ShapeType GetShapeType() const {
+   return std::visit([](auto&& shape) {
+       return shape.GetShapeType();
+   }, shape_);
+  }
+
   bool operator==(const Collider& other) const
   {
    return shape_ == other.shape_ &&

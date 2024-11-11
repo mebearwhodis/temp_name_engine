@@ -3,7 +3,6 @@
 #include "random.h"
 #include "math/four_vec2.h"
 
-//TODO: Replace all the planet.body() (get the body at the start in a variable)
 void PlanetSystem::CreatePlanet(const math::Vec2f position, const float radius, const SDL_Color color)
 {
     auto body = physics::Body(position, math::Vec2f::Zero(), planet_mass_);

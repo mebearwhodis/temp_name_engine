@@ -31,6 +31,9 @@ public:
     void set_collider(const physics::Collider& collider) { collider_ = collider; }
     void set_radius(const float radius) { radius_ = radius; }
     void set_color(const SDL_Color& color) { color_ = color; }
+
+    void OnTriggerEnter(){ color_ = SDL_Color{ 0, 255, 0, 255 }; }
+    void OnTriggerExit(){ color_ = SDL_Color{ 255, 13, 132, 255 }; }
 };
 
 struct GameObjectPair
