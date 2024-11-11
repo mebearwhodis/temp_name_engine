@@ -50,6 +50,16 @@ namespace physics
    }, shape_);
   }
 
+  // [[nodiscard]] math::Vec2f GetHalfSize() const {
+  //  return std::visit([](auto&& shape) {
+  //    if(shape.GetShape() == math::ShapeType::kAABB)
+  //    {
+  //     return shape.GetHalfSize();
+  //    }
+  //   return math::Vec2f::Zero();
+  //  }, shape_);
+  // }
+
   bool operator==(const Collider& other) const
   {
    return shape_ == other.shape_ &&

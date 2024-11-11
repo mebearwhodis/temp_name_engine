@@ -1,8 +1,10 @@
 ﻿#include "trigger_system.h"
 
+#include <iostream>
 #include <ranges>
 
 #include "random.h"
+#include "physics/contact_solver.h"
 
 TriggerSystem::TriggerSystem()
 {
@@ -10,7 +12,7 @@ TriggerSystem::TriggerSystem()
     for(size_t i = 0; i < kNumberOfShapes; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        const float radius = random::Range(5.f, 5.f);
+        const float radius = random::Range(10.f, 20.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
@@ -19,8 +21,8 @@ TriggerSystem::TriggerSystem()
 void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
 {
     math::Vec2f velocity(random::Range(-0.05f, 0.05f), random::Range(-0.05f, 0.05f));
-    physics::Body body(circle.center(), velocity, 0);
-    physics::Collider collider(circle, 0, 0, true);
+    physics::Body body(circle.centre(), velocity, random::Range(1.0f, 1.0f));
+    physics::Collider collider(circle, random::Range(0.0f, 1.0f), 0, false);
     GameObject object(body, collider, circle.radius());
 
     objects_[index] = object;
@@ -75,7 +77,7 @@ void TriggerSystem::UpdateShapes()
         //Update the collider's position
         collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon> {
             if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>) {
-                shape.set_center(position);
+                shape.set_centre(position);
             }
             return shape;
         }, collider.shape()));
@@ -184,6 +186,12 @@ void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
     {
         pair.gameObjectA_->OnTriggerEnter();
         pair.gameObjectB_->OnTriggerEnter();
+    }
+    else
+    {
+        physics::ContactSolver ContactSolver;
+        ContactSolver.SetContactObjects(pair);
+        ContactSolver.ResolveContact();
     }
 }
 

@@ -11,6 +11,7 @@ private:
     math::Vec2f velocity_ = math::Vec2f::Zero();
     math::Vec2f acceleration_ = math::Vec2f::Zero();
     float mass_ = 1.0f;
+    float inverse_mass_ = 1.0f;
 
 public:
     Body() = default;
@@ -19,6 +20,14 @@ public:
         position_ = position;
         velocity_ = velocity;
         mass_ = mass;
+        if(mass_ == 0.0f)
+        {
+            inverse_mass_ = 0.0f;
+        }
+        else
+        {
+            inverse_mass_ = 1.0f / mass;
+        }
     };
 
     //Getters
@@ -26,6 +35,7 @@ public:
     [[nodiscard]] math::Vec2f velocity() const { return velocity_; }
     [[nodiscard]] math::Vec2f acceleration() const { return acceleration_; }
     [[nodiscard]] float mass() const { return mass_; }
+    [[nodiscard]] float inverse_mass() const { return inverse_mass_; }
     // [[nodiscard]] BodyType type() const { return type_; }
 
     //Setters
@@ -34,7 +44,8 @@ public:
     void set_mass(const float new_mass) { mass_ = new_mass; }
     // void set_type(const BodyType new_type) { type_ = new_type; }
 
-    void ApplyForce(const math::Vec2f force) { acceleration_ += force / mass_; }
+    void ApplyForce(const math::Vec2f force) { acceleration_ += force * inverse_mass_; }
+    void ApplyImpulse(const math::Vec2f impulse) { velocity_ += impulse * inverse_mass_; }
 
     void ResetForce() { acceleration_ = math::Vec2f::Zero(); }
 };

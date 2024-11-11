@@ -6,7 +6,7 @@
 #include "physics/quadtree.h"
 
 
-static constexpr size_t kNumberOfShapes = 500;
+static constexpr size_t kNumberOfShapes = 50;
 
 class TriggerSystem {
 private:

@@ -41,6 +41,7 @@ namespace math
         [[nodiscard]] AABB GetBoundingBox() const {
             return *this;
         }
+        // [[nodiscard]] constexpr Vec2f GetHalfSize() const { return (max_bound_ - min_bound_) / 2; }
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kAABB; }
 
         bool operator==(const AABB& other) const {
@@ -51,36 +52,36 @@ namespace math
     class Circle
     {
     private:
-        Vec2f center_ = Vec2f::Zero();
+        Vec2f centre_ = Vec2f::Zero();
         float radius_ = 0.0f;
 
     public:
-        constexpr Circle(const Vec2f center, const float radius) : center_(center), radius_(radius){}
+        constexpr Circle(const Vec2f center, const float radius) : centre_(center), radius_(radius){}
 
-        explicit constexpr Circle(const float radius) : center_(Vec2f::Zero()), radius_(radius){}
+        explicit constexpr Circle(const float radius) : centre_(Vec2f::Zero()), radius_(radius){}
 
-        [[nodiscard]] constexpr Vec2f center() const { return center_; }
+        [[nodiscard]] constexpr Vec2f centre() const { return centre_; }
         [[nodiscard]] constexpr float radius() const { return radius_; }
 
-        void set_center(const Vec2f center) { center_ = center; }
+        void set_centre(const Vec2f center) { centre_ = center; }
         void set_radius(const float radius) { radius_ = radius; }
 
         [[nodiscard]] bool Contains(const Vec2f point) const
         {
-            return (point - center_).SquareMagnitude() <= radius_ * radius_;
+            return (point - centre_).SquareMagnitude() <= radius_ * radius_;
         }
 
         [[nodiscard]] AABB GetBoundingBox() const
         {
-            const Vec2f min = center_ - Vec2f(radius_, radius_);
-            const Vec2f max = center_ + Vec2f(radius_, radius_);
+            const Vec2f min = centre_ - Vec2f(radius_, radius_);
+            const Vec2f max = centre_ + Vec2f(radius_, radius_);
             const AABB box(min, max);
             return box;
         }
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kCircle; }
 
         bool operator==(const Circle& other) const {
-            return center_ == other.center_ && radius_ == other.radius_;
+            return centre_ == other.centre_ && radius_ == other.radius_;
         }
     };
 
@@ -139,11 +140,11 @@ namespace math
 
     [[nodiscard]] constexpr bool Intersect(const Circle& circle_a, const Circle& circle_b)
     {
-        const Vec2f delta = circle_a.center() - circle_b.center();
+        const Vec2f delta = circle_a.centre() - circle_b.centre();
         const float distanceSquared = delta.SquareMagnitude();
         const float radiusSum = circle_a.radius() + circle_b.radius();
         return distanceSquared < radiusSum * radiusSum;
-        //return (circle_b.center() - circle_a.center()).SquareMagnitude() <= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
+        //return (circle_b.centre() - circle_a.centre()).SquareMagnitude() <= (circle_b.radius() + circle_a.radius()) * (circle_b.radius() + circle_a.radius());
     }
 
     [[nodiscard]] constexpr bool Intersect(const Polygon& polygon_a, const Polygon& polygon_b)
@@ -194,11 +195,11 @@ namespace math
 
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Circle& circle)
     {
-        const auto center = circle.center();
-        //Check if the AABB contains the circle's center
+        const auto center = circle.centre();
+        //Check if the AABB contains the circle's centre
         if(aabb.Contains(center)) return true;
 
-        //If not, expand the AABB bounds by the radius and check if those contain the center
+        //If not, expand the AABB bounds by the radius and check if those contain the centre
         const auto radius = circle.radius();
         const auto min_bound = aabb.min_bound();
         const auto max_bound = aabb.max_bound();
@@ -240,7 +241,7 @@ namespace math
     [[nodiscard]] constexpr bool Intersect(const Circle& circle, const Polygon& polygon)
     {
         const auto vertices = polygon.vertices();
-        const auto center = circle.center();
+        const auto center = circle.centre();
         auto radius = circle.radius();
 
         //Check if any vertex of the polygon is inside the circle
