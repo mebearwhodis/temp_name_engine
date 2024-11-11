@@ -103,24 +103,22 @@ namespace physics
 
         void ResolveVelocities() const
         {
-            auto body_a = objects_[0]->body();
-            auto body_b = objects_[1]->body();
-            const auto& collider_a = objects_[0]->collider();
-            const auto& collider_b = objects_[1]->collider();
+            auto& body_a = objects_[0]->body();
+            auto& body_b = objects_[1]->body();
 
             //Calculate the relative velocity between the bodies
             const math::Vec2f relative_velocity = body_a.velocity() - body_b.velocity();
 
             //Relative velocity along Normal
             const float separating_velocity = math::Vec2f::Dot(relative_velocity, contact_normal_);
-            if (separating_velocity > 0.0f)
-            {
-                return;
-            }
+
+
+
+            if (separating_velocity > 0.0f){ return; }
 
             //TODO: may use a combined restitution taking the mass into account to have a more accurate simulation
             //Calculate restitution
-            float restitution = std::min(collider_a.bounciness(), collider_b.bounciness());
+            float restitution = std::min(objects_[0]->collider().bounciness(), objects_[1]->collider().bounciness());
 
             // const auto finalSepVel = -separating_velocity * restitution;
             // const auto deltaVel = finalSepVel - separating_velocity;
@@ -132,14 +130,16 @@ namespace physics
             // body_b.ApplyImpulse(-impulsePerMass);
 
             //Calculate impulse scalar
-            float factor = -(1.0f + restitution) * separating_velocity;
-            factor /= (body_a.inverse_mass() + body_b.inverse_mass());
+            float impulse_magnitude = -(1.0f + restitution) * separating_velocity;
+            impulse_magnitude /= (body_a.inverse_mass() + body_b.inverse_mass());
+
 
             //TODO: add check if bodies are static or dynamic
             //Apply impulse
-            const math::Vec2f impulse = factor * contact_normal_;
-            body_a.set_velocity(body_a.velocity() + impulse * body_a.inverse_mass());
-            body_b.set_velocity(body_b.velocity() - impulse * body_b.inverse_mass());
+            const math::Vec2f impulse = impulse_magnitude * contact_normal_;
+            body_a.ApplyImpulse(impulse);
+            body_b.ApplyImpulse(-impulse);
+
         }
 
         void ResolvePositions() const
@@ -150,8 +150,8 @@ namespace physics
             const auto inverse_mass_a = body_a.inverse_mass();
             const auto inverse_mass_b = body_b.inverse_mass();
             const auto total_inverse_mass = inverse_mass_a + inverse_mass_b;
-            constexpr float correction_percent = 0.2f;
-            constexpr float slop = 0.01f; // usually 0.01 to 0.1
+            constexpr float correction_percent = 0.4f;
+            constexpr float slop = 0.05f; // usually 0.01 to 0.1
 
             const math::Vec2f correction = std::max(penetration_ - slop, 0.0f) / total_inverse_mass * correction_percent * contact_normal_;
             //const math::Vec2f correction = penetration_ / total_inverse_mass * contact_normal_;
@@ -227,7 +227,7 @@ namespace physics
             const auto centre_b = objects_[1]->position();
 
             //Calculate the vector between the centers
-            const math::Vec2f delta = centre_b - centre_a;
+            const math::Vec2f delta = centre_a - centre_b;
 
             //Calculate contact normal and point
             contact_normal_ = delta.Normalized();
