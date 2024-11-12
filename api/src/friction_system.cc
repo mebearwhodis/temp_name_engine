@@ -9,21 +9,12 @@
 FrictionSystem::FrictionSystem()
 {
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
-    objects_.reserve(1000);
-    CreateGround();
+    objects_.reserve(100);
+    math::AABB ground(math::Vec2f(360.0f, 700.0f), math::Vec2f(840.0f, 600.0f));
+    size_t i = objects_.size();
+    CreateGround(i, ground);
 }
 
-void FrictionSystem::CreateGround()
-{
-    math::AABB aabb(math::Vec2f(360.0f, 700.0f), math::Vec2f(840.0f, 600.0f));
-    math::Vec2f velocity(0.0f, 0.0f);
-    physics::Body body(aabb.GetCenter(), velocity, 0.0f);
-    physics::Collider collider(aabb, 1.0f, 0, false);
-    GameObject object(body, collider, aabb.half_size_length());
-
-    objects_.push_back(object);
-    RegisterObject(objects_[0]);
-}
 
 void FrictionSystem::SpawnShape(const math::Vec2f pos, const math::ShapeType type)
 {
@@ -73,6 +64,18 @@ void FrictionSystem::CreateObject(size_t index, math::AABB& aabb)
     RegisterObject(objects_[index]);
 }
 
+void FrictionSystem::CreateGround(size_t index, math::AABB& aabb)
+{
+    math::Vec2f velocity(0.0f, 0.0f);
+    physics::Body body(aabb.GetCenter(), velocity, 0.0f);
+    body.set_is_static(true);
+    physics::Collider collider(aabb, 1.0f, 0, false);
+    GameObject object(body, collider, aabb.half_size_length());
+
+    objects_.push_back(object);
+    RegisterObject(objects_[index]);
+}
+
 void FrictionSystem::RegisterObject(GameObject& object)
 {
     collider_to_object_map_[&object.collider()] = &object;
@@ -100,35 +103,38 @@ void FrictionSystem::UpdateShapes()
         //TODO change for actual delta-time
         body.Update(1.0f / 60.0f);
         math::Vec2f gravity(0.0f, 9.8f);
-        body.ApplyForce(gravity);
-
-        auto position = body.position();
-
-        float radius = object.radius();
-
-        //Check for collision with window borders
-        if (position.x - radius < 0 || position.x + radius > 1200)
+        if(!body.is_static())
         {
-            body.set_velocity(math::Vec2f(-body.velocity().x, body.velocity().y));
-        }
-        if (position.y - radius < 0 || position.y + radius > 800)
-        {
-            body.set_velocity(math::Vec2f(body.velocity().x, -body.velocity().y));
-        }
+            body.ApplyForce(gravity);
 
-        //Update the collider's position
-        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon>
-        {
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>)
+            auto position = body.position();
+
+            float radius = object.radius();
+
+            //Check for collision with window borders
+            if (position.x - radius < 0 || position.x + radius > 1200)
             {
-                shape.set_centre(position);
+                body.set_velocity(math::Vec2f(-body.velocity().x, body.velocity().y));
             }
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
+            if (position.y - radius < 0 || position.y + radius > 800)
             {
-                shape.UpdatePosition(position);
+                body.set_velocity(math::Vec2f(body.velocity().x, -body.velocity().y));
             }
-            return shape;
-        }, collider.shape()));
+
+            //Update the collider's position
+            collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon>
+            {
+                if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>)
+                {
+                    shape.set_centre(position);
+                }
+                if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
+                {
+                    shape.UpdatePosition(position);
+                }
+                return shape;
+            }, collider.shape()));
+        }
     }
 }
 
@@ -164,6 +170,7 @@ void FrictionSystem::BroadPhase()
                     {
                         GameObjectPair pair{objectA, objectB};
                         new_potential_pairs[pair] = true;
+
                     }
                 }
             }
@@ -204,7 +211,7 @@ void FrictionSystem::NarrowPhase()
     }
 
     // Check for ended collisions
-    for (const auto& [pair, _] : active_pairs_)
+    for (const auto& pair : active_pairs_ | std::views::keys)
     {
         if (!newActivePairs.contains(pair))
         {

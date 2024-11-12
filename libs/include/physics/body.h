@@ -13,6 +13,9 @@ private:
     float mass_ = 1.0f;
     float inverse_mass_ = 1.0f;
 
+    //TODO enum
+    bool is_static_ = false;
+
 public:
     Body() = default;
     Body(const math::Vec2f position, const math::Vec2f velocity, const float mass)
@@ -36,12 +39,14 @@ public:
     [[nodiscard]] math::Vec2f acceleration() const { return acceleration_; }
     [[nodiscard]] float mass() const { return mass_; }
     [[nodiscard]] float inverse_mass() const { return inverse_mass_; }
+    [[nodiscard]] bool is_static() const { return is_static_; }
     // [[nodiscard]] BodyType type() const { return type_; }
 
     //Setters
     void set_position(const math::Vec2f new_position) { position_ = new_position; }
     void set_velocity(const math::Vec2f new_velocity) { velocity_ = new_velocity; }
     void set_mass(const float new_mass) { mass_ = new_mass; }
+    void set_is_static(const bool new_is_static) { is_static_ = new_is_static; }
     // void set_type(const BodyType new_type) { type_ = new_type; }
 
     void ApplyForce(const math::Vec2f force) { acceleration_ += force * inverse_mass_; }
@@ -49,9 +54,12 @@ public:
 
     void Update(const float delta_time)
     {
+        if(!is_static_)
+            {
         velocity_ += acceleration_ * delta_time;
         position_ += velocity_ * delta_time;
         ResetForce();
+        }
     }
 
     void ResetForce() { acceleration_ = math::Vec2f::Zero(); }

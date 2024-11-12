@@ -18,14 +18,13 @@ private:
 public:
     FrictionSystem();
 
-    void CreateGround();
-
     std::vector<GameObject> objects() { return objects_; }
     [[nodiscard]] physics::Quadtree* quadtree() const { return quadtree_; }
 
     void SpawnShape(math::Vec2f pos, math::ShapeType type);
     void CreateObject(size_t index, math::Circle& circle);
     void CreateObject(size_t index, math::AABB& aabb);
+    void CreateGround(size_t index, math::AABB& aabb);
     //void CreateObject(size_t index, math::Polygon& polygon);
 
     void RegisterObject(GameObject& object);
