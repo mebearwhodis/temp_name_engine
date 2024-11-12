@@ -1,17 +1,13 @@
-﻿#ifndef TRIGGER_SYSTEM_H
-#define TRIGGER_SYSTEM_H
-#include <vector>
-
+﻿#ifndef FRICTION_SYSTEM_H
+#define FRICTION_SYSTEM_H
 #include "game_object.h"
+#include "math/shape.h"
 #include "physics/quadtree.h"
 
-
-static constexpr size_t kNumberOfShapes = 100;
-
-class TriggerSystem {
+class FrictionSystem
+{
 private:
-
-    std::array<GameObject, kNumberOfShapes> objects_ = {};
+    std::vector<GameObject> objects_;
 
     physics::Quadtree* quadtree_;
 
@@ -19,13 +15,15 @@ private:
     std::unordered_map<GameObjectPair, bool> active_pairs_;
 
     std::unordered_map<physics::Collider*, GameObject*> collider_to_object_map_; //Mapping from Collider to GameObject
-
 public:
-    TriggerSystem();
+    FrictionSystem();
 
-    std::array<GameObject, kNumberOfShapes> objects() { return objects_; }
+    void CreateGround();
+
+    std::vector<GameObject> objects() { return objects_; }
     [[nodiscard]] physics::Quadtree* quadtree() const { return quadtree_; }
 
+    void SpawnShape(math::Vec2f pos, math::ShapeType type);
     void CreateObject(size_t index, math::Circle& circle);
     void CreateObject(size_t index, math::AABB& aabb);
     //void CreateObject(size_t index, math::Polygon& polygon);
@@ -41,8 +39,7 @@ public:
 
     static void OnPairCollide(const GameObjectPair& pair);
     static void OnPairCollideEnd(const GameObjectPair& pair);
+
 };
 
-
-
-#endif //TRIGGER_SYSTEM_H
+#endif //FRICTION_SYSTEM_H

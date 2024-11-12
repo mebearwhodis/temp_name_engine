@@ -36,9 +36,8 @@ void PlanetSystem::UpdatePlanets()
             planet.body().ApplyForce(force);
         }
 
-        planet.body().set_velocity(planet.body().velocity() + planet.body().acceleration());
-        planet.body().set_position(planet.position() + planet.body().velocity());
-        planet.body().ResetForce();
+        //TODO change for actual delta-time
+        planet.body().Update(1.0f/60.0f);
     }
 }
 
@@ -77,9 +76,8 @@ void PlanetSystem::UpdatePlanetsSIMD()
         math::FourVec2f forces = normalizedU * forceMagnitudes;
         for (int j = 0; j < 4; ++j) {
             planets_[i+j].body().ApplyForce(math::Vec2f(forces.x[j], forces.y[j]));
-            planets_[i+j].body().set_velocity(planets_[i+j].body().velocity() + planets_[i+j].body().acceleration());
-            planets_[i+j].body().set_position(planets_[i+j].position() + planets_[i+j].body().velocity());
-            planets_[i+j].body().ResetForce();
+            //TODO change for actual delta-time
+            planets_[i+j].body().Update(1.0f/60.0f);
         }
     }
 
@@ -92,9 +90,8 @@ void PlanetSystem::UpdatePlanetsSIMD()
             math::Vec2f force = force_magnitude * u.Normalized();
             planets_[i].body().ApplyForce(force);
         }
-        planets_[i].body().set_velocity(planets_[i].body().velocity() + planets_[i].body().acceleration());
-        planets_[i].body().set_position(planets_[i].position() + planets_[i].body().velocity());
-        planets_[i].body().ResetForce();
+            //TODO change for actual delta-time
+        planets_[i].body().Update(1.0f/60.0f);
     }
 }
 

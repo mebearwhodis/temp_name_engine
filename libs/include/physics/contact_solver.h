@@ -152,12 +152,12 @@ namespace physics
             const auto inverse_mass_b = body_b.inverse_mass();
             const auto total_inverse_mass = inverse_mass_a + inverse_mass_b;
             constexpr float correction_percent = 0.4f;
-            constexpr float slop = 0.05f; // usually 0.01 to 0.1
+            constexpr float slop = 0.01f; // usually 0.01 to 0.1
 
             const math::Vec2f correction = std::max(penetration_ - slop, 0.0f) / total_inverse_mass * correction_percent * contact_normal_;
             //const math::Vec2f correction = penetration_ / total_inverse_mass * contact_normal_;
             body_a.set_position(body_a.position() + inverse_mass_a * correction);
-            body_b.set_position(body_b.position() - inverse_mass_a * correction);
+            body_b.set_position(body_b.position() - inverse_mass_b * correction);
         }
 
         void HandleAABBAABBCollision()

@@ -47,6 +47,13 @@ public:
     void ApplyForce(const math::Vec2f force) { acceleration_ += force * inverse_mass_; }
     void ApplyImpulse(const math::Vec2f impulse) { velocity_ += impulse * inverse_mass_; }
 
+    void Update(const float delta_time)
+    {
+        velocity_ += acceleration_ * delta_time;
+        position_ += velocity_ * delta_time;
+        ResetForce();
+    }
+
     void ResetForce() { acceleration_ = math::Vec2f::Zero(); }
 };
 }

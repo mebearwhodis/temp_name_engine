@@ -15,15 +15,19 @@ GameEngine::GameEngine()
     graphics_manager_ = new GraphicsManager();
     planet_system_ = new PlanetSystem();
     trigger_system_ = new TriggerSystem();
+    friction_system_ = new FrictionSystem();
     is_running_ = true;
     imgui_interface_ = new ImGuiInterface();
     imgui_interface_->Initialize(display_);
+
+    fps_counter_ = new FPSCounter();
 }
 
 GameEngine::~GameEngine()
 {
 
     delete imgui_interface_;
+    delete friction_system_;
     delete trigger_system_;
     delete planet_system_;
     delete graphics_manager_;
@@ -60,6 +64,23 @@ void GameEngine::HandleEvents()
                     SDL_GetMouseState(&mouse_x, &mouse_y);
                     const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
                     planet_system_->SpawnPlanets(mouse_pos);
+                }
+                if(selected_system_ == 3)
+                {
+                    int mouse_x, mouse_y;
+                    SDL_GetMouseState(&mouse_x, &mouse_y);
+                    const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+                    friction_system_->SpawnShape(mouse_pos, math::ShapeType::kCircle);
+                }
+            }
+            else if (event.button.button == SDL_BUTTON_RIGHT)
+            {
+                if(selected_system_ == 3)
+                {
+                    int mouse_x, mouse_y;
+                    SDL_GetMouseState(&mouse_x, &mouse_y);
+                    const auto mouse_pos = math::Vec2f(mouse_x, mouse_y);
+                    friction_system_->SpawnShape(mouse_pos, math::ShapeType::kAABB);
                 }
             }
         }
@@ -114,7 +135,7 @@ void GameEngine::Run()
                 switch (g.collider().GetShapeType())
                 {
                 case math::ShapeType::kAABB:
-                    graphics_manager_->CreateAABB(g.position(), g.radius(), g.color(), true);
+                    graphics_manager_->CreateAABB(g.collider().GetBoundingBox().min_bound(), g.collider().GetBoundingBox().max_bound(), g.color(), true);
                     break;
                 case math::ShapeType::kCircle:
                     graphics_manager_->CreateCircle(g.position(), g.radius(), g.color(), false);
@@ -125,7 +146,32 @@ void GameEngine::Run()
                     break;
                 }
             }
+            //TODO add imgui toggle for quadtree display
             trigger_system_->quadtree()->Draw(display_->renderer());
+        }
+        //COLLISION SYSTEM:
+        if(selected_system_ == 2){}
+
+        //FRICTION SYSTEM:
+        if(selected_system_ == 3)
+        {
+            friction_system_->Update();
+            for(auto g : friction_system_->objects())
+            {
+                switch (g.collider().GetShapeType())
+                {
+                case math::ShapeType::kAABB:
+                    graphics_manager_->CreateAABB(g.collider().GetBoundingBox().min_bound(), g.collider().GetBoundingBox().max_bound(), g.color(), true);
+                    break;
+                case math::ShapeType::kCircle:
+                    graphics_manager_->CreateCircle(g.position(), g.radius(), g.color(), false);
+                    break;
+                case math::ShapeType::kPolygon:
+                case math::ShapeType::kNone:
+                default:
+                    break;
+                }
+            }
         }
 
 
@@ -139,6 +185,9 @@ void GameEngine::Run()
 
 
 
+        // Update FPS counter
+        //fps_counter_->Update();
+        //std::cout << "FPS: " << fps_counter_->GetFPS() << std::endl;
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());

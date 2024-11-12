@@ -85,24 +85,24 @@ void GraphicsManager::CreateAABB(const math::Vec2f min, const math::Vec2f max, c
 }
 
 
-void GraphicsManager::CreateAABB(const math::Vec2f centre, const float half_size, const SDL_Color color, bool fill_status)
-{
-    const size_t starting_index = vertices_.size();
-    const auto min = math::Vec2f(centre.x - half_size, centre.y - half_size);
-    const auto max = math::Vec2f(centre.x + half_size, centre.y + half_size);
-    AddVertex(min, color);
-    AddVertex(math::Vec2f{min.x, max.y}, color);
-    AddVertex(max, color);
-    AddVertex(math::Vec2f{max.x, min.y}, color);
-
-    indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + 1);
-    indices_.push_back(static_cast<int>(starting_index) + 2);
-
-    indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + 2);
-    indices_.push_back(static_cast<int>(starting_index) + 3);
-}
+// void GraphicsManager::CreateAABB(const math::Vec2f centre, const float half_size, const SDL_Color color, bool fill_status)
+// {
+//     const size_t starting_index = vertices_.size();
+//     const auto min = math::Vec2f(centre.x - half_size, centre.y - half_size);
+//     const auto max = math::Vec2f(centre.x + half_size, centre.y + half_size);
+//     AddVertex(min, color);
+//     AddVertex(math::Vec2f{min.x, max.y}, color);
+//     AddVertex(max, color);
+//     AddVertex(math::Vec2f{max.x, min.y}, color);
+//
+//     indices_.push_back(static_cast<int>(starting_index));
+//     indices_.push_back(static_cast<int>(starting_index) + 1);
+//     indices_.push_back(static_cast<int>(starting_index) + 2);
+//
+//     indices_.push_back(static_cast<int>(starting_index));
+//     indices_.push_back(static_cast<int>(starting_index) + 2);
+//     indices_.push_back(static_cast<int>(starting_index) + 3);
+// }
 
 void GraphicsManager::CreatePolygon(const std::vector<math::Vec2f>& points, const math::Vec2f center, const SDL_Color color, bool fill_status)
 {

@@ -20,24 +20,44 @@ namespace math
         Vec2f min_bound_ = Vec2f::Zero();
         Vec2f max_bound_ = Vec2f::Zero();
         Vec2f centre_ = Vec2f::Zero();
-        float half_size_ = 0.0f;
+        Vec2f half_size_vec_ = Vec2f::Zero();
+        float half_size_length_ = 0.0f;
 
     public:
         constexpr AABB(const Vec2f min_bound, const Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound)
         {
             centre_ = (min_bound + max_bound) * 0.5f;
-            half_size_ = (centre_ - min_bound).Magnitude();
+            half_size_vec_ = centre_ - min_bound;
+            half_size_length_ = (centre_ - min_bound).Magnitude();
         }
-        constexpr AABB(const Vec2f centre, const float half_size) : centre_(centre), half_size_(half_size)
+
+        constexpr AABB(const Vec2f min_bound,
+                       const Vec2f max_bound,
+                       const Vec2f centre,
+                       const Vec2f half_size_vec,
+                       const float half_size_length) :
+            min_bound_(min_bound),
+            max_bound_(max_bound),
+            centre_(centre),
+            half_size_vec_(half_size_vec),
+            half_size_length_(half_size_length)
         {
-            min_bound_ = Vec2f(centre_.x - half_size_, centre_.y - half_size_);
-            max_bound_ = Vec2f(centre_.x + half_size_, centre_.y + half_size_);
         }
+
+        explicit constexpr AABB(const Vec2f centre)
+        {
+            half_size_vec_ = math::Vec2f(random::Range(5.f, 20.f),random::Range(5.f, 20.f));
+            min_bound_ = Vec2f(centre - half_size_vec_);
+            max_bound_ = Vec2f(centre + half_size_vec_);
+            centre_ = centre;
+            half_size_length_ = half_size_vec_.Magnitude();;
+        }
+
         AABB() = default;
 
         [[nodiscard]] constexpr Vec2f min_bound() const { return min_bound_; }
         [[nodiscard]] constexpr Vec2f max_bound() const { return max_bound_; }
-        [[nodiscard]] constexpr float half_size() const { return half_size_; }
+        [[nodiscard]] constexpr float half_size_length() const { return half_size_length_; }
 
         void set_min_bound(const Vec2f bound) { min_bound_ = bound; }
         void set_max_bound(const Vec2f bound) { max_bound_ = bound; }
@@ -50,20 +70,25 @@ namespace math
             if (point.y > max_bound_.y) return false;
             return true;
         }
-        [[nodiscard]] AABB GetBoundingBox() const {
+
+        [[nodiscard]] AABB GetBoundingBox() const
+        {
             return *this;
         }
-        [[nodiscard]] Vec2f GetCenter() const {  return (min_bound_ + max_bound_) * 0.5f; }
+
+        [[nodiscard]] Vec2f GetCenter() const { return (min_bound_ + max_bound_) * 0.5f; }
         // [[nodiscard]] constexpr Vec2f GetHalfSize() const { return (max_bound_ - min_bound_) / 2; }
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kAABB; }
+
         void UpdatePosition(const Vec2f position)
         {
             centre_ = position;
-            min_bound_ = Vec2f(centre_.x - half_size_, centre_.y - half_size_);
-            max_bound_ = Vec2f(centre_.x + half_size_, centre_.y + half_size_);
+            min_bound_ = Vec2f(centre_ - half_size_vec_);
+            max_bound_ = Vec2f(centre_ + half_size_vec_);
         }
 
-        bool operator==(const AABB& other) const {
+        bool operator==(const AABB& other) const
+        {
             return min_bound_ == other.min_bound_ && max_bound_ == other.max_bound_;
         }
     };
@@ -75,9 +100,13 @@ namespace math
         float radius_ = 0.0f;
 
     public:
-        constexpr Circle(const Vec2f center, const float radius) : centre_(center), radius_(radius){}
+        constexpr Circle(const Vec2f center, const float radius) : centre_(center), radius_(radius)
+        {
+        }
 
-        explicit constexpr Circle(const float radius) : centre_(Vec2f::Zero()), radius_(radius){}
+        explicit constexpr Circle(const float radius) : centre_(Vec2f::Zero()), radius_(radius)
+        {
+        }
 
         [[nodiscard]] constexpr Vec2f centre() const { return centre_; }
         [[nodiscard]] constexpr float radius() const { return radius_; }
@@ -97,20 +126,24 @@ namespace math
             const AABB box(min, max);
             return box;
         }
+
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kCircle; }
 
-        bool operator==(const Circle& other) const {
+        bool operator==(const Circle& other) const
+        {
             return centre_ == other.centre_ && radius_ == other.radius_;
         }
     };
 
     class Polygon
     {
-        private:
+    private:
         std::vector<Vec2f> vertices_;
 
-        public:
-        explicit constexpr Polygon(const std::vector<Vec2f>& vertices) : vertices_(vertices){}
+    public:
+        explicit constexpr Polygon(const std::vector<Vec2f>& vertices) : vertices_(vertices)
+        {
+        }
 
         [[nodiscard]] constexpr std::vector<Vec2f> vertices() const { return vertices_; }
 
@@ -118,11 +151,13 @@ namespace math
 
         [[nodiscard]] constexpr int VertexCount() const { return vertices_.size(); }
 
-        [[nodiscard]] AABB GetBoundingBox() const {
+        [[nodiscard]] AABB GetBoundingBox() const
+        {
             Vec2f min = vertices_[0];
             Vec2f max = vertices_[0];
 
-            for (const auto& vertex : vertices_) {
+            for (const auto& vertex : vertices_)
+            {
                 min.x = std::min(min.x, vertex.x);
                 min.y = std::min(min.y, vertex.y);
                 max.x = std::max(max.x, vertex.x);
@@ -131,9 +166,11 @@ namespace math
 
             return AABB(min, max);
         }
+
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kPolygon; }
 
-        bool operator==(const Polygon& other) const {
+        bool operator==(const Polygon& other) const
+        {
             return vertices_ == other.vertices_;
         }
     };
@@ -152,8 +189,8 @@ namespace math
     //Intersections between shapes
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb_a, const AABB& aabb_b)
     {
-        if(aabb_a.max_bound().x < aabb_b.min_bound().x || aabb_a.min_bound().x > aabb_b.max_bound().x) return false;
-        if(aabb_a.max_bound().y < aabb_b.min_bound().y || aabb_a.min_bound().y > aabb_b.max_bound().y) return false;
+        if (aabb_a.max_bound().x < aabb_b.min_bound().x || aabb_a.min_bound().x > aabb_b.max_bound().x) return false;
+        if (aabb_a.max_bound().y < aabb_b.min_bound().y || aabb_a.min_bound().y > aabb_b.max_bound().y) return false;
         return true;
     }
 
@@ -216,7 +253,7 @@ namespace math
     {
         const auto center = circle.centre();
         //Check if the AABB contains the circle's centre
-        if(aabb.Contains(center)) return true;
+        if (aabb.Contains(center)) return true;
 
         //If not, expand the AABB bounds by the radius and check if those contain the centre
         const auto radius = circle.radius();
@@ -232,14 +269,14 @@ namespace math
         const AABB extended_x(min_bound_x, max_bound_x);
         const AABB extended_y(min_bound_y, max_bound_y);
 
-        if(extended_x.Contains(center)) return true;
-        if(extended_y.Contains(center)) return true;
+        if (extended_x.Contains(center)) return true;
+        if (extended_y.Contains(center)) return true;
 
         //If not, check if the circle contains one of the corners of the AABB
-        if(circle.Contains(min_bound)) return true;
-        if(circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
-        if(circle.Contains(max_bound)) return true;
-        if(circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
+        if (circle.Contains(min_bound)) return true;
+        if (circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
+        if (circle.Contains(max_bound)) return true;
+        if (circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
 
         //If not, they don't intersect
         return false;
@@ -264,28 +301,35 @@ namespace math
         auto radius = circle.radius();
 
         //Check if any vertex of the polygon is inside the circle
-        for(const auto& vertex : vertices)
+        for (const auto& vertex : vertices)
         {
-            if(circle.Contains(vertex)) return true;
+            if (circle.Contains(vertex)) return true;
         }
 
         //Check if the circle intersects with any of the polygon's edges
-        for(size_t i = 0, j = polygon.VertexCount() - 1; i < polygon.VertexCount(); j = i++)
+        for (size_t i = 0, j = polygon.VertexCount() - 1; i < polygon.VertexCount(); j = i++)
         {
             const Vec2f start = vertices[i];
             const Vec2f end = vertices[j];
 
-            if(const Vec2f closest_point = ClosestPointOnSegment(start, end, center); circle.Contains(closest_point)) return true;
+            if (const Vec2f closest_point = ClosestPointOnSegment(start, end, center); circle.Contains(closest_point))
+                return true;
         }
         //If no intersection is found, return false
         return false;
     }
 
-    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const AABB& aabb){ return Intersect(aabb, circle); }
+    [[nodiscard]] constexpr bool Intersect(const Circle& circle, const AABB& aabb) { return Intersect(aabb, circle); }
 
-    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const Circle& circle) { return Intersect(circle, polygon); }
+    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const Circle& circle)
+    {
+        return Intersect(circle, polygon);
+    }
 
-    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const AABB& aabb) { return Intersect(aabb, polygon); }
+    [[nodiscard]] constexpr bool Intersect(const Polygon& polygon, const AABB& aabb)
+    {
+        return Intersect(aabb, polygon);
+    }
 }
 
 #endif //SHAPE_H

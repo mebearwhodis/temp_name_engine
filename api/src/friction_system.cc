@@ -1,4 +1,4 @@
-﻿#include "trigger_system.h"
+﻿#include "friction_system.h"
 
 #include <iostream>
 #include <ranges>
@@ -6,64 +6,91 @@
 #include "random.h"
 #include "physics/contact_solver.h"
 
-TriggerSystem::TriggerSystem()
+FrictionSystem::FrictionSystem()
 {
-    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0,0), math::Vec2f(1200,800)));
-    for(size_t i = 0; i < kNumberOfShapes/2 - 1; i++)
-    {
-        math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        const float radius = random::Range(5.f, 20.f);
-        math::Circle circle(position, radius);
-        CreateObject(i, circle);
-    }
-    for(size_t i = kNumberOfShapes/2 - 1; i < kNumberOfShapes; i++)
-    {
-        math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        math::AABB aabb(position);
-        CreateObject(i, aabb);
-    }
+    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
+    objects_.reserve(1000);
+    CreateGround();
 }
 
-void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
+void FrictionSystem::CreateGround()
 {
-    math::Vec2f velocity(random::Range(-5.0f, 5.0f), random::Range(-5.0f, 5.0f));
-    physics::Body body(circle.centre(), velocity, random::Range(1.0f, 100.0f));
-    physics::Collider collider(circle, random::Range(1.0f, 1.0f), 0, false);
-    GameObject object(body, collider, circle.radius());
-
-    objects_[index] = object;
-    RegisterObject(objects_[index]);
-}
-
-void TriggerSystem::CreateObject(size_t index, math::AABB& aabb)
-{
-    math::Vec2f velocity(random::Range(-5.0f, 5.0f), random::Range(-5.0f, 5.0f));
-    physics::Body body(aabb.GetCenter(), velocity, random::Range(1.0f, 100.0f));
-    physics::Collider collider(aabb, random::Range(1.0f, 1.0f), 0, false);
+    math::AABB aabb(math::Vec2f(360.0f, 700.0f), math::Vec2f(840.0f, 600.0f));
+    math::Vec2f velocity(0.0f, 0.0f);
+    physics::Body body(aabb.GetCenter(), velocity, 0.0f);
+    physics::Collider collider(aabb, 1.0f, 0, false);
     GameObject object(body, collider, aabb.half_size_length());
 
-    objects_[index] = object;
+    objects_.push_back(object);
+    RegisterObject(objects_[0]);
+}
+
+void FrictionSystem::SpawnShape(const math::Vec2f pos, const math::ShapeType type)
+{
+    size_t i = objects_.size();
+
+    switch (type)
+    {
+    case math::ShapeType::kAABB:
+        {
+            math::AABB aabb(pos);
+            CreateObject(i, aabb);
+        }
+        break;
+    case math::ShapeType::kCircle:
+        {
+            const float radius = random::Range(5.f, 20.f);
+            math::Circle circle(pos, radius);
+            CreateObject(i, circle);
+        }
+        break;
+    case math::ShapeType::kPolygon:
+    case math::ShapeType::kNone:
+    default:
+        break;
+    }
+}
+
+void FrictionSystem::CreateObject(size_t index, math::Circle& circle)
+{
+    math::Vec2f velocity(0.0f, 0.0f);
+    physics::Body body(circle.centre(), velocity, random::Range(1.0f, 100.0f));
+    physics::Collider collider(circle, random::Range(0.5f, 0.5f), 0, false);
+    GameObject object(body, collider, circle.radius());
+
+    objects_.push_back(object);
     RegisterObject(objects_[index]);
 }
 
-void TriggerSystem::RegisterObject(GameObject& object)
+void FrictionSystem::CreateObject(size_t index, math::AABB& aabb)
+{
+    math::Vec2f velocity(0.0f, 0.0f);
+    physics::Body body(aabb.GetCenter(), velocity, random::Range(1.0f, 100.0f));
+    physics::Collider collider(aabb, random::Range(0.0f, 0.0f), 0, false);
+    GameObject object(body, collider, aabb.half_size_length());
+
+    objects_.push_back(object);
+    RegisterObject(objects_[index]);
+}
+
+void FrictionSystem::RegisterObject(GameObject& object)
 {
     collider_to_object_map_[&object.collider()] = &object;
 }
 
-void TriggerSystem::UnregisterObject(GameObject& object)
+void FrictionSystem::UnregisterObject(GameObject& object)
 {
     collider_to_object_map_.erase(&object.collider());
 }
 
-void TriggerSystem::Update()
+void FrictionSystem::Update()
 {
     UpdateShapes();
     BroadPhase();
     NarrowPhase();
 }
 
-void TriggerSystem::UpdateShapes()
+void FrictionSystem::UpdateShapes()
 {
     for (auto& object : objects_)
     {
@@ -71,7 +98,9 @@ void TriggerSystem::UpdateShapes()
         auto& collider = object.collider();
 
         //TODO change for actual delta-time
-        body.Update(1.0f/60.0f);
+        body.Update(1.0f / 60.0f);
+        math::Vec2f gravity(0.0f, 9.8f);
+        body.ApplyForce(gravity);
 
         auto position = body.position();
 
@@ -88,8 +117,10 @@ void TriggerSystem::UpdateShapes()
         }
 
         //Update the collider's position
-        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon> {
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>) {
+        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon>
+        {
+            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>)
+            {
                 shape.set_centre(position);
             }
             if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
@@ -101,29 +132,36 @@ void TriggerSystem::UpdateShapes()
     }
 }
 
-
-void TriggerSystem::BroadPhase() {
+void FrictionSystem::BroadPhase()
+{
     std::unordered_map<GameObjectPair, bool> new_potential_pairs;
 
     quadtree_->Clear();
-    for (auto& object : objects_) {
+    for (auto& object : objects_)
+    {
         quadtree_->Insert(&object.collider());
     }
 
     // Use AABB tests for broad phase
-    for (auto& object : objects_) {
+    for (auto& object : objects_)
+    {
         auto& collider = object.collider();
         // Get the AABB of the collider for broad phase test
         auto range = collider.GetBoundingBox();
         auto potentialColliders = quadtree_->Query(range);
 
-        for (auto& otherCollider : potentialColliders) {
-            if (&collider != otherCollider) {  // Avoid self-collision
+        for (auto& otherCollider : potentialColliders)
+        {
+            if (&collider != otherCollider)
+            {
+                // Avoid self-collision
                 // Only test AABB overlap in broad phase
-                if (math::Intersect(range, otherCollider->GetBoundingBox())) {
+                if (math::Intersect(range, otherCollider->GetBoundingBox()))
+                {
                     GameObject* objectA = collider_to_object_map_[&collider];
                     GameObject* objectB = collider_to_object_map_[otherCollider];
-                    if (objectA && objectB) {
+                    if (objectA && objectB)
+                    {
                         GameObjectPair pair{objectA, objectB};
                         new_potential_pairs[pair] = true;
                     }
@@ -136,32 +174,40 @@ void TriggerSystem::BroadPhase() {
     potential_pairs_ = std::move(new_potential_pairs);
 }
 
-void TriggerSystem::NarrowPhase() {
+void FrictionSystem::NarrowPhase()
+{
     std::unordered_map<GameObjectPair, bool> newActivePairs;
 
-    for (const auto& pair : potential_pairs_ | std::views::keys) {
-        if (!pair.gameObjectA_ || !pair.gameObjectB_) {
+    for (const auto& pair : potential_pairs_ | std::views::keys)
+    {
+        if (!pair.gameObjectA_ || !pair.gameObjectB_)
+        {
             continue;
         }
 
-        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b) {
-            return math::Intersect(shape_a, shape_b);
-        }, pair.gameObjectA_->collider().shape(),
-           pair.gameObjectB_->collider().shape());
+        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                                    {
+                                        return math::Intersect(shape_a, shape_b);
+                                    }, pair.gameObjectA_->collider().shape(),
+                                    pair.gameObjectB_->collider().shape());
 
-        if (intersect) {
+        if (intersect)
+        {
             newActivePairs[pair] = true;
 
             // If this is a new collision
-            if (!active_pairs_.contains(pair)) {
+            if (!active_pairs_.contains(pair))
+            {
                 OnPairCollide(pair);
             }
         }
     }
 
     // Check for ended collisions
-    for (const auto& [pair, _] : active_pairs_) {
-        if (!newActivePairs.contains(pair)) {
+    for (const auto& [pair, _] : active_pairs_)
+    {
+        if (!newActivePairs.contains(pair))
+        {
             OnPairCollideEnd(pair);
         }
     }
@@ -169,7 +215,7 @@ void TriggerSystem::NarrowPhase() {
 }
 
 //Called on the first collision frame
-void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
+void FrictionSystem::OnPairCollide(const GameObjectPair& pair)
 {
     if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
     {
@@ -187,7 +233,7 @@ void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
 }
 
 //TODO: find a way to check if it's still colliding with something else when Exit
-void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
+void FrictionSystem::OnPairCollideEnd(const GameObjectPair& pair)
 {
     if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
     {
@@ -200,5 +246,3 @@ void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
         pair.gameObjectB_->OnCollisionExit();
     }
 }
-
-
