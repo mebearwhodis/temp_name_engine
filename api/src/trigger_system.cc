@@ -9,21 +9,39 @@
 TriggerSystem::TriggerSystem()
 {
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0,0), math::Vec2f(1200,800)));
-    for(size_t i = 0; i < kNumberOfShapes; i++)
+    for(size_t i = 0; i < kNumberOfShapes/2 - 1; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
         const float radius = random::Range(5.f, 20.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
+    for(size_t i = kNumberOfShapes/2 - 1; i < kNumberOfShapes; i++)
+    {
+        math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
+        const float half_size_value = random::Range(5.f, 20.f);
+        math::AABB aabb(position, half_size_value);
+        CreateObject(i, aabb);
+    }
 }
 
 void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
 {
-    math::Vec2f velocity(random::Range(-0.05f, 0.05f), random::Range(-0.05f, 0.05f));
+    math::Vec2f velocity(random::Range(-0.1f, 0.1f), random::Range(-0.1f, 0.1f));
     physics::Body body(circle.centre(), velocity, random::Range(1.0f, 100.0f));
     physics::Collider collider(circle, random::Range(1.0f, 1.0f), 0, false);
     GameObject object(body, collider, circle.radius());
+
+    objects_[index] = object;
+    RegisterObject(objects_[index]);
+}
+
+void TriggerSystem::CreateObject(size_t index, math::AABB& aabb)
+{
+    math::Vec2f velocity(random::Range(-0.1f, 0.1f), random::Range(-0.1f, 0.1f));
+    physics::Body body(aabb.GetCenter(), velocity, random::Range(1.0f, 100.0f));
+    physics::Collider collider(aabb, random::Range(1.0f, 1.0f), 0, false);
+    GameObject object(body, collider, aabb.half_size());
 
     objects_[index] = object;
     RegisterObject(objects_[index]);
@@ -78,6 +96,10 @@ void TriggerSystem::UpdateShapes()
         collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon> {
             if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>) {
                 shape.set_centre(position);
+            }
+            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
+            {
+                shape.UpdatePosition(position);
             }
             return shape;
         }, collider.shape()));
@@ -172,10 +194,9 @@ void TriggerSystem::NarrowPhase() {
     // Check for ended collisions
     for (const auto& [pair, _] : active_pairs_) {
         if (!newActivePairs.contains(pair)) {
-            OnTriggerExit(pair);
+            OnPairCollideEnd(pair);
         }
     }
-
     active_pairs_ = std::move(newActivePairs);
 }
 
@@ -192,18 +213,24 @@ void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
         physics::ContactSolver ContactSolver;
         ContactSolver.SetContactObjects(pair);
         ContactSolver.ResolveContact();
+        pair.gameObjectA_->OnCollisionEnter();
+        pair.gameObjectB_->OnCollisionEnter();
     }
 }
-
 
 //TODO: find a way to check if it's still colliding with something else when Exit
-//Called on the last collision frame
-void TriggerSystem::OnTriggerExit(const GameObjectPair& pair)
+void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
 {
-    if (pair.gameObjectA_) {
-        pair.gameObjectA_->set_color(SDL_Color{ 255, 13, 132, 255 }); // Revert to original color
+    if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
+    {
+        pair.gameObjectA_->OnTriggerExit();
+        pair.gameObjectB_->OnTriggerExit();
     }
-    if (pair.gameObjectB_) {
-        pair.gameObjectB_->set_color(SDL_Color{ 255, 13, 132, 255 }); // Revert to original color
+    else
+    {
+        pair.gameObjectA_->OnCollisionExit();
+        pair.gameObjectB_->OnCollisionExit();
     }
 }
+
+

@@ -19,13 +19,25 @@ namespace math
     private:
         Vec2f min_bound_ = Vec2f::Zero();
         Vec2f max_bound_ = Vec2f::Zero();
+        Vec2f centre_ = Vec2f::Zero();
+        float half_size_ = 0.0f;
 
     public:
-        constexpr AABB(const Vec2f min_bound, const Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound){}
+        constexpr AABB(const Vec2f min_bound, const Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound)
+        {
+            centre_ = (min_bound + max_bound) * 0.5f;
+            half_size_ = (centre_ - min_bound).Magnitude();
+        }
+        constexpr AABB(const Vec2f centre, const float half_size) : centre_(centre), half_size_(half_size)
+        {
+            min_bound_ = Vec2f(centre_.x - half_size_, centre_.y - half_size_);
+            max_bound_ = Vec2f(centre_.x + half_size_, centre_.y + half_size_);
+        }
         AABB() = default;
 
         [[nodiscard]] constexpr Vec2f min_bound() const { return min_bound_; }
         [[nodiscard]] constexpr Vec2f max_bound() const { return max_bound_; }
+        [[nodiscard]] constexpr float half_size() const { return half_size_; }
 
         void set_min_bound(const Vec2f bound) { min_bound_ = bound; }
         void set_max_bound(const Vec2f bound) { max_bound_ = bound; }
@@ -41,8 +53,15 @@ namespace math
         [[nodiscard]] AABB GetBoundingBox() const {
             return *this;
         }
+        [[nodiscard]] Vec2f GetCenter() const {  return (min_bound_ + max_bound_) * 0.5f; }
         // [[nodiscard]] constexpr Vec2f GetHalfSize() const { return (max_bound_ - min_bound_) / 2; }
         [[nodiscard]] static constexpr ShapeType GetShapeType() { return ShapeType::kAABB; }
+        void UpdatePosition(const Vec2f position)
+        {
+            centre_ = position;
+            min_bound_ = Vec2f(centre_.x - half_size_, centre_.y - half_size_);
+            max_bound_ = Vec2f(centre_.x + half_size_, centre_.y + half_size_);
+        }
 
         bool operator==(const AABB& other) const {
             return min_bound_ == other.min_bound_ && max_bound_ == other.max_bound_;

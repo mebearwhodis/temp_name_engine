@@ -111,7 +111,19 @@ void GameEngine::Run()
             trigger_system_->Update();
             for(auto g : trigger_system_->objects())
             {
-                graphics_manager_->CreateCircle(g.position(), g.radius(), g.color(), false);
+                switch (g.collider().GetShapeType())
+                {
+                case math::ShapeType::kAABB:
+                    graphics_manager_->CreateAABB(g.position(), g.radius(), g.color(), true);
+                    break;
+                case math::ShapeType::kCircle:
+                    graphics_manager_->CreateCircle(g.position(), g.radius(), g.color(), false);
+                    break;
+                case math::ShapeType::kPolygon:
+                case math::ShapeType::kNone:
+                default:
+                    break;
+                }
             }
             trigger_system_->quadtree()->Draw(display_->renderer());
         }

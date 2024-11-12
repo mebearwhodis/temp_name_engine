@@ -58,6 +58,7 @@ namespace physics
                 default:
                     break;
                 }
+                break;
             case math::ShapeType::kCircle:
                 switch (collider_b.GetShapeType())
                 {
@@ -206,7 +207,7 @@ namespace physics
             };
 
             //Calculate the vector from the circle centre to the closest point
-            const math::Vec2f delta = centre - closest_point;
+            const math::Vec2f delta = closest_point - centre;
             const float distance = delta.Magnitude();
 
             contact_normal_ = delta.Normalized();

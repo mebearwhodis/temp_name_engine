@@ -27,8 +27,8 @@ public:
     [[nodiscard]] physics::Quadtree* quadtree() const { return quadtree_; }
 
     void CreateObject(size_t index, math::Circle& circle);
-    //void CreateObject(math::AABB& aabb);
-    //void CreateObject(math::Polygon& polygon);
+    void CreateObject(size_t index, math::AABB& aabb);
+    //void CreateObject(size_t index, math::Polygon& polygon);
 
     void RegisterObject(GameObject& object);
     void UnregisterObject(GameObject& object);
@@ -41,7 +41,7 @@ public:
     void NarrowPhase();
 
     static void OnPairCollide(const GameObjectPair& pair);
-    static void OnTriggerExit(const GameObjectPair& pair);
+    static void OnPairCollideEnd(const GameObjectPair& pair);
 };
 
 

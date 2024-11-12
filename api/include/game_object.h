@@ -2,6 +2,9 @@
 #define GAME_OBJECT_H
 #include <SDL_pixels.h>
 
+#include <utility>
+
+#include "random.h"
 #include "physics/body.h"
 #include "physics/collider.h"
 
@@ -15,8 +18,8 @@ private:
 
 public:
     GameObject() = default;
-    GameObject(const physics::Body& body, const physics::Collider& collider, const float radius) : body_(body),
-        collider_(collider), radius_(radius){}
+    GameObject(const physics::Body& body, physics::Collider  collider, const float radius) : body_(body),
+        collider_(std::move(collider)), radius_(radius){}
     GameObject(const physics::Body& body, const float radius, const SDL_Color& color) : body_(body), radius_(radius), color_(color){}
 
     ~GameObject() = default;
@@ -34,6 +37,14 @@ public:
 
     void OnTriggerEnter(){ color_ = SDL_Color{ 0, 255, 0, 255 }; }
     void OnTriggerExit(){ color_ = SDL_Color{ 255, 13, 132, 255 }; }
+    void OnCollisionEnter()
+    {
+        Uint8 r = random::Range(128, 255);
+        Uint8 g = random::Range(128, 255);
+        Uint8 b = random::Range(128, 255);
+        color_ = SDL_Color{ r, g, b, 255 };
+    }
+    void OnCollisionExit(){return;}
 };
 
 struct GameObjectPair

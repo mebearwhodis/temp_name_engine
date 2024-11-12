@@ -16,20 +16,20 @@ void GraphicsManager::Clear()
     indices_.clear();
 }
 
-void GraphicsManager::CreateCircle(const math::Vec2f center, const float radius, const SDL_Color color, const bool rotation)
+void GraphicsManager::CreateCircle(const math::Vec2f centre, const float radius, const SDL_Color color, const bool rotation)
 {
     //Track where the new circle's vertices start
     const size_t starting_index = vertices_.size();
 
     constexpr float angle_step = (2 * math::Pi) / kCircleVertexCount;
 
-    //Add the center of the circle
-    AddVertex(center, color);
+    //Add the centre of the circle
+    AddVertex(centre, color);
 
     {
     const float angle = static_cast<float>(0) * angle_step;
-    const float x = center.x + radius * std::cos(angle);
-    const float y = center.y + radius * std::sin(angle);
+    const float x = centre.x + radius * std::cos(angle);
+    const float y = centre.y + radius * std::sin(angle);
     if(rotation)
     {
         AddVertex(math::Vec2f{x, y}, SDL_Color{255, 255, 255, 255});
@@ -45,8 +45,8 @@ void GraphicsManager::CreateCircle(const math::Vec2f center, const float radius,
     for (size_t i = 1; i < kCircleVertexCount; i++)
     {
         const float angle = static_cast<float>(i) * angle_step;
-        const float x = center.x + radius * std::cos(angle);
-        const float y = center.y + radius * std::sin(angle);
+        const float x = centre.x + radius * std::cos(angle);
+        const float y = centre.y + radius * std::sin(angle);
 
         AddVertex(math::Vec2f{x, y}, color);
     }
@@ -67,7 +67,7 @@ void GraphicsManager::CreateCircle(const math::Vec2f center, const float radius,
 
 }
 
-void GraphicsManager::CreateAABB(math::Vec2f min, math::Vec2f max, SDL_Color color, bool fill_status)
+void GraphicsManager::CreateAABB(const math::Vec2f min, const math::Vec2f max, const SDL_Color color, bool fill_status)
 {
     const size_t starting_index = vertices_.size();
     AddVertex(min, color);
@@ -84,7 +84,27 @@ void GraphicsManager::CreateAABB(math::Vec2f min, math::Vec2f max, SDL_Color col
     indices_.push_back(static_cast<int>(starting_index) + 3);
 }
 
-void GraphicsManager::CreatePolygon(const std::vector<math::Vec2f>& points, const math::Vec2f center, SDL_Color color, bool fill_status)
+
+void GraphicsManager::CreateAABB(const math::Vec2f centre, const float half_size, const SDL_Color color, bool fill_status)
+{
+    const size_t starting_index = vertices_.size();
+    const auto min = math::Vec2f(centre.x - half_size, centre.y - half_size);
+    const auto max = math::Vec2f(centre.x + half_size, centre.y + half_size);
+    AddVertex(min, color);
+    AddVertex(math::Vec2f{min.x, max.y}, color);
+    AddVertex(max, color);
+    AddVertex(math::Vec2f{max.x, min.y}, color);
+
+    indices_.push_back(static_cast<int>(starting_index));
+    indices_.push_back(static_cast<int>(starting_index) + 1);
+    indices_.push_back(static_cast<int>(starting_index) + 2);
+
+    indices_.push_back(static_cast<int>(starting_index));
+    indices_.push_back(static_cast<int>(starting_index) + 2);
+    indices_.push_back(static_cast<int>(starting_index) + 3);
+}
+
+void GraphicsManager::CreatePolygon(const std::vector<math::Vec2f>& points, const math::Vec2f center, const SDL_Color color, bool fill_status)
 {
     const size_t starting_index = vertices_.size();
 
