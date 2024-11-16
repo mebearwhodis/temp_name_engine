@@ -9,10 +9,8 @@
 FrictionSystem::FrictionSystem()
 {
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
-    objects_.reserve(100);
-    math::AABB ground(math::Vec2f(360.0f, 700.0f), math::Vec2f(840.0f, 600.0f));
-    size_t i = objects_.size();
-    CreateGround(i, ground);
+    objects_.reserve(1000);
+    CreateGround();
 }
 
 
@@ -64,16 +62,30 @@ void FrictionSystem::CreateObject(size_t index, math::AABB& aabb)
     RegisterObject(objects_[index]);
 }
 
-void FrictionSystem::CreateGround(size_t index, math::AABB& aabb)
+void FrictionSystem::CreateGround()
 {
-    math::Vec2f velocity(0.0f, 0.0f);
-    physics::Body body(aabb.GetCenter(), velocity, 0.0f);
-    body.set_is_static(true);
-    physics::Collider collider(aabb, 1.0f, 0, false);
-    GameObject object(body, collider, aabb.half_size_length());
+    size_t i = objects_.size();
+
+    math::AABB ground(math::Vec2f(360.0f, 700.0f), math::Vec2f(840.0f, 600.0f));
+    //math::AABB ground(math::Vec2f(600, 650));
+    ground.set_max_bound(math::Vec2f(560.0f, 650.0f));
+
+     math::Vec2f velocity(0.0f, 0.0f);
+     physics::Body body(ground.GetCenter(), velocity, 0.0f);
+     body.set_is_static(true);
+     physics::Collider collider(ground, 1.0f, 0, false);
+     GameObject object(body, collider, ground.half_size_length());
+
+
+    // math::Circle ground(math::Vec2f(600,650), 500.0f);
+    // math::Vec2f velocity(0.0f, 0.0f);
+    // physics::Body body(ground.centre(), velocity, 0.0f);
+    // body.set_is_static(true);
+    // physics::Collider collider(ground, 1.0f, 0, false);
+    // GameObject object(body, collider, ground.radius());
 
     objects_.push_back(object);
-    RegisterObject(objects_[index]);
+    RegisterObject(objects_[i]);
 }
 
 void FrictionSystem::RegisterObject(GameObject& object)
@@ -89,6 +101,7 @@ void FrictionSystem::UnregisterObject(GameObject& object)
 void FrictionSystem::Update()
 {
     UpdateShapes();
+    //SimplisticBroadPhase();
     BroadPhase();
     NarrowPhase();
 }
@@ -106,7 +119,7 @@ void FrictionSystem::UpdateShapes()
         if(!body.is_static())
         {
             body.ApplyForce(gravity);
-
+        }
             auto position = body.position();
 
             float radius = object.radius();
@@ -134,8 +147,45 @@ void FrictionSystem::UpdateShapes()
                 }
                 return shape;
             }, collider.shape()));
+
+    }
+}
+
+void FrictionSystem::SimplisticBroadPhase()
+{
+    std::unordered_map<GameObjectPair, bool> new_potential_pairs;
+
+    // Loop through all objects
+    for (size_t i = 0; i < objects_.size(); ++i)
+    {
+        auto& objectA = objects_[i];
+        auto& colliderA = objectA.collider();
+
+        // Get the AABB of the first collider
+        auto rangeA = colliderA.GetBoundingBox();
+
+        // Compare with all other objects
+        for (size_t j = i + 1; j < objects_.size(); ++j)
+        {
+            auto& objectB = objects_[j];
+            auto& colliderB = objectB.collider();
+
+            // Get the AABB of the second collider
+            auto rangeB = colliderB.GetBoundingBox();
+
+            // Check for AABB overlap
+            if (math::Intersect(rangeA, rangeB))
+            {
+                std::cout << "Potential collision detected between objects: "
+                          << i << " and " << j << std::endl;
+                GameObjectPair pair{&objectA, &objectB};
+                new_potential_pairs[pair] = true;
+            }
         }
     }
+
+    // Update the potential pairs for narrow phase to process
+    potential_pairs_ = std::move(new_potential_pairs);
 }
 
 void FrictionSystem::BroadPhase()
@@ -170,7 +220,6 @@ void FrictionSystem::BroadPhase()
                     {
                         GameObjectPair pair{objectA, objectB};
                         new_potential_pairs[pair] = true;
-
                     }
                 }
             }

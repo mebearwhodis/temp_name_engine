@@ -15,7 +15,7 @@
 class GameEngine
 {
 private:
-    int selected_system_= 1; //This will change, it's a temporary way to switch systems
+    int selected_system_= 3; //This will change, it's a temporary way to switch systems
     bool is_running_;
 
     Display* display_;
@@ -29,7 +29,7 @@ private:
 
     void HandleEvents();
 
-    //TODO: remove
+    //TODO: remove (combine fps counter with timer)
     FPSCounter* fps_counter_;
 public:
     GameEngine();

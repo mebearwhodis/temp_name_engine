@@ -97,6 +97,7 @@ void GameEngine::Run()
 {
     //Begin():
 
+
     while (is_running_)
     {
         //Update()
@@ -147,7 +148,7 @@ void GameEngine::Run()
                 }
             }
             //TODO add imgui toggle for quadtree display
-            trigger_system_->quadtree()->Draw(display_->renderer());
+            // trigger_system_->quadtree()->Draw(display_->renderer());
         }
         //COLLISION SYSTEM:
         if(selected_system_ == 2){}
@@ -172,6 +173,7 @@ void GameEngine::Run()
                     break;
                 }
             }
+            //friction_system_->quadtree()->Draw(display_->renderer());
         }
 
 
@@ -186,8 +188,8 @@ void GameEngine::Run()
 
 
         // Update FPS counter
-        //fps_counter_->Update();
-        //std::cout << "FPS: " << fps_counter_->GetFPS() << std::endl;
+        // fps_counter_->Update();
+        // std::cout << "FPS: " << fps_counter_->GetFPS() << std::endl;
 
         imgui_interface_->Render();
         SDL_RenderPresent(display_->renderer());

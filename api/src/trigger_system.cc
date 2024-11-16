@@ -8,15 +8,15 @@
 
 TriggerSystem::TriggerSystem()
 {
-    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0,0), math::Vec2f(1200,800)));
-    for(size_t i = 0; i < kNumberOfShapes/2 - 1; i++)
+    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
+    for (size_t i = 0; i < kNumberOfShapes / 2 - 1; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
         const float radius = random::Range(5.f, 20.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
-    for(size_t i = kNumberOfShapes/2 - 1; i < kNumberOfShapes; i++)
+    for (size_t i = kNumberOfShapes / 2 - 1; i < kNumberOfShapes; i++)
     {
         math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
         math::AABB aabb(position);
@@ -59,7 +59,7 @@ void TriggerSystem::UnregisterObject(GameObject& object)
 void TriggerSystem::Update()
 {
     UpdateShapes();
-    BroadPhase();
+    SimplisticBroadPhase();
     NarrowPhase();
 }
 
@@ -71,7 +71,7 @@ void TriggerSystem::UpdateShapes()
         auto& collider = object.collider();
 
         //TODO change for actual delta-time
-        body.Update(1.0f/60.0f);
+        body.Update(1.0f / 60.0f);
 
         auto position = body.position();
 
@@ -88,8 +88,10 @@ void TriggerSystem::UpdateShapes()
         }
 
         //Update the collider's position
-        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon> {
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>) {
+        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon>
+        {
+            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>)
+            {
                 shape.set_centre(position);
             }
             if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
@@ -101,29 +103,73 @@ void TriggerSystem::UpdateShapes()
     }
 }
 
+void TriggerSystem::SimplisticBroadPhase()
+{
+    std::unordered_map<GameObjectPair, bool> new_potential_pairs;
 
-void TriggerSystem::BroadPhase() {
+    // Loop through all objects
+    for (size_t i = 0; i < objects_.size(); ++i)
+    {
+        auto& objectA = objects_[i];
+        auto& colliderA = objectA.collider();
+
+        // Get the AABB of the first collider
+        auto rangeA = colliderA.GetBoundingBox();
+
+        // Compare with all other objects
+        for (size_t j = i + 1; j < objects_.size(); ++j)
+        {
+            auto& objectB = objects_[j];
+            auto& colliderB = objectB.collider();
+
+            // Get the AABB of the second collider
+            auto rangeB = colliderB.GetBoundingBox();
+
+            // Check for AABB overlap
+            if (math::Intersect(rangeA, rangeB))
+            {
+                GameObjectPair pair{&objectA, &objectB};
+                new_potential_pairs[pair] = true;
+            }
+        }
+    }
+
+    // Update the potential pairs for narrow phase to process
+    potential_pairs_ = std::move(new_potential_pairs);
+}
+
+
+
+void TriggerSystem::BroadPhase()
+{
     std::unordered_map<GameObjectPair, bool> new_potential_pairs;
 
     quadtree_->Clear();
-    for (auto& object : objects_) {
+    for (auto& object : objects_)
+    {
         quadtree_->Insert(&object.collider());
     }
 
     // Use AABB tests for broad phase
-    for (auto& object : objects_) {
+    for (auto& object : objects_)
+    {
         auto& collider = object.collider();
         // Get the AABB of the collider for broad phase test
         auto range = collider.GetBoundingBox();
         auto potentialColliders = quadtree_->Query(range);
 
-        for (auto& otherCollider : potentialColliders) {
-            if (&collider != otherCollider) {  // Avoid self-collision
+        for (auto& otherCollider : potentialColliders)
+        {
+            if (&collider != otherCollider)
+            {
+                // Avoid self-collision
                 // Only test AABB overlap in broad phase
-                if (math::Intersect(range, otherCollider->GetBoundingBox())) {
+                if (math::Intersect(range, otherCollider->GetBoundingBox()))
+                {
                     GameObject* objectA = collider_to_object_map_[&collider];
                     GameObject* objectB = collider_to_object_map_[otherCollider];
-                    if (objectA && objectB) {
+                    if (objectA && objectB)
+                    {
                         GameObjectPair pair{objectA, objectB};
                         new_potential_pairs[pair] = true;
                     }
@@ -136,32 +182,40 @@ void TriggerSystem::BroadPhase() {
     potential_pairs_ = std::move(new_potential_pairs);
 }
 
-void TriggerSystem::NarrowPhase() {
+void TriggerSystem::NarrowPhase()
+{
     std::unordered_map<GameObjectPair, bool> newActivePairs;
 
-    for (const auto& pair : potential_pairs_ | std::views::keys) {
-        if (!pair.gameObjectA_ || !pair.gameObjectB_) {
+    for (const auto& pair : potential_pairs_ | std::views::keys)
+    {
+        if (!pair.gameObjectA_ || !pair.gameObjectB_)
+        {
             continue;
         }
 
-        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b) {
-            return math::Intersect(shape_a, shape_b);
-        }, pair.gameObjectA_->collider().shape(),
-           pair.gameObjectB_->collider().shape());
+        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                                    {
+                                        return math::Intersect(shape_a, shape_b);
+                                    }, pair.gameObjectA_->collider().shape(),
+                                    pair.gameObjectB_->collider().shape());
 
-        if (intersect) {
+        if (intersect)
+        {
             newActivePairs[pair] = true;
 
             // If this is a new collision
-            if (!active_pairs_.contains(pair)) {
+            if (!active_pairs_.contains(pair))
+            {
                 OnPairCollide(pair);
             }
         }
     }
 
     // Check for ended collisions
-    for (const auto& [pair, _] : active_pairs_) {
-        if (!newActivePairs.contains(pair)) {
+    for (const auto& [pair, _] : active_pairs_)
+    {
+        if (!newActivePairs.contains(pair))
+        {
             OnPairCollideEnd(pair);
         }
     }
@@ -200,5 +254,3 @@ void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
         pair.gameObjectB_->OnCollisionExit();
     }
 }
-
-

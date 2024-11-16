@@ -5,7 +5,7 @@
 
 #include "math/vec2.h"
 
-static constexpr size_t kCircleVertexCount = 30;
+static constexpr size_t kCircleVertexCount = 20;
 
 class GraphicsManager
 {

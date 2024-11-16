@@ -15,6 +15,8 @@ private:
     std::unordered_map<GameObjectPair, bool> active_pairs_;
 
     std::unordered_map<physics::Collider*, GameObject*> collider_to_object_map_; //Mapping from Collider to GameObject
+
+    //TODO Make a GameObject ground?
 public:
     FrictionSystem();
 
@@ -24,7 +26,7 @@ public:
     void SpawnShape(math::Vec2f pos, math::ShapeType type);
     void CreateObject(size_t index, math::Circle& circle);
     void CreateObject(size_t index, math::AABB& aabb);
-    void CreateGround(size_t index, math::AABB& aabb);
+    void CreateGround();
     //void CreateObject(size_t index, math::Polygon& polygon);
 
     void RegisterObject(GameObject& object);
@@ -33,6 +35,7 @@ public:
     void Update();
     void UpdateShapes();
 
+    void SimplisticBroadPhase();
     void BroadPhase();
     void NarrowPhase();
 

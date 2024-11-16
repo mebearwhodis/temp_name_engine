@@ -27,8 +27,8 @@ namespace math
         constexpr AABB(const Vec2f min_bound, const Vec2f max_bound) : min_bound_(min_bound), max_bound_(max_bound)
         {
             centre_ = (min_bound + max_bound) * 0.5f;
-            half_size_vec_ = centre_ - min_bound;
-            half_size_length_ = (centre_ - min_bound).Magnitude();
+            half_size_vec_ = max_bound - centre_;
+            half_size_length_ = (max_bound - centre_).Magnitude();
         }
 
         constexpr AABB(const Vec2f min_bound,
@@ -59,8 +59,18 @@ namespace math
         [[nodiscard]] constexpr Vec2f max_bound() const { return max_bound_; }
         [[nodiscard]] constexpr float half_size_length() const { return half_size_length_; }
 
-        void set_min_bound(const Vec2f bound) { min_bound_ = bound; }
-        void set_max_bound(const Vec2f bound) { max_bound_ = bound; }
+        void set_min_bound(const Vec2f bound)
+        {
+            min_bound_ = bound;
+            centre_ = (min_bound_ + max_bound_) * 0.5f;
+            half_size_vec_ = max_bound_ - centre_;
+            half_size_length_ = (max_bound_ - centre_).Magnitude();
+        }
+        void set_max_bound(const Vec2f bound) {
+            max_bound_ = bound;
+            centre_ = (min_bound_ + max_bound_) * 0.5f;
+            half_size_vec_ = max_bound_ - centre_;
+            half_size_length_ = (max_bound_ - centre_).Magnitude();}
 
         [[nodiscard]] constexpr bool Contains(const Vec2f point) const
         {
@@ -251,35 +261,93 @@ namespace math
 
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Circle& circle)
     {
-        const auto center = circle.centre();
-        //Check if the AABB contains the circle's centre
-        if (aabb.Contains(center)) return true;
-
-        //If not, expand the AABB bounds by the radius and check if those contain the centre
-        const auto radius = circle.radius();
-        const auto min_bound = aabb.min_bound();
-        const auto max_bound = aabb.max_bound();
-
-        const auto min_bound_x = min_bound - Vec2f(radius, 0);
-        const auto max_bound_x = max_bound + Vec2f(radius, 0);
-
-        const auto min_bound_y = min_bound - Vec2f(0, radius);
-        const auto max_bound_y = max_bound + Vec2f(0, radius);
-
-        const AABB extended_x(min_bound_x, max_bound_x);
-        const AABB extended_y(min_bound_y, max_bound_y);
-
-        if (extended_x.Contains(center)) return true;
-        if (extended_y.Contains(center)) return true;
-
-        //If not, check if the circle contains one of the corners of the AABB
-        if (circle.Contains(min_bound)) return true;
-        if (circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
-        if (circle.Contains(max_bound)) return true;
-        if (circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
+        //V1
+        // const auto& center = circle.centre();
+        // //Check if the AABB contains the circle's centre
+        // if (aabb.Contains(center)) return true;
+        //
+        // //If not, expand the AABB bounds by the radius and check if those contain the centre
+        // const auto radius = circle.radius();
+        // const auto min_bound = aabb.min_bound();
+        // const auto max_bound = aabb.max_bound();
+        //
+        // const auto min_bound_x = min_bound - Vec2f(radius, 0);
+        // const auto max_bound_x = max_bound + Vec2f(radius, 0);
+        //
+        // const auto min_bound_y = min_bound - Vec2f(0, radius);
+        // const auto max_bound_y = max_bound + Vec2f(0, radius);
+        //
+        // const AABB extended_x(min_bound_x, max_bound_x);
+        // const AABB extended_y(min_bound_y, max_bound_y);
+        //
+        // if (extended_x.Contains(center)) return true;
+        // if (extended_y.Contains(center)) return true;
+        //
+        // //If not, check if the circle contains one of the corners of the AABB
+        // if (circle.Contains(min_bound)) return true;
+        // if (circle.Contains(Vec2f(min_bound.x, max_bound.y))) return true;
+        // if (circle.Contains(max_bound)) return true;
+        // if (circle.Contains(Vec2f(max_bound.x, min_bound.y))) return true;
 
         //If not, they don't intersect
-        return false;
+        // return false;
+
+        //V2
+        // const Vec2f& center = circle.centre();
+        // const float radius = circle.radius();
+        //
+        // // Find the closest point on the AABB to the circle's center
+        // float closest_x = std::max(aabb.min_bound().x, std::min(center.x, aabb.max_bound().x));
+        // float closest_y = std::max(aabb.min_bound().y, std::min(center.y, aabb.max_bound().y));
+        //
+        // // Calculate the distance from the circle's center to this closest point
+        // Vec2f closest_point(closest_x, closest_y);
+        // float distance_squared = (closest_point - center).SquareMagnitude();
+        //
+        // // If the distance is less than or equal to the circle's radius squared, they intersect
+        // return distance_squared <= (radius * radius);
+
+        //V3
+        const Vec2f& centre = circle.centre();
+        const float radius = circle.radius();
+
+        // Find the closest point on each of the four sides of the AABB to the circle's center
+        Vec2f closest_point;
+
+        // Check closest point on the left or right edge
+        if (centre.x < aabb.min_bound().x)
+            closest_point = ClosestPointOnSegment(
+                {aabb.min_bound().x, aabb.min_bound().y},
+                {aabb.min_bound().x, aabb.max_bound().y},
+                centre
+            );
+        else if (centre.x > aabb.max_bound().x)
+            closest_point = ClosestPointOnSegment(
+                {aabb.max_bound().x, aabb.min_bound().y},
+                {aabb.max_bound().x, aabb.max_bound().y},
+                centre
+            );
+        else // Closest point is on the top or bottom edge
+        {
+            if (centre.y < aabb.min_bound().y)
+                closest_point = ClosestPointOnSegment(
+                    {aabb.min_bound().x, aabb.min_bound().y},
+                    {aabb.max_bound().x, aabb.min_bound().y},
+                    centre
+                );
+            else
+                closest_point = ClosestPointOnSegment(
+                    {aabb.min_bound().x, aabb.max_bound().y},
+                    {aabb.max_bound().x, aabb.max_bound().y},
+                    centre
+                );
+        }
+
+        // Calculate the distance from the circle's center to the closest point on the AABB
+        const float distance_squared = (closest_point - centre).SquareMagnitude();
+
+        // If the distance is less than or equal to the circle's radius squared, they intersect
+        return distance_squared <= (radius * radius);
     }
 
     [[nodiscard]] constexpr bool Intersect(const AABB& aabb, const Polygon& polygon)
