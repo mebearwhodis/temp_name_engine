@@ -1,21 +1,27 @@
-#ifndef KUMAENGINE_API_GAME_ENGINE_H_
-#define KUMAENGINE_API_GAME_ENGINE_H_
+#ifndef KUMA_ENGINE_API_GAME_ENGINE_H_
+#define KUMA_ENGINE_API_GAME_ENGINE_H_
 
-
+#include "collision_system.h"
 #include "display.h"
-#include "FPS_counter.h"
 #include "friction_system.h"
+#include "graphics_manager.h"
 #include "imgui_interface.h"
 #include "planet_system.h"
-#include "graphics_manager.h"
 #include "timer.h"
 #include "trigger_system.h"
 
+enum class SystemScene
+{
+    PlanetSystemScene,
+    TriggerSystemScene,
+    CollisionSystemScene,
+    FrictionSystemScene
+};
 
 class GameEngine
 {
 private:
-    int selected_system_= 3; //This will change, it's a temporary way to switch systems
+    SystemScene selected_scene_ = SystemScene::PlanetSystemScene;
     bool is_running_;
 
     Display* display_;
@@ -23,19 +29,20 @@ private:
     GraphicsManager* graphics_manager_;
     PlanetSystem* planet_system_;
     TriggerSystem* trigger_system_;
+    CollisionSystem* collision_system_;
     FrictionSystem* friction_system_;
 
     ImGuiInterface* imgui_interface_;
 
     void HandleEvents();
 
-    //TODO: remove (combine fps counter with timer)
-    FPSCounter* fps_counter_;
 public:
     GameEngine();
     ~GameEngine();
 
+    void ChangeScene(SystemScene new_sample);
+
     void Run();
 };
 
-#endif // KUMAENGINE_API_GAME_ENGINE_H_
+#endif // KUMA_ENGINE_API_GAME_ENGINE_H_

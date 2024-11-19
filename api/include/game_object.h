@@ -1,20 +1,22 @@
-﻿#ifndef GAME_OBJECT_H
-#define GAME_OBJECT_H
+﻿#ifndef KUMA_ENGINE_API_GAME_OBJECT_H_
+#define KUMA_ENGINE_API_GAME_OBJECT_H_
+
 #include <SDL_pixels.h>
 
 #include <utility>
 
+#include "body.h"
+#include "collider.h"
 #include "random.h"
-#include "physics/body.h"
-#include "physics/collider.h"
 
 class GameObject
 {
 private:
     physics::Body body_;
-    physics::Collider collider_;
+    physics::Collider collider_ = {};
     float radius_ = 0.f;
     SDL_Color color_ = SDL_Color{255, 13, 132, 255};
+    int collisions_count_ = 0;
 
 public:
     GameObject() = default;
@@ -29,14 +31,27 @@ public:
     [[nodiscard]] float radius() const { return radius_; }
     [[nodiscard]] SDL_Color color() const { return color_; }
     [[nodiscard]] math::Vec2f position() const { return body_.position(); }
+    [[nodiscard]] int collisions_count() const { return collisions_count_; }
 
     void set_body(const physics::Body& body) { body_ = body; }
     void set_collider(const physics::Collider& collider) { collider_ = collider; }
     void set_radius(const float radius) { radius_ = radius; }
     void set_color(const SDL_Color& color) { color_ = color; }
+    void AddCollision() { collisions_count_++; }
+    void SubCollision() { collisions_count_--; }
 
-    void OnTriggerEnter(){ color_ = SDL_Color{ 0, 255, 0, 255 }; }
-    void OnTriggerExit(){ color_ = SDL_Color{ 255, 13, 132, 255 }; }
+    void OnTriggerEnter()
+    {
+        color_ = SDL_Color{ 0, 255, 0, 255 };
+    }
+    void OnTriggerStay()
+    {
+        color_ = SDL_Color{ 0, 255, 0, 255 };
+    }
+    void OnTriggerExit()
+    {
+        color_ = SDL_Color{ 255, 13, 132, 255 };
+    }
     void OnCollisionEnter()
     {
         Uint8 r = random::Range(128, 255);
@@ -44,7 +59,10 @@ public:
         Uint8 b = random::Range(128, 255);
         color_ = SDL_Color{ r, g, b, 255 };
     }
-    void OnCollisionExit(){return;}
+    void OnCollisionExit()
+    {
+        //color_ = SDL_Color{ 255, 13, 132, 255 };
+    }
 };
 
 struct GameObjectPair
@@ -66,12 +84,15 @@ namespace std
     {
         std::size_t operator()(const GameObjectPair& pair) const noexcept
         {
-            //Hash the pointer values
-            std::size_t h1 = std::hash<const GameObject*>{}(pair.gameObjectA_);
-            std::size_t h2 = std::hash<const GameObject*>{}(pair.gameObjectB_);
-            //Combine hashes
+            // Ensure consistent ordering by hashing the pointers in a sorted manner
+            const GameObject* first = pair.gameObjectA_ < pair.gameObjectB_ ? pair.gameObjectA_ : pair.gameObjectB_;
+            const GameObject* second = pair.gameObjectA_ < pair.gameObjectB_ ? pair.gameObjectB_ : pair.gameObjectA_;
+
+            std::size_t h1 = std::hash<const GameObject*>{}(first);
+            std::size_t h2 = std::hash<const GameObject*>{}(second);
+            // Combine hashes
             return h1 ^ (h2 << 1);
         }
     };
 };
-#endif //GAME_OBJECT_H
+#endif // KUMA_ENGINE_API_GAME_OBJECT_H_

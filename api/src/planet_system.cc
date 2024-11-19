@@ -1,47 +1,91 @@
 ﻿#include "planet_system.h"
 
+#include <SDL_mouse.h>
+
+#include "four_vec2.h"
+#include "metrics.h"
 #include "random.h"
-#include "math/four_vec2.h"
+
+
+PlanetSystem::PlanetSystem()
+{
+    star_ = physics::Body(physics::BodyType::Static, math::Vec2f(600, 400), math::Vec2f::Zero(), star_mass_);
+    planets_.reserve(kStartingPlanetsCount_*5);
+    planets_.clear();
+    for (std::size_t i = 0; i < kStartingPlanetsCount_; i++)
+    {
+        const math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        float radius = random::Range(5.f, 20.f);
+        uint8_t alpha = random::Range(10, 255);
+
+        CreatePlanet(position, radius, SDL_Color{ 255, 13, 132, alpha });
+    }
+}
+
+void PlanetSystem::Update(float delta_time)
+{
+    if(is_spawner_active_)
+    {
+        math::Vec2i mouse_pos;
+        SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
+        const auto mouse_pos_f = math::Vec2f(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y));
+        if(constexpr float minimum_range = 30;
+            metrics::ConvertToMeters((mouse_pos_f - star_.position()).Magnitude()) > metrics::ConvertToMeters(minimum_range))
+        {
+            const math::Vec2f random_pos(random::Range(mouse_pos_f.x - minimum_range, mouse_pos_f.x + minimum_range),
+                                         random::Range(mouse_pos_f.y - minimum_range, mouse_pos_f.y + minimum_range));
+
+            const float radius = random::Range(5.f, 20.f);
+            const uint8_t alpha = random::Range(10, 255);
+
+            CreatePlanet(random_pos, radius, SDL_Color{ 255, 13, 132, alpha });
+        }
+    }
+    UpdatePlanetsSIMD(delta_time);
+}
 
 void PlanetSystem::CreatePlanet(const math::Vec2f position, const float radius, const SDL_Color color)
 {
-    auto body = physics::Body(position, math::Vec2f::Zero(), planet_mass_);
 
-    math::Vec2f u = star_.position() - body.position();
+    math::Vec2f u = star_.position() - position;
     float r = u.Magnitude();
 
-    math::Vec2f angular_velocity = std::sqrt(kGravitationConstant_ * (star_.mass() / r)) * math::Vec2f(-u.y, u.x).
-        Normalized();
+    if (r > 0)
+    {
+    // Calculate angular velocity magnitude based on gravitational force
+        math::Vec2f tangential_direction = math::Vec2f(-u.y, u.x).Normalized();
+        float orbital_velocity = std::sqrt(kGravitationConstant_ * (star_mass_ / r));
 
-    body.set_position(position);
-    body.set_velocity(angular_velocity);
+        // Calculate angular velocity
+        math::Vec2f angular_velocity = tangential_direction * orbital_velocity;
+        physics::Body body(physics::BodyType::Dynamic,position, angular_velocity, planet_mass_);
+    //Random mass: random::Range(1.0f, 50.0f)
 
     auto planet = GameObject(body, radius, color);
     planets_.push_back(planet);
+    }
+
 }
 
-void PlanetSystem::UpdatePlanets()
+void PlanetSystem::UpdatePlanets(float delta_time)
 {
-    for (std::size_t i = 0; i < planets_.size(); i++)
+    for (auto& planet : planets_)
     {
-        auto& planet = planets_[i];
-
         math::Vec2f u = star_.position() - planet.position();
         float r = u.Magnitude();
 
         if (r > 0)
         {
-            float force_magnitude = kGravitationConstant_ * (planet.body().mass() * star_.mass() / (r * r));
+            float force_magnitude = kGravitationConstant_ * (planet_mass_ * star_mass_ / (r * r));
             math::Vec2f force = force_magnitude * u.Normalized();
             planet.body().ApplyForce(force);
         }
 
-        //TODO change for actual delta-time
-        planet.body().Update(1.0f/60.0f);
+        planet.body().Update();
     }
 }
 
-void PlanetSystem::UpdatePlanetsSIMD()
+void PlanetSystem::UpdatePlanetsSIMD(float delta_time)
 {
     const std::size_t simdSize = planets_.size() / 4 * 4;
 
@@ -63,7 +107,7 @@ void PlanetSystem::UpdatePlanetsSIMD()
         std::array<float, 4> distances = u.Magnitude();
         math::FourVec2f normalizedU = u.Normalize();
 
-        std::array<float, 4> forceMagnitudes;
+        std::array<float, 4> forceMagnitudes = {};
         for (int j = 0; j < 4; ++j) {
             if (distances[j] > 0) {
                 forceMagnitudes[j] = kGravitationConstant_ * (planets_[i+j].body().mass() * star_.mass() / (distances[j] * distances[j]));
@@ -76,8 +120,7 @@ void PlanetSystem::UpdatePlanetsSIMD()
         math::FourVec2f forces = normalizedU * forceMagnitudes;
         for (int j = 0; j < 4; ++j) {
             planets_[i+j].body().ApplyForce(math::Vec2f(forces.x[j], forces.y[j]));
-            //TODO change for actual delta-time
-            planets_[i+j].body().Update(1.0f/60.0f);
+            planets_[i+j].body().Update();
         }
     }
 
@@ -90,14 +133,13 @@ void PlanetSystem::UpdatePlanetsSIMD()
             math::Vec2f force = force_magnitude * u.Normalized();
             planets_[i].body().ApplyForce(force);
         }
-            //TODO change for actual delta-time
-        planets_[i].body().Update(1.0f/60.0f);
+        planets_[i].body().Update();
     }
 }
 
 void PlanetSystem::SpawnPlanets(math::Vec2f position)
 {
-    // if(spawner_ == true)
+    // if(is_spawner_active_ == true)
     // {
         float radius = random::Range(5.f, 20.f);
         uint8_t alpha = random::Range(10, 255);
@@ -105,16 +147,3 @@ void PlanetSystem::SpawnPlanets(math::Vec2f position)
     // }
 }
 
-
-PlanetSystem::PlanetSystem()
-{
-    star_ = physics::Body(math::Vec2f(600, 400), math::Vec2f::Zero(), star_mass_);
-    for (std::size_t i = 0; i < kStartingPlanetsCount_; i++)
-    {
-        const math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
-        float radius = random::Range(5.f, 20.f);
-        uint8_t alpha = random::Range(10, 255);
-
-        CreatePlanet(position, radius, SDL_Color{ 255, 13, 132, alpha });
-    }
-}

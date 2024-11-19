@@ -1,4 +1,5 @@
 ﻿#include "graphics_manager.h"
+
 #include "common.h"
 
 void GraphicsManager::AddVertex(const math::Vec2f position, const SDL_Color color)
@@ -21,10 +22,10 @@ void GraphicsManager::CreateCircle(const math::Vec2f centre, const float radius,
     //Track where the new circle's vertices start
     const size_t starting_index = vertices_.size();
 
-    constexpr float angle_step = (2 * math::Pi) / kCircleVertexCount;
+    constexpr float angle_step = (2 * common::Pi) / kCircleVertexCount;
 
     //Add the centre of the circle
-    AddVertex(centre, color);
+    AddVertex(centre, SDL_Color{0, 0, 0, 0});
 
     {
     const float angle = static_cast<float>(0) * angle_step;
@@ -32,7 +33,7 @@ void GraphicsManager::CreateCircle(const math::Vec2f centre, const float radius,
     const float y = centre.y + radius * std::sin(angle);
     if(rotation)
     {
-        AddVertex(math::Vec2f{x, y}, SDL_Color{255, 255, 255, 255});
+        AddVertex(math::Vec2f{x, y}, SDL_Color{0, 0, 0, 255});
     }
         else
         {
@@ -55,15 +56,15 @@ void GraphicsManager::CreateCircle(const math::Vec2f centre, const float radius,
     for (size_t i = 0; i < kCircleVertexCount - 1; i++)
     {
         indices_.push_back(static_cast<int>(starting_index));          //Center vertex
-        indices_.push_back(static_cast<int>(starting_index) + i + 1);  //Current outer vertex
-        indices_.push_back(static_cast<int>(starting_index) + i + 2);  //Next outer vertex
+        indices_.push_back(static_cast<int>(starting_index + i + 1));  //Current outer vertex
+        indices_.push_back(static_cast<int>(starting_index + i + 2));  //Next outer vertex
     }
 
 
     //Last triangle, closing the circle
     indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + kCircleVertexCount);
-    indices_.push_back(static_cast<int>(starting_index) + 1);
+    indices_.push_back(static_cast<int>(starting_index + kCircleVertexCount));
+    indices_.push_back(static_cast<int>(starting_index + 1));
 
 }
 
@@ -76,33 +77,13 @@ void GraphicsManager::CreateAABB(const math::Vec2f min, const math::Vec2f max, c
     AddVertex(math::Vec2f{max.x, min.y}, color);
 
     indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + 1);
-    indices_.push_back(static_cast<int>(starting_index) + 2);
+    indices_.push_back(static_cast<int>(starting_index + 1));
+    indices_.push_back(static_cast<int>(starting_index + 2));
 
     indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + 2);
-    indices_.push_back(static_cast<int>(starting_index) + 3);
+    indices_.push_back(static_cast<int>(starting_index + 2));
+    indices_.push_back(static_cast<int>(starting_index + 3));
 }
-
-
-// void GraphicsManager::CreateAABB(const math::Vec2f centre, const float half_size, const SDL_Color color, bool fill_status)
-// {
-//     const size_t starting_index = vertices_.size();
-//     const auto min = math::Vec2f(centre.x - half_size, centre.y - half_size);
-//     const auto max = math::Vec2f(centre.x + half_size, centre.y + half_size);
-//     AddVertex(min, color);
-//     AddVertex(math::Vec2f{min.x, max.y}, color);
-//     AddVertex(max, color);
-//     AddVertex(math::Vec2f{max.x, min.y}, color);
-//
-//     indices_.push_back(static_cast<int>(starting_index));
-//     indices_.push_back(static_cast<int>(starting_index) + 1);
-//     indices_.push_back(static_cast<int>(starting_index) + 2);
-//
-//     indices_.push_back(static_cast<int>(starting_index));
-//     indices_.push_back(static_cast<int>(starting_index) + 2);
-//     indices_.push_back(static_cast<int>(starting_index) + 3);
-// }
 
 void GraphicsManager::CreatePolygon(const std::vector<math::Vec2f>& points, const math::Vec2f center, const SDL_Color color, bool fill_status)
 {
@@ -120,13 +101,13 @@ void GraphicsManager::CreatePolygon(const std::vector<math::Vec2f>& points, cons
     for (size_t i = 0; i < points.size() - 1; i++)
     {
         indices_.push_back(static_cast<int>(starting_index));          //Center vertex
-        indices_.push_back(static_cast<int>(starting_index) + i + 1);  //Current outer vertex
-        indices_.push_back(static_cast<int>(starting_index) + i + 2);  //Next outer vertex
+        indices_.push_back(static_cast<int>(starting_index + i + 1));  //Current outer vertex
+        indices_.push_back(static_cast<int>(starting_index + i + 2));  //Next outer vertex
     }
 
 
     //Last triangle, closing the shape
     indices_.push_back(static_cast<int>(starting_index));
-    indices_.push_back(static_cast<int>(starting_index) + points.size());
-    indices_.push_back(static_cast<int>(starting_index) + 1);
+    indices_.push_back(static_cast<int>(starting_index + points.size()));
+    indices_.push_back(static_cast<int>(starting_index + 1));
 }

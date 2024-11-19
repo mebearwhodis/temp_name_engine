@@ -1,16 +1,14 @@
-﻿#ifndef KUMA_ENGINE_API_TRIGGER_SYSTEM_H_
-#define KUMA_ENGINE_API_TRIGGER_SYSTEM_H_
+﻿#ifndef KUMA_ENGINE_API_COLLISION_SYSTEM_H_
+#define KUMA_ENGINE_API_COLLISION_SYSTEM_H_
 
 #include <unordered_map>
-#include <unordered_set>
 
 #include "game_object.h"
 #include "quadtree.h"
+#include "trigger_system.h"
 
 
-static constexpr size_t kNumberOfShapes = 200;
-
-class TriggerSystem
+class CollisionSystem
 {
 private:
     std::array<GameObject, kNumberOfShapes> objects_ = {};
@@ -23,8 +21,8 @@ private:
     std::unordered_map<physics::Collider*, GameObject*> collider_to_object_map_; //Mapping from Collider to GameObject
 
 public:
-    TriggerSystem();
-    ~TriggerSystem() = default;
+    CollisionSystem();
+    ~CollisionSystem() = default;
 
     void Initialize();
     void Update(float delta_time);
@@ -51,6 +49,4 @@ public:
     static void OnPairCollideStay(const GameObjectPair& pair);
     static void OnPairCollideEnd(const GameObjectPair& pair);
 };
-
-
-#endif //KUMA_ENGINE_API_TRIGGER_SYSTEM_H_
+#endif // KUMA_ENGINE_API_COLLISION_SYSTEM_H_

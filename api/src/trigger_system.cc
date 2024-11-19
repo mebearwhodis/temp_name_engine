@@ -1,34 +1,36 @@
 ﻿#include "trigger_system.h"
 
-#include <iostream>
 #include <ranges>
 
+#include "contact_solver.h"
 #include "random.h"
-#include "physics/contact_solver.h"
 
 TriggerSystem::TriggerSystem()
 {
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
     for (size_t i = 0; i < kNumberOfShapes / 2 - 1; i++)
     {
-        math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        const float radius = random::Range(5.f, 20.f);
+        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        const float radius = random::Range(5.f, 10.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
     for (size_t i = kNumberOfShapes / 2 - 1; i < kNumberOfShapes; i++)
     {
-        math::Vec2f position(random::Range(100.f, 1100.f), random::Range(100.f, 700.f));
-        math::AABB aabb(position);
+        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        math::Vec2f half_size_vec = math::Vec2f(random::Range(5.f, 10.f),random::Range(5.f, 10.f));
+        auto half_size_length = half_size_vec.Magnitude();
+
+        math::AABB aabb(position, half_size_vec, half_size_length);
         CreateObject(i, aabb);
     }
 }
 
 void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
 {
-    math::Vec2f velocity(random::Range(-5.0f, 5.0f), random::Range(-5.0f, 5.0f));
-    physics::Body body(circle.centre(), velocity, random::Range(1.0f, 100.0f));
-    physics::Collider collider(circle, random::Range(1.0f, 1.0f), 0, false);
+    math::Vec2f velocity(random::Range(-50.0f, 50.0f), random::Range(-50.0f, 50.0f));
+    physics::Body body(physics::BodyType::Dynamic,circle.centre(), velocity, random::Range(1.0f, 50.0f));
+    physics::Collider collider(circle, random::Range(1.0f, 1.0f), 0, true);
     GameObject object(body, collider, circle.radius());
 
     objects_[index] = object;
@@ -37,13 +39,22 @@ void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
 
 void TriggerSystem::CreateObject(size_t index, math::AABB& aabb)
 {
-    math::Vec2f velocity(random::Range(-5.0f, 5.0f), random::Range(-5.0f, 5.0f));
-    physics::Body body(aabb.GetCenter(), velocity, random::Range(1.0f, 100.0f));
-    physics::Collider collider(aabb, random::Range(1.0f, 1.0f), 0, false);
+    math::Vec2f velocity(random::Range(-50.0f, 50.0f), random::Range(-50.0f, 50.0f));
+    physics::Body body(physics::BodyType::Dynamic, aabb.GetCentre(), velocity, random::Range(1.0f, 50.0f));
+    physics::Collider collider(aabb, random::Range(1.0f, 1.0f), 0, true);
     GameObject object(body, collider, aabb.half_size_length());
 
     objects_[index] = object;
     RegisterObject(objects_[index]);
+}
+
+void TriggerSystem::DeleteObject(size_t index)
+{
+    if (index >= objects_.size()) return;
+
+    GameObject& object = objects_[index];
+    UnregisterObject(object);
+    objects_[index] = {};
 }
 
 void TriggerSystem::RegisterObject(GameObject& object)
@@ -56,50 +67,50 @@ void TriggerSystem::UnregisterObject(GameObject& object)
     collider_to_object_map_.erase(&object.collider());
 }
 
-void TriggerSystem::Update()
+void TriggerSystem::Update(float delta_time)
 {
-    UpdateShapes();
-    SimplisticBroadPhase();
+    UpdateShapes(delta_time);
+    BroadPhase();
     NarrowPhase();
 }
 
-void TriggerSystem::UpdateShapes()
+void TriggerSystem::UpdateShapes(float delta_time)
 {
     for (auto& object : objects_)
     {
         auto& body = object.body();
         auto& collider = object.collider();
 
-        //TODO change for actual delta-time
-        body.Update(1.0f / 60.0f);
+        body.Update(delta_time);
 
         auto position = body.position();
 
         float radius = object.radius();
 
         //Check for collision with window borders
-        if (position.x - radius < 0 || position.x + radius > 1200)
+        if (position.x - radius < 0)
         {
+            position.x = radius;
             body.set_velocity(math::Vec2f(-body.velocity().x, body.velocity().y));
         }
-        if (position.y - radius < 0 || position.y + radius > 800)
+        if(position.x + radius > 1200)
         {
+            position.x = 1200 - radius;
+            body.set_velocity(math::Vec2f(-body.velocity().x, body.velocity().y));
+        }
+        if (position.y - radius < 0)
+        {
+            position.y = radius;
+            body.set_velocity(math::Vec2f(body.velocity().x, -body.velocity().y));
+        }
+        if(position.y + radius > 800)
+        {
+            position.y = 800 - radius;
             body.set_velocity(math::Vec2f(body.velocity().x, -body.velocity().y));
         }
 
         //Update the collider's position
-        collider.set_shape(std::visit([&position](auto shape) -> std::variant<math::Circle, math::AABB, math::Polygon>
-        {
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::Circle>)
-            {
-                shape.set_centre(position);
-            }
-            if constexpr (std::is_same_v<std::decay_t<decltype(shape)>, math::AABB>)
-            {
-                shape.UpdatePosition(position);
-            }
-            return shape;
-        }, collider.shape()));
+        collider.UpdatePosition(position);
     }
 }
 
@@ -184,7 +195,7 @@ void TriggerSystem::BroadPhase()
 
 void TriggerSystem::NarrowPhase()
 {
-    std::unordered_map<GameObjectPair, bool> newActivePairs;
+    std::unordered_set<GameObjectPair> newActivePairs;
 
     for (const auto& pair : potential_pairs_ | std::views::keys)
     {
@@ -201,20 +212,23 @@ void TriggerSystem::NarrowPhase()
 
         if (intersect)
         {
-            newActivePairs[pair] = true;
+            newActivePairs.insert(pair);
 
-            // If this is a new collision
-            if (!active_pairs_.contains(pair))
+            // If this is a new collision Keep for triggers?
+            if (active_pairs_.find(pair) == active_pairs_.end())
             {
-                OnPairCollide(pair);
+                OnPairCollideStart(pair);
+            }
+            else
+            {
+                OnPairCollideStay(pair);
             }
         }
     }
 
-    // Check for ended collisions
-    for (const auto& [pair, _] : active_pairs_)
+    for (const auto& pair : active_pairs_)
     {
-        if (!newActivePairs.contains(pair))
+        if (newActivePairs.find(pair) == newActivePairs.end())
         {
             OnPairCollideEnd(pair);
         }
@@ -223,8 +237,13 @@ void TriggerSystem::NarrowPhase()
 }
 
 //Called on the first collision frame
-void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
+void TriggerSystem::OnPairCollideStart(const GameObjectPair& pair)
 {
+    if(!pair.gameObjectA_ || !pair.gameObjectB_){return;}
+
+    pair.gameObjectA_->AddCollision();
+    pair.gameObjectB_->AddCollision();
+
     if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
     {
         pair.gameObjectA_->OnTriggerEnter();
@@ -239,18 +258,50 @@ void TriggerSystem::OnPairCollide(const GameObjectPair& pair)
         pair.gameObjectB_->OnCollisionEnter();
     }
 }
-
-//TODO: find a way to check if it's still colliding with something else when Exit
-void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
+void TriggerSystem::OnPairCollideStay(const GameObjectPair& pair)
 {
+    if(!pair.gameObjectA_ || !pair.gameObjectB_){return;}
+
     if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
     {
-        pair.gameObjectA_->OnTriggerExit();
-        pair.gameObjectB_->OnTriggerExit();
+        pair.gameObjectA_->OnTriggerStay();
+        pair.gameObjectB_->OnTriggerStay();
     }
     else
     {
-        pair.gameObjectA_->OnCollisionExit();
-        pair.gameObjectB_->OnCollisionExit();
+        //pair.gameObjectA_->OnCollisionStay();
+        //pair.gameObjectB_->OnCollisionStay();
+    }
+}
+
+void TriggerSystem::OnPairCollideEnd(const GameObjectPair& pair)
+{
+    if (!pair.gameObjectA_ || !pair.gameObjectB_) return;
+
+    pair.gameObjectA_->SubCollision();
+    pair.gameObjectB_->SubCollision();
+
+    if (pair.gameObjectA_->collider().is_trigger() || pair.gameObjectB_->collider().is_trigger())
+    {
+        if (pair.gameObjectA_->collisions_count() <= 0)
+        {
+            pair.gameObjectA_->OnTriggerExit();
+        }
+        if (pair.gameObjectB_->collisions_count() <= 0)
+        {
+            pair.gameObjectB_->OnTriggerExit();
+        }
+    }
+    else
+    {
+
+        if (pair.gameObjectA_->collisions_count() <= 0)
+        {
+            pair.gameObjectA_->OnCollisionExit();
+        }
+        if (pair.gameObjectB_->collisions_count() <= 0)
+        {
+            pair.gameObjectB_->OnCollisionExit();
+        }
     }
 }

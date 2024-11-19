@@ -1,7 +1,13 @@
-﻿#ifndef GAME_WINDOW_H
-#define GAME_WINDOW_H
+﻿#ifndef KUMA_ENGINE_API_DISPLAY_H_
+#define KUMA_ENGINE_API_DISPLAY_H_
+
 #include <SDL_render.h>
 #include <SDL_video.h>
+
+//TODO replace
+static constexpr int kWindowWidth = 1200;
+static constexpr int kWindowHeight = 800;
+
 
 class Display
 {
@@ -23,4 +29,4 @@ public:
     void Clear() const;
 };
 
-#endif //GAME_WINDOW_H
+#endif // KUMA_ENGINE_API_DISPLAY_H_
