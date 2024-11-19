@@ -1,6 +1,7 @@
 ﻿#ifndef KUMA_ENGINE_LIB_PHYSICS_BODY_H_
 #define KUMA_ENGINE_LIB_PHYSICS_BODY_H_
 
+#include "common.h"
 #include "vec2.h"
 
 namespace physics
@@ -27,6 +28,8 @@ namespace physics
         float orientation_ = 0.0f;
         float angular_velocity_ = 0.0f;
         float torque_ = 0.0f;
+
+        bool is_awake_ = true;
 
         float mass_ = 1.0f;
         float inverse_mass_ = 1.0f;
@@ -113,6 +116,10 @@ namespace physics
         {
             if (type_ == BodyType::Dynamic)
             {
+                if(force.Magnitude() > common::Epsilon)
+                {
+                    is_awake_ = true;
+                }
                 acceleration_ += force * inverse_mass_;
             }
         }
@@ -129,7 +136,7 @@ namespace physics
         {
             if (type_ == BodyType::Dynamic)
             {
-                ApplyForce(gravity * mass_);
+                ApplyForce(gravity);
             }
         }
 
@@ -137,18 +144,10 @@ namespace physics
         {
             if (type_ != BodyType::Static)
             {
-                velocity_ += acceleration_ * delta_time;
-                position_ += velocity_ * delta_time;
-            }
-            ResetForce();
-        }
+                    velocity_ += acceleration_ * delta_time;
 
-        void Update()
-        {
-            if (type_ != BodyType::Static)
-            {
-                velocity_ += acceleration_;
-                position_ += velocity_;
+                    position_ += velocity_ * delta_time;
+
             }
             ResetForce();
         }

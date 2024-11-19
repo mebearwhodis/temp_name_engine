@@ -3,27 +3,57 @@
 #include <ranges>
 
 #include "contact_solver.h"
+#include "display.h"
 #include "random.h"
 
-TriggerSystem::TriggerSystem()
+TriggerSystem::~TriggerSystem()
 {
-    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
-    for (size_t i = 0; i < kNumberOfShapes / 2 - 1; i++)
+    Clear();
+}
+
+void TriggerSystem::Initialize()
+{
+    Clear();
+
+    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(kWindowWidth, kWindowHeight)));
+    constexpr float margin = 20.0f;
+
+    for (size_t i = 0; i < number_of_objects_ / 2 - 1; i++)
     {
-        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        const math::Vec2f position(random::Range(margin, kWindowWidth - margin), random::Range(margin, kWindowHeight - margin));
         const float radius = random::Range(5.f, 10.f);
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
-    for (size_t i = kNumberOfShapes / 2 - 1; i < kNumberOfShapes; i++)
+    for (size_t i = number_of_objects_ / 2 - 1; i < number_of_objects_; i++)
     {
-        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        const math::Vec2f position(random::Range(margin, kWindowWidth - margin), random::Range(margin, kWindowHeight - margin));
         math::Vec2f half_size_vec = math::Vec2f(random::Range(5.f, 10.f),random::Range(5.f, 10.f));
-        auto half_size_length = half_size_vec.Magnitude();
+        const auto half_size_length = half_size_vec.Magnitude();
 
         math::AABB aabb(position, half_size_vec, half_size_length);
         CreateObject(i, aabb);
     }
+}
+
+void TriggerSystem::Clear()
+{
+    if (quadtree_)
+    {
+        quadtree_->Clear();
+        delete quadtree_;
+        quadtree_ = nullptr;
+    }
+
+    for (size_t i = 0; i < number_of_objects_; ++i)
+    {
+        DeleteObject(i);
+    }
+
+    objects_.fill({});
+    collider_to_object_map_.clear();
+    potential_pairs_.clear();
+    active_pairs_.clear();
 }
 
 void TriggerSystem::CreateObject(size_t index, math::Circle& circle)
@@ -48,7 +78,7 @@ void TriggerSystem::CreateObject(size_t index, math::AABB& aabb)
     RegisterObject(objects_[index]);
 }
 
-void TriggerSystem::DeleteObject(size_t index)
+void TriggerSystem::DeleteObject(const size_t index)
 {
     if (index >= objects_.size()) return;
 
@@ -67,14 +97,14 @@ void TriggerSystem::UnregisterObject(GameObject& object)
     collider_to_object_map_.erase(&object.collider());
 }
 
-void TriggerSystem::Update(float delta_time)
+void TriggerSystem::Update(const float delta_time)
 {
     UpdateShapes(delta_time);
     BroadPhase();
     NarrowPhase();
 }
 
-void TriggerSystem::UpdateShapes(float delta_time)
+void TriggerSystem::UpdateShapes(const float delta_time)
 {
     for (auto& object : objects_)
     {
@@ -85,7 +115,7 @@ void TriggerSystem::UpdateShapes(float delta_time)
 
         auto position = body.position();
 
-        float radius = object.radius();
+        const float radius = object.radius();
 
         //Check for collision with window borders
         if (position.x - radius < 0)
@@ -204,11 +234,11 @@ void TriggerSystem::NarrowPhase()
             continue;
         }
 
-        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
-                                    {
-                                        return math::Intersect(shape_a, shape_b);
-                                    }, pair.gameObjectA_->collider().shape(),
-                                    pair.gameObjectB_->collider().shape());
+        const bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                                          {
+                                              return math::Intersect(shape_a, shape_b);
+                                          }, pair.gameObjectA_->collider().shape(),
+                                          pair.gameObjectB_->collider().shape());
 
         if (intersect)
         {

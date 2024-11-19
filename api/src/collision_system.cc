@@ -3,21 +3,27 @@
 #include <ranges>
 
 #include "contact_solver.h"
+#include "display.h"
 #include "random.h"
 
-CollisionSystem::CollisionSystem()
+void CollisionSystem::Initialize()
 {
-    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
-    for (size_t i = 0; i < kNumberOfShapes / 2 - 1; i++)
+    Clear();
+
+    quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0),  math::Vec2f(kWindowWidth, kWindowHeight)));
+    constexpr float margin = 20.0f;
+
+    for (size_t i = 0; i < number_of_objects_ / 2 - 1; i++)
     {
-        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        const math::Vec2f position(random::Range(margin, kWindowWidth - margin), random::Range(margin, kWindowHeight - margin));
         const float radius = random::Range(5.f, 10.f);
+
         math::Circle circle(position, radius);
         CreateObject(i, circle);
     }
-    for (size_t i = kNumberOfShapes / 2 - 1; i < kNumberOfShapes; i++)
+    for (size_t i = number_of_objects_ / 2 - 1; i < number_of_objects_; i++)
     {
-        math::Vec2f position(random::Range(20.f, 1180.f), random::Range(20.f, 780.f));
+        const math::Vec2f position(random::Range(margin, kWindowWidth - margin), random::Range(margin, kWindowHeight - margin));
         math::Vec2f half_size_vec = math::Vec2f(random::Range(5.f, 10.f),random::Range(5.f, 10.f));
         auto half_size_length = half_size_vec.Magnitude();
 
@@ -25,6 +31,27 @@ CollisionSystem::CollisionSystem()
         CreateObject(i, aabb);
     }
 }
+
+void CollisionSystem::Clear()
+{
+    if (quadtree_)
+    {
+        quadtree_->Clear();
+        delete quadtree_;
+        quadtree_ = nullptr;
+    }
+
+    for (size_t i = 0; i < number_of_objects_; ++i)
+    {
+        DeleteObject(i);
+    }
+
+    objects_.fill({});
+    potential_pairs_.clear();
+    active_pairs_.clear();
+    collider_to_object_map_.clear();
+}
+
 
 void CollisionSystem::CreateObject(size_t index, math::Circle& circle)
 {

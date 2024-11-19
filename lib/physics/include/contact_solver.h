@@ -124,14 +124,12 @@ namespace physics
             if (separating_velocity > 0.0f) { return; }
 
             // Calculate restitution
-            const float restitution = (objects_[0]->collider().bounciness() * body_a.mass() +
-                    objects_[1]->collider().bounciness() * body_b.mass()) /
-                (body_a.mass() + body_b.mass());
-
+            const float restitution = (collider_a.bounciness() * body_a.mass() + collider_b.bounciness() * body_b.mass()) / (body_a.mass() + body_b.mass());
 
             // Calculate impulse scalar
             float impulse_magnitude = -(1.0f + restitution) * separating_velocity;
             impulse_magnitude /= (body_a.inverse_mass() + body_b.inverse_mass());
+            math::Vec2f impulse = impulse_magnitude * contact_normal_;
 
             // // Debug output
             // std::cout << "ResolveVelocities:" << std::endl;
@@ -143,11 +141,11 @@ namespace physics
             // Apply impulse to the dynamic bodies
             if (body_a.type() == BodyType::Dynamic)
             {
-                body_a.ApplyImpulse(impulse_magnitude * contact_normal_);
+                body_a.ApplyImpulse(impulse);
             }
             if (body_b.type() == BodyType::Dynamic)
             {
-                body_b.ApplyImpulse(-impulse_magnitude * contact_normal_);
+                body_b.ApplyImpulse(-impulse);
             }
 
             //Friction
@@ -197,10 +195,10 @@ namespace physics
             //Correct positions to avoid objects sinking into each other
             //Only correct position if the penetration is above this threshold
             float penetration_correction = std::max(penetration_, 0.01f);
-            constexpr float correction_percent = 1.0f;
+            constexpr float correction_percent = 0.8f;
             const math::Vec2f correction = contact_normal_ * (penetration_correction * correction_percent);
 
-            // Debug output
+            //// Debug output
             // std::cout << "ResolvePositions:" << std::endl;
             // std::cout << "  Penetration: " << penetration_ << std::endl;
             // std::cout << "  Correction: " << correction.x << " : " << correction.y << std::endl;
@@ -216,7 +214,7 @@ namespace physics
             {
                 body_b.set_position(body_b.position() + correction * inverse_mass_b) ;
             }
-            // Debug output after position correction
+            // // Debug output after position correction
             // std::cout << "  Body A Position After: " << body_a.position().x << " : " << body_a.position().y << std::endl;
             // std::cout << "  Body B Position After: " << body_b.position().x << " : " << body_b.position().y << std::endl;
             // std::cout << "-------------------------" << std::endl;
@@ -248,42 +246,76 @@ namespace physics
             }
 
             //Calculate the contact point as the midpoint of the overlapping edges
-            contact_point_ = {(centre_a.x + centre_b.x) / 2, (centre_a.y + centre_b.y) / 2};
+            contact_point_ = {
+                std::clamp((centre_a.x + centre_b.x) / 2, aabb_a.min_bound().x, aabb_a.max_bound().x),
+                std::clamp((centre_a.y + centre_b.y) / 2, aabb_a.min_bound().y, aabb_a.max_bound().y)
+            };
+
         }
 
         void HandleAABBCircleCollision()
+{
+    const auto& aabb = std::get<math::AABB>(objects_[0]->collider().shape());
+    const auto& circle = std::get<math::Circle>(objects_[1]->collider().shape());
+    const auto centre = circle.centre();
+    const auto radius = circle.radius();
+
+    // Find the closest point on the AABB to the circle center
+    const math::Vec2f closest_point = {
+        std::clamp(centre.x, aabb.min_bound().x, aabb.max_bound().x),
+        std::clamp(centre.y, aabb.min_bound().y, aabb.max_bound().y)
+    };
+
+    // Calculate the vector from the circle center to the closest point
+    const math::Vec2f delta = closest_point - centre;
+    const float distance = delta.Magnitude();
+
+    if (distance > std::numeric_limits<float>::epsilon())
+    {
+        // Case: Circle's center is outside the AABB
+        contact_normal_ = delta / distance; // Normalized vector
+        penetration_ = radius - distance;
+        contact_point_ = closest_point;
+    }
+    else
+    {
+        // Case: Circle's center is inside the AABB
+        // Find the minimum distance to an edge of the AABB
+        float left_dist = std::abs(centre.x - aabb.min_bound().x);
+        float right_dist = std::abs(aabb.max_bound().x - centre.x);
+        float bottom_dist = std::abs(centre.y - aabb.min_bound().y);
+        float top_dist = std::abs(aabb.max_bound().y - centre.y);
+
+        // Determine the edge with the smallest distance
+        float min_dist = std::min({left_dist, right_dist, bottom_dist, top_dist});
+
+        if (min_dist == left_dist)
         {
-            const auto& aabb = std::get<math::AABB>(objects_[0]->collider().shape());
-            const auto& circle = std::get<math::Circle>(objects_[1]->collider().shape());
-            const auto centre = circle.centre();
-            const auto radius = circle.radius();
-
-            //Find the closest point on the AABB to the circle centre
-            const math::Vec2f closest_point = {
-                std::clamp(centre.x, aabb.min_bound().x, aabb.max_bound().x),
-                std::clamp(centre.y, aabb.min_bound().y, aabb.max_bound().y)
-            };
-
-            //Calculate the vector from the circle centre to the closest point
-            const math::Vec2f delta = closest_point - centre;
-            const float distance = delta.Magnitude();
-
-            if (distance > std::numeric_limits<float>::epsilon())
-            {
-                contact_normal_ = delta / distance; // Normalized vector
-                penetration_ = radius - distance;
-            }
-            else
-            {
-                // Circle center is inside the AABB
-                contact_normal_ = math::Vec2f(1, 0); // Arbitrary normal
-                penetration_ = radius;
-            }
-
-            // Contact point is the closest point
-            contact_point_ = closest_point;
-
+            contact_normal_ = math::Vec2f(-1, 0); // Left edge
+            penetration_ = radius - left_dist;
+            contact_point_ = {aabb.min_bound().x, centre.y};
         }
+        else if (min_dist == right_dist)
+        {
+            contact_normal_ = math::Vec2f(1, 0); // Right edge
+            penetration_ = radius - right_dist;
+            contact_point_ = {aabb.max_bound().x, centre.y};
+        }
+        else if (min_dist == bottom_dist)
+        {
+            contact_normal_ = math::Vec2f(0, -1); // Bottom edge
+            penetration_ = radius - bottom_dist;
+            contact_point_ = {centre.x, aabb.min_bound().y};
+        }
+        else if (min_dist == top_dist)
+        {
+            contact_normal_ = math::Vec2f(0, 1); // Top edge
+            penetration_ = radius - top_dist;
+            contact_point_ = {centre.x, aabb.max_bound().y};
+        }
+    }
+}
+
 
         void HandleAABBPolygonCollision()
         {
@@ -300,9 +332,17 @@ namespace physics
             //Calculate the vector between the centers
             const math::Vec2f delta = centre_a - centre_b;
 
-            //Calculate contact normal and point
-            contact_normal_ = delta.Normalized();
-            penetration_ = radius_a + radius_b - delta.Magnitude();
+            if (delta.Magnitude() < std::numeric_limits<float>::epsilon())
+            {
+                contact_normal_ = math::Vec2f(1.0f, 0.0f); // Arbitrary normal
+                penetration_ = radius_a + radius_b;       // Total overlap
+            }
+            else
+            {
+                contact_normal_ = delta.Normalized();
+                penetration_ = radius_a + radius_b - delta.Magnitude();
+            }
+
             contact_point_ = centre_a + contact_normal_ * radius_a;
         }
 

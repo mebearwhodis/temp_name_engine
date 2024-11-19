@@ -10,11 +10,11 @@
 class PlanetSystem
 {
 private:
-    static constexpr float kGravitationConstant_ = 0.06674f;
-    static constexpr std::size_t kStartingPlanetsCount_ = 3;
+    static constexpr float kGravitationConstant_ = 0.0667f;
+    static constexpr std::size_t kStartingPlanetsCount_ = 20;
 
-    float star_mass_ = 10000.f;
-    float planet_mass_ = 1000000.f;
+    float star_mass_ = 10.f;
+    float planet_mass_ = 3.f;
 
     physics::Body star_;
     std::vector<GameObject> planets_{};
@@ -22,17 +22,17 @@ private:
     bool is_spawner_active_ = false;
 
 public:
-    PlanetSystem();
+    PlanetSystem() = default;
     ~PlanetSystem() = default;
 
     void Initialize();
-    void Update(float delta_time);
+    void Update(float delta_time, SDL_Color colour);
     void Clear();
 
     void CreatePlanet(math::Vec2f position, float radius, SDL_Color color);
     void UpdatePlanets(float delta_time);
     void UpdatePlanetsSIMD(float delta_time);
-    void SpawnPlanets(math::Vec2f position);
+    void SpawnPlanets(SDL_Color colour);
 
     std::vector<GameObject> planets() { return planets_; }
     physics::Body* star() { return &star_; }

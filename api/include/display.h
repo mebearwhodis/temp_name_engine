@@ -4,7 +4,6 @@
 #include <SDL_render.h>
 #include <SDL_video.h>
 
-//TODO replace
 static constexpr int kWindowWidth = 1200;
 static constexpr int kWindowHeight = 800;
 
@@ -15,8 +14,8 @@ private:
     SDL_Window* window_;
     SDL_Renderer* renderer_;
 
-    int window_width_ = 1200;
-    int window_height_ = 800;
+    int window_width_ = kWindowWidth;
+    int window_height_ = kWindowHeight;
 
 public:
 

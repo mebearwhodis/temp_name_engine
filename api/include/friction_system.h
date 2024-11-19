@@ -4,33 +4,32 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "display.h"
 #include "game_object.h"
 #include "quadtree.h"
 #include "shape.h"
 #include "timer.h"
-
-static const auto kGravity_ = math::Vec2f(0.0f, 9.8f);
 
 class FrictionSystem
 {
 private:
     std::vector<GameObject> objects_;
 
-    physics::Quadtree* quadtree_;
+    physics::Quadtree* quadtree_ = nullptr;
 
     std::unordered_map<GameObjectPair, bool> potential_pairs_;
     std::unordered_set<GameObjectPair> active_pairs_;
 
     std::unordered_map<physics::Collider*, GameObject*> collider_to_object_map_; //Mapping from Collider to GameObject
 
-    Timer* timer_;
+    Timer* timer_ = nullptr;
+    math::AABB frame_bounds_ = math::AABB(math::Vec2f(0, 0), math::Vec2f(kWindowWidth, kWindowHeight));
 
 public:
-    FrictionSystem();
-    ~FrictionSystem() = default;
+    FrictionSystem() = default;
+    ~FrictionSystem();
 
     void Initialize();
-    void Update(float delta_time);
     void Clear();
 
     std::vector<GameObject> objects() { return objects_; }
@@ -39,13 +38,15 @@ public:
     void SpawnShape(math::Vec2f pos, math::ShapeType type);
     void CreateObject(size_t index, math::Circle& circle);
     void CreateObject(size_t index, math::AABB& aabb);
+    //void CreateObject(size_t index, math::Polygon& polygon);
     void CreateGround();
     void DeleteObject(size_t index);
-    //void CreateObject(size_t index, math::Polygon& polygon);
+    void RemoveOutOfBoundsObjects();
 
     void RegisterObject(GameObject& object);
     void UnregisterObject(GameObject& object);
 
+    void Update(float delta_time);
     void UpdateShapes(float delta_time);
 
     void SimplisticBroadPhase();

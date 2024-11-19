@@ -12,7 +12,7 @@
 
 namespace physics
 {
-    static constexpr int kMaxDepth_ = 5;
+    static constexpr int kMaxDepth_ = 6;
     static constexpr int kMaxShapeCount_ = 8;
 
     struct QuadtreeNode

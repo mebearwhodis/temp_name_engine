@@ -37,29 +37,29 @@ void ImGuiInterface::Update(bool& show_imgui)
 
         // Create a window
         ImGui::Begin("Kuma Engine", nullptr,
-                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
-        //TODO display quadtree or not + change other options maybe + reset scene button
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize);
 
         // Display FPS at the top
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+
 
         ImGui::Separator();
 
         // Scene Selector Combo Box
         const char* scenes[] = {"Planet System", "Trigger System", "Collision System", "Friction System"};
-        static int current_scene = 0; // Index of the current scene
 
-        if (ImGui::BeginCombo("Scene Selector", scenes[current_scene]))
+        if (ImGui::BeginCombo("Select Scene", scenes[current_scene_]))
         {
             for (int n = 0; n < IM_ARRAYSIZE(scenes); n++)
             {
-                const bool is_selected = (current_scene == n);
+                const bool is_selected = (current_scene_ == n);
                 if (ImGui::Selectable(scenes[n], is_selected))
                 {
-                    current_scene = n;
+                    current_scene_ = n;
+                    speed_multiplier_ = 1.0f;
                     if(game_engine_)
                     {
-                        game_engine_->ChangeScene(static_cast<SystemScene>(current_scene));
+                        game_engine_->ChangeScene(static_cast<SystemScene>(current_scene_));
                     }
                 }
                 if (is_selected)
@@ -70,66 +70,70 @@ void ImGuiInterface::Update(bool& show_imgui)
             ImGui::EndCombo();
         }
 
+        // Reset Scene Button
+        if (ImGui::Button("Reset Scene"))
+        {
+            speed_multiplier_ = 1.0f;
+            if (game_engine_)
+            {
+                game_engine_->ChangeScene(static_cast<SystemScene>(current_scene_));
+            }
+        }
         ImGui::Separator();
 
         // Scene-specific options
-        switch (current_scene)
+        switch (static_cast<SystemScene>(current_scene_))
         {
-        case 0: // Planet System
+        case SystemScene::PlanetSystemScene: // Planet System
             {
 
                 ImGui::PushTextWrapPos();
-                ImGui::Text("Scene Description");
+                ImGui::Text("Left Click: Toggle Spawner");
                 ImGui::PopTextWrapPos();
 
                 ImGui::Separator();
 
-                static bool option_a = true;
-                ImGui::Checkbox("Enable Option A", &option_a);
+                static ImVec4 planetColor = ImVec4(1.0f, 13.f/255.f, 132.f/255.f, 1.0f);  // Default color
+                if (ImGui::ColorPicker3("Planet Color", reinterpret_cast<float*>(&planetColor)))
+                {
+                    // Convert the ImVec3 color (0-1 range) to SDL_Color (0-255 range)
+                    SDL_Color sdlColor;
+                    sdlColor.r = static_cast<Uint8>(planetColor.x * 255);
+                    sdlColor.g = static_cast<Uint8>(planetColor.y * 255);
+                    sdlColor.b = static_cast<Uint8>(planetColor.z * 255);
+                    sdlColor.a = 255;  // Full opacity, since ColorPicker3 does not have an alpha channel
+                    planets_colour_ = sdlColor;
+                }
 
-
-                ImGui::SliderFloat("Speed Multiplier", &speed_multiplier_, 1.0f, 10.0f);
+                ImGui::SliderFloat("Speed Mult", &speed_multiplier_, 0.0f, 10.0f);
                 break;
             }
-        case 1: // Trigger System
+        case SystemScene::TriggerSystemScene: // Trigger System
+            {
+                ImGui::Checkbox("Show Quadtree", &show_quadtree_);
+
+                ImGui::SliderFloat("Speed Mult", &speed_multiplier_, 0.0f, 10.0f);
+                break;
+            }
+        case SystemScene::CollisionSystemScene: // Collision System
+            {
+                ImGui::Checkbox("Show Quadtree", &show_quadtree_);
+
+                ImGui::SliderFloat("Speed Mult", &speed_multiplier_, 0.0f, 10.0f);
+                break;
+            }
+        case SystemScene::FrictionSystemScene: // Friction System
             {
                 ImGui::PushTextWrapPos();
-                ImGui::Text("Scene Description");
+                ImGui::Text("Left Click: Spawn Circle");
+                ImGui::Text("Right Click: Spawn AABB");
                 ImGui::PopTextWrapPos();
 
                 ImGui::Separator();
 
                 ImGui::Checkbox("Show Quadtree", &show_quadtree_);
 
-                ImGui::SliderFloat("Speed Multiplier", &speed_multiplier_, 0.0f, 10.0f);
-                static int shape_count = 10;
-                ImGui::SliderInt("Number of Shapes", &shape_count, 1, 100);
-                break;
-            }
-        case 2: // Collision System
-            {
-                ImGui::PushTextWrapPos();
-                ImGui::Text("Scene Description");
-                ImGui::PopTextWrapPos();
-
-                ImGui::Separator();
-
-                ImGui::Checkbox("Show Quadtree", &show_quadtree_);
-
-                ImGui::SliderFloat("Speed Multiplier", &speed_multiplier_, 0.0f, 10.0f);
-                break;
-            }
-        case 3: // Friction System
-            {
-                ImGui::PushTextWrapPos();
-                ImGui::Text("Scene Description");
-                ImGui::PopTextWrapPos();
-
-                ImGui::Separator();
-
-                ImGui::Checkbox("Show Quadtree", &show_quadtree_);
-
-                ImGui::SliderFloat("Speed Multiplier", &speed_multiplier_, 0.0f, 10.0f);
+                ImGui::SliderFloat("Speed Mult", &speed_multiplier_, 0.0f, 2.0f);
                 break;
             }
         default:

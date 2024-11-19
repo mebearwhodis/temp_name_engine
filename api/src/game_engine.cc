@@ -34,46 +34,46 @@ GameEngine::~GameEngine()
     delete display_;
 }
 
-void GameEngine::ChangeScene(SystemScene new_sample)
+void GameEngine::ChangeScene(const SystemScene new_sample)
 {
-    // // Perform cleanup for the current scene
-    // switch (selected_scene_) {
-    // case 0: // Planet System
-    //     planet_system_->Clear(); // Hypothetical cleanup method
-    //     break;
-    // case 1: // Trigger System
-    //     trigger_system_->Clear(); // Cleanup if needed
-    //     break;
-    // case 2: // Collision System
-    //     collision_system_->Clear(); // Cleanup if needed
-    //     break;
-    // case 3: // Friction System
-    //     friction_system_->Clear(); // Cleanup if needed
-    //     break;
-    // default:
-    //     break;
-    // }
+    // Perform cleanup for the current scene
+    switch (selected_scene_) {
+    case SystemScene::PlanetSystemScene: // Planet System
+        planet_system_->Clear(); // Hypothetical cleanup method
+        break;
+    case SystemScene::TriggerSystemScene: // Trigger System
+        trigger_system_->Clear(); // Cleanup if needed
+        break;
+    case SystemScene::CollisionSystemScene: // Collision System
+        collision_system_->Clear(); // Cleanup if needed
+        break;
+    case SystemScene::FrictionSystemScene: // Friction System
+        friction_system_->Clear(); // Cleanup if needed
+        break;
+    default:
+        break;
+    }
 
-    // Update to the new scene
+    //Update to the new scene
     selected_scene_ = new_sample;
 
-    // // Initialize the new scene
-    // switch (selected_scene_) {
-    // case 0: // Planet System
-    //     planet_system_->Initialize();
-    //     break;
-    // case 1: // Trigger System
-    //     trigger_system_->Initialize();
-    //     break;
-    // case 2: // Collision System
-    //     collision_system_->Initialize();
-    //     break;
-    // case 3: // Friction System
-    //     friction_system_->Initialize();
-    //     break;
-    // default:
-    //     break;
-    // }
+    // Initialize the new scene
+    switch (selected_scene_) {
+    case SystemScene::PlanetSystemScene: // Planet System
+        planet_system_->Initialize();
+        break;
+    case SystemScene::TriggerSystemScene: // Trigger System
+        trigger_system_->Initialize();
+        break;
+    case SystemScene::CollisionSystemScene: // Collision System
+        collision_system_->Initialize();
+        break;
+    case SystemScene::FrictionSystemScene: // Friction System
+        friction_system_->Initialize();
+        break;
+    default:
+        break;
+    }
 }
 
 void GameEngine::HandleEvents()
@@ -134,6 +134,7 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Run()
 {
+    ChangeScene(selected_scene_);
     //Begin():
     const float fixed_time_step = timer_->FixedDeltaTime();
     float accumulator = 0.0f;
@@ -156,7 +157,7 @@ void GameEngine::Run()
             // Update all systems with the fixed time step
             if (selected_scene_ == SystemScene::PlanetSystemScene)
             {
-                planet_system_->Update(fixed_time_step * imgui_interface_->speed_multiplier());
+                planet_system_->Update(fixed_time_step * imgui_interface_->speed_multiplier() * 1000.0f, imgui_interface_->planets_colour());
             }
             else if (selected_scene_ == SystemScene::TriggerSystemScene)
             {
@@ -168,7 +169,7 @@ void GameEngine::Run()
             }
             else if (selected_scene_ == SystemScene::FrictionSystemScene)
             {
-                friction_system_->Update(fixed_time_step * imgui_interface_->speed_multiplier());
+                friction_system_->Update(fixed_time_step * imgui_interface_->speed_multiplier() * 4.f);
             }
 
             accumulator -= fixed_time_step; // Decrease the accumulator

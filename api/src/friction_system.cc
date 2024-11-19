@@ -4,24 +4,50 @@
 #include <ranges>
 
 #include "contact_solver.h"
+#include "metrics.h"
 #include "random.h"
 
-FrictionSystem::FrictionSystem()
+
+FrictionSystem::~FrictionSystem()
 {
+    Clear();
+}
+
+void FrictionSystem::Initialize()
+{
+    Clear();
     quadtree_ = new physics::Quadtree(math::AABB(math::Vec2f(0, 0), math::Vec2f(1200, 800)));
     timer_ = new Timer();
     objects_.reserve(1000);
     CreateGround();
 }
 
+void FrictionSystem::Clear()
+{
+    if (quadtree_)
+    {
+        quadtree_->Clear();
+        delete quadtree_;
+        quadtree_ = nullptr;
+    }
+
+    delete timer_;
+    timer_ = nullptr;
+
+    objects_.clear();
+    potential_pairs_.clear();
+    active_pairs_.clear();
+    collider_to_object_map_.clear();
+}
+
 
 void FrictionSystem::SpawnShape(const math::Vec2f pos, const math::ShapeType type)
 {
-    size_t i = objects_.size();
+    const size_t i = objects_.size();
     math::Vec2f new_position = pos;
     const float radius = random::Range(5.f, 20.f);
 
-    const int max_retries = 10; // Limit retries to avoid infinite loops.
+    constexpr int max_retries = 10; // Limit retries to avoid infinite loops.
     for (int retry = 0; retry < max_retries; ++retry)
     {
         bool position_valid = true;
@@ -44,8 +70,10 @@ void FrictionSystem::SpawnShape(const math::Vec2f pos, const math::ShapeType typ
     {
     case math::ShapeType::kAABB:
         {
-            math::Vec2f half_size_vec = math::Vec2f(radius, radius);
-            auto half_size_length = half_size_vec.Magnitude();
+            const float half_size_x = random::Range(5.f, 20.f);
+            const float half_size_y = radius;
+            const auto half_size_vec = math::Vec2f(half_size_x, half_size_y);
+            const auto half_size_length = half_size_vec.Magnitude();
             math::AABB aabb(new_position, half_size_vec, half_size_length);
             CreateObject(i, aabb);
         }
@@ -66,7 +94,7 @@ void FrictionSystem::SpawnShape(const math::Vec2f pos, const math::ShapeType typ
 void FrictionSystem::CreateObject(size_t index, math::Circle& circle)
 {
     math::Vec2f velocity(0.0f, 0.0f);
-    physics::Body body(physics::BodyType::Dynamic, circle.centre(), velocity, random::Range(0.1f, 0.5f));
+    physics::Body body(physics::BodyType::Dynamic, circle.centre(), velocity, random::Range(50.f, 100.f));
     physics::Collider collider(circle, random::Range(0.5f, 0.9f), 0.1f, false);
     GameObject object(body, collider, circle.radius());
 
@@ -77,8 +105,8 @@ void FrictionSystem::CreateObject(size_t index, math::Circle& circle)
 void FrictionSystem::CreateObject(size_t index, math::AABB& aabb)
 {
     math::Vec2f velocity(0.0f, 0.0f);
-    physics::Body body(physics::BodyType::Dynamic, aabb.GetCentre(), velocity, random::Range(0.1f, 0.5f));
-    physics::Collider collider(aabb, random::Range(0.0f, 0.0f), 0.0f, false);
+    physics::Body body(physics::BodyType::Dynamic, aabb.GetCentre(), velocity, random::Range(50.f, 100.f));
+    physics::Collider collider(aabb, random::Range(0.0f, 0.0f), 0.5f, false);
     GameObject object(body, collider, aabb.half_size_length());
 
     objects_.push_back(object);
@@ -93,7 +121,7 @@ void FrictionSystem::CreateGround()
 
     math::Vec2f velocity(0.0f, 0.0f);
     physics::Body body(physics::BodyType::Static, ground.GetCentre(), velocity, 0.0f);
-    physics::Collider collider(ground, 0.0f, 0.0f, false);
+    physics::Collider collider(ground, 1.0f, 0.0f, false);
     GameObject object(body, collider, ground.half_size_length());
 
 
@@ -101,7 +129,7 @@ void FrictionSystem::CreateGround()
     RegisterObject(objects_[i]);
 }
 
-void FrictionSystem::DeleteObject(size_t index)
+void FrictionSystem::DeleteObject(const size_t index)
 {
     if (index >= objects_.size()) return;
 
@@ -109,6 +137,23 @@ void FrictionSystem::DeleteObject(size_t index)
     UnregisterObject(object);
     objects_.erase(objects_.begin() + index);
 }
+
+void FrictionSystem::RemoveOutOfBoundsObjects()
+{
+    for (size_t i = objects_.size(); i-- > 0;) // Reverse iteration
+    {
+        const auto& bounding_box = objects_[i].collider().GetBoundingBox();
+
+        // Check if the object is out of bounds (left, right, or bottom)
+        if (bounding_box.min_bound().x < frame_bounds_.min_bound().x ||
+            bounding_box.max_bound().x > frame_bounds_.max_bound().x ||
+            bounding_box.max_bound().y > frame_bounds_.max_bound().y)
+        {
+            DeleteObject(i);
+        }
+    }
+}
+
 
 
 void FrictionSystem::RegisterObject(GameObject& object)
@@ -118,28 +163,51 @@ void FrictionSystem::RegisterObject(GameObject& object)
 
 void FrictionSystem::UnregisterObject(GameObject& object)
 {
-    collider_to_object_map_.erase(&object.collider());
+    const auto collider = &object.collider();
+
+    // Remove collider from collider_to_object_map_
+    collider_to_object_map_.erase(collider);
+
+    // Remove related pairs in active_pairs_ and potential_pairs_
+    for (auto it = active_pairs_.begin(); it != active_pairs_.end();)
+    {
+        if (it->gameObjectA_ == &object || it->gameObjectB_ == &object)
+            it = active_pairs_.erase(it);
+        else
+            ++it;
+    }
+
+    for (auto it = potential_pairs_.begin(); it != potential_pairs_.end();)
+    {
+        if (it->first.gameObjectA_ == &object || it->first.gameObjectB_ == &object)
+            it = potential_pairs_.erase(it);
+        else
+            ++it;
+    }
 }
 
-void FrictionSystem::Update(float delta_time)
+
+void FrictionSystem::Update(const float delta_time)
 {
-    UpdateShapes(delta_time);
-    BroadPhase();
-    NarrowPhase();
+        UpdateShapes(delta_time);
+        //RemoveOutOfBoundsObjects();
+        BroadPhase();
+        NarrowPhase();
 }
 
-void FrictionSystem::UpdateShapes(float delta_time)
+void FrictionSystem::UpdateShapes(const float delta_time)
 {
     for (auto& object : objects_)
     {
         auto& body = object.body();
         auto& collider = object.collider();
+        constexpr math::Vec2f gravity = metrics::ConvertToPixels(math::Vec2f(0.f, 9.8f));
 
-        body.ApplyGravity(kGravity_);
+        body.ApplyGravity(gravity);
 
         body.Update(delta_time);
 
-        auto position = body.position();
+        const auto position = body.position();
 
         //Update the collider's position
         collider.UpdatePosition(position);
@@ -234,11 +302,11 @@ void FrictionSystem::NarrowPhase()
             continue;
         }
 
-        bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
-                                    {
-                                        return math::Intersect(shape_a, shape_b);
-                                    }, pair.gameObjectA_->collider().shape(),
-                                    pair.gameObjectB_->collider().shape());
+        const bool intersect = std::visit([](auto&& shape_a, auto&& shape_b)
+                                          {
+                                              return math::Intersect(shape_a, shape_b);
+                                          }, pair.gameObjectA_->collider().shape(),
+                                          pair.gameObjectB_->collider().shape());
 
         if (intersect)
         {
